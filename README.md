@@ -13,10 +13,9 @@
 ![Git](https://img.shields.io/badge/Git-F05032?style=flat&logo=git&logoColor=white)
 ![Cursor](https://img.shields.io/badge/Cursor-000000?style=flat&logo=cursor&logoColor=white)
 
-Estudio Negocios Digitales en UdeSA y un Certificado Profesional en IA en ITBA, buscando sentarme en la intersección entre datos, IA y problemas reales de negocio.
-Disfruto convertir datos desordenados en algo útil y después construir productos o herramientas chicas encima de eso.
+Soy estudiante de Licenciatura en Negocios Digitales en Universidad de San Andrés y cuento con un Certificado Profesional en IA del Instituto Tecnológico de Buenos Aires. Me interesa trabajar en la intersección entre datos, inteligencia artificial y problemas reales de negocio, transformando información compleja en insights accionables y productos con impacto.
 
-Actualmente trabajo como IT Beauty Tech Intern en L'Oréal y colaboro como Head of Product Design & Brand en Luke, un agente de IA para ciberseguridad.
+Actualmente trabajo como IT Beauty Tech Intern en L'Oréal y colaboro como Head of Product Design & Brand en Luke, un agente de IA enfocado en ciberseguridad.
 
 ---
 
