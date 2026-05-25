@@ -37,7 +37,7 @@ Actualmente trabajo como IT Beauty Tech Intern en L'Oréal y colaboro como Head 
 
 📈 **Negocios Digitales – UdeSA** – Carrera enfocada en la intersección entre tecnología, datos y negocio: análisis financiero, modelado y estrategia digital.
 
-🎨 **Diseño de producto y productos digitales** – Aprendiendo por mi cuenta UX, diseño de interfaces y desarrollo de producto digital, aplicado en Luke y Fixit/Weave.
+🎨 **Diseño de producto y productos digitales** – Aprendiendo sobre UX, diseño de interfaces y desarrollo de producto digital, aplicado en Luke y Fixit/Weave.
 
 Siempre buscando aprender algo nuevo — ahora mismo profundizando en agentes de IA, desarrollo de producto y cómo escalar proyectos desde cero.
 
