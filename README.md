@@ -45,6 +45,6 @@ Siempre buscando aprender algo nuevo — ahora mismo profundizando en agentes de
 
 ## Connect
 
-- 💼 LinkedIn: [www.linkedin.com/in/aaxelrad]
-- 📧 Email: [anntocamila@gmail.com]
-- 🐙 GitHub: [@anntocamila](https://github.com/anntocamila)
+- 💼 LinkedIn: www.linkedin.com/in/aaxelrad
+- 📧 Email: anntocamila@gmail.com
+- 🐙 GitHub: @anntocamila (https://github.com/anntocamila)
