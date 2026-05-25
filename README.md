@@ -1,4 +1,4 @@
-# Hi, I'm Anto 👋
+# Hi, I'm Anto 🤠
 
 📍 Buenos Aires · 📊 Data, AI & Product · Exploring the intersection of tech and business
 
