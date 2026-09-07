@@ -1,5 +1,7 @@
 # TechPulse 📡
 
+**En vivo: https://anntocamila.github.io/anntocamila/**
+
 Un portal de noticias tech estilo timeline (Twitter/X) que agrega en un solo lugar
 lo último de **inteligencia artificial, startups, negocios, eventos y tecnología**
 desde fuentes RSS públicas de todo internet.
@@ -81,6 +83,13 @@ En [`docs/PLAN.md`](docs/PLAN.md) está el plan de diseño (favicons reales,
 color por categoría, trending, guardados, tema claro, mobile) y la
 arquitectura del orquestador con LLM (planificar → buscar → rankear →
 sintetizar con citas).
+
+## Deploy
+
+Cada push a `main` que toque `tech-news-portal/` dispara
+`.github/workflows/deploy-techpulse.yml`, que buildea el proyecto y lo
+publica en GitHub Pages. El build de Pages usa `GITHUB_PAGES=true` para
+servir los assets bajo `/anntocamila/`.
 
 ## Stack
 
