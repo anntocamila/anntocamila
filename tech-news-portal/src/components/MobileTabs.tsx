@@ -2,7 +2,7 @@ import { CATEGORIES } from "../data/categories";
 import type { Category } from "../types";
 
 interface Props {
-  active: Category | "all";
+  active: Category | "all" | null;
   onSelect: (c: Category | "all") => void;
 }
 

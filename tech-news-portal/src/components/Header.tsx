@@ -8,6 +8,7 @@ interface Props {
   onRefresh: () => void;
   isLoading: boolean;
   lastUpdated: Date | null;
+  progress?: { loaded: number; total: number } | null;
 }
 
 export function headerLabel(active: Category | "all"): string {
@@ -21,16 +22,24 @@ export default function Header({
   onRefresh,
   isLoading,
   lastUpdated,
+  progress,
 }: Props) {
   return (
     <div className="sticky top-0 z-10 border-b border-zinc-800 bg-black/85 backdrop-blur">
       <div className="flex items-center justify-between px-4 py-3">
         <div>
           <h1 className="text-xl font-bold text-zinc-50">{activeLabel}</h1>
-          {lastUpdated && (
-            <p className="text-xs text-zinc-500">
-              Actualizado {lastUpdated.toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit" })}
+          {isLoading && progress ? (
+            <p className="text-xs text-sky-400">
+              Cargando fuentes {progress.loaded}/{progress.total}…
             </p>
+          ) : (
+            lastUpdated && (
+              <p className="text-xs text-zinc-500">
+                Actualizado{" "}
+                {lastUpdated.toLocaleTimeString("es-AR", { hour: "2-digit", minute: "2-digit" })}
+              </p>
+            )
           )}
         </div>
         <button
@@ -48,7 +57,7 @@ export default function Header({
           value={query}
           onChange={(e) => onQueryChange(e.target.value)}
           type="search"
-          placeholder="Buscar noticias, empresas, temas..."
+          placeholder="Filtrar el feed por palabra clave..."
           className="w-full rounded-full border border-zinc-800 bg-zinc-900 px-4 py-2 text-[15px] text-zinc-100 placeholder-zinc-500 outline-none focus:border-sky-500"
         />
       </div>

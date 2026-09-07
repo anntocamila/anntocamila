@@ -14,10 +14,20 @@ auto-actualización cada 5 minutos.
 
 - **Feed estilo timeline**: tarjetas con avatar de la fuente, título, resumen,
   imagen (cuando el feed la trae), categoría y tiempo relativo ("hace 3h").
-- **Categorías**: IA, Startups, Negocios, Eventos, Tech — un mismo artículo
-  puede aparecer en más de una si el título/resumen matchea varias.
-- **Búsqueda** en vivo sobre título, resumen y fuente.
-- **Auto-refresh** cada 5 minutos + botón de actualizar manual.
+- **Categorías**: IA, Labs IA, Startups, Negocios, Eventos, Tech — un mismo
+  artículo puede aparecer en más de una si el título/resumen matchea varias.
+- **Labs IA**: seguimiento de las empresas que hacen los modelos (OpenAI,
+  Anthropic, Google DeepMind, Meta AI, Mistral, xAI, Hugging Face, NVIDIA,
+  Microsoft AI). Las que no publican RSS se siguen vía Google News.
+- **"Preguntá algo"**: escribís una pregunta en lenguaje natural y el
+  orquestador la convierte en keywords, consulta en paralelo Google News
+  (EN/ES), Bing News y Hacker News, y devuelve los resultados rankeados por
+  relevancia + frescura. Ver `src/lib/search.ts` y `docs/PLAN.md` para la
+  versión con LLM.
+- **Filtro local** por palabra clave sobre título, resumen y fuente.
+- **Auto-refresh** cada 5 minutos + botón de actualizar manual, con render
+  progresivo (las fuentes aparecen a medida que responden) y cache local
+  para que el feed cargue al instante al volver a abrir.
 - **100% client-side**: no hay backend ni base de datos, todo corre en el
   navegador. Se puede desplegar como sitio estático (GitHub Pages, Vercel,
   Netlify, etc.).
@@ -64,6 +74,13 @@ npm run dev       # http://localhost:5173
 npm run build     # build de producción en dist/
 npm run preview   # sirve el build de producción
 ```
+
+## Roadmap
+
+En [`docs/PLAN.md`](docs/PLAN.md) está el plan de diseño (favicons reales,
+color por categoría, trending, guardados, tema claro, mobile) y la
+arquitectura del orquestador con LLM (planificar → buscar → rankear →
+sintetizar con citas).
 
 ## Stack
 

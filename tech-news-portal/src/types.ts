@@ -1,4 +1,4 @@
-export type Category = "ai" | "startups" | "business" | "events" | "tech";
+export type Category = "ai" | "labs" | "startups" | "business" | "events" | "tech";
 
 export interface CategoryMeta {
   id: Category;
@@ -6,11 +6,17 @@ export interface CategoryMeta {
   emoji: string;
 }
 
+/** How a source is fetched.
+ *  - "rss": an RSS/Atom feed (default).
+ *  - "hn-algolia": Hacker News' public JSON search API (CORS enabled, no proxy). */
+export type SourceKind = "rss" | "hn-algolia";
+
 export interface FeedSource {
   id: string;
   name: string;
   url: string;
   category: Category;
+  kind?: SourceKind;
 }
 
 export interface Post {

@@ -2,6 +2,7 @@ import type { CategoryMeta } from "../types";
 
 export const CATEGORIES: CategoryMeta[] = [
   { id: "ai", label: "IA", emoji: "🤖" },
+  { id: "labs", label: "Labs IA", emoji: "🧪" },
   { id: "startups", label: "Startups", emoji: "🚀" },
   { id: "business", label: "Negocios", emoji: "💼" },
   { id: "events", label: "Eventos", emoji: "📅" },

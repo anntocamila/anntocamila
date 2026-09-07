@@ -4,6 +4,7 @@ import { timeAgo } from "../lib/time";
 import SourceAvatar from "./SourceAvatar";
 
 export default function PostCard({ post }: { post: Post }) {
+  const [sourceName, via] = post.source.split(" · via ");
   return (
     <a
       href={post.link}
@@ -11,11 +12,12 @@ export default function PostCard({ post }: { post: Post }) {
       rel="noopener noreferrer"
       className="flex gap-3 border-b border-zinc-800 px-4 py-3 transition-colors hover:bg-zinc-950"
     >
-      <SourceAvatar name={post.source} />
+      <SourceAvatar name={sourceName} />
 
       <div className="min-w-0 flex-1">
         <div className="flex flex-wrap items-center gap-1 text-[15px]">
-          <span className="font-bold text-zinc-100">{post.source}</span>
+          <span className="font-bold text-zinc-100">{sourceName}</span>
+          {via && <span className="text-zinc-500">via {via}</span>}
           <span className="text-zinc-500">·</span>
           <span className="text-zinc-500">{timeAgo(post.pubDate)}</span>
           <span className="ml-1 rounded-full bg-zinc-800 px-2 py-0.5 text-xs font-medium text-zinc-400">
