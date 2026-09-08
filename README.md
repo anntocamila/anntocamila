@@ -1,6 +1,6 @@
 # Hi, I'm Anto 🤠
 
-📍 Buenos Aires · 📊 Data, AI & Product · Exploring the intersection of tech and business
+📍 Buenos Aires · 📊 Data, AI & Product · Building at the intersection of technology and business
 
 ![Python](https://img.shields.io/badge/Python-3776AB?style=flat&logo=python&logoColor=white)
 ![R](https://img.shields.io/badge/R-276DC3?style=flat&logo=r&logoColor=white)
@@ -13,32 +13,47 @@
 ![Git](https://img.shields.io/badge/Git-F05032?style=flat&logo=git&logoColor=white)
 ![Cursor](https://img.shields.io/badge/Cursor-000000?style=flat&logo=cursor&logoColor=white)
 
-I'm an undergraduate student in Digital Business at Universidad de San Andrés and I hold a Professional Certificate in AI from Instituto Tecnológico de Buenos Aires. I'm interested in working at the intersection of data, artificial intelligence and real business problems — turning complex information into actionable insights and products that drive impact.
+I'm an undergraduate student in Digital Business at Universidad de San Andrés, with a Professional Certificate in AI from Instituto Tecnológico de Buenos Aires.
 
-I currently work as an IT Beauty Tech Intern at L'Oréal and collaborate as Head of Product Design & Brand at Luke, an AI agent focused on cybersecurity.
+I'm interested in the intersection of **data, artificial intelligence and real business problems** — from analyzing large datasets and building machine learning models to creating AI-powered products and workflows.
+
+I currently work in **Data & AI at Aleph**, as part of the **Spotify LATAM team**, where I work on advertising data reconciliation, campaign delivery analysis and machine learning models to forecast sales.
 
 ## Current Projects
 
-🛡️ **Luke** – AI agent for cybersecurity. I lead product and brand alongside the founding team. Pre-revenue, currently in building phase.
+📊 **Advertising Data & Reconciliation – Aleph / Spotify LATAM**
+Working with advertising datasets to reconcile campaign delivery, identify discrepancies across data sources and improve the reliability of reporting and business analysis.
 
-🎨 **Fixit / Weave** – Cursor/VS Code extension: a Figma-style visual editor for web apps. Load your localhost app inside a panel, edit elements visually (move, color, typography, layout) and an AI agent rewrites your source code respecting your design system. Stack: VS Code extension + webview, React + Tailwind + TypeScript, Anthropic API.
+🔮 **Sales Forecasting – Aleph / Spotify LATAM**
+Building and exploring machine learning models to forecast future advertising sales and support commercial planning and decision-making.
 
-🧪 **Tester Demand Forecasting (L'Oréal)** – Predictive model (XGBoost/LightGBM) to optimize tester allocation across points of sale, using sell-out as the target variable.
+🎨 **Visual AI Development**
 
-🔍 **Consumer Sentiment Scraper (L'Oréal)** – Web scraping tool for post-launch consumer sentiment analysis.
+Cursor/VS Code extension that brings a Figma-style visual editing experience directly into web development. Load a localhost app inside a panel, visually modify elements such as layout, typography and styles, and use an AI agent to translate those changes back into source code while respecting the existing design system.
 
-## Learning Work
+**Stack:** VS Code Extension · React · Tailwind · TypeScript · AI APIs
 
-🤖 **Professional Certificate in AI – ITBA** – Intensive training in Machine Learning and Data Science. Hands-on projects in R and Python covering clustering, classification, ensemble methods and NLP.
+🧪 **Sales Forecasting – L'Oréal**
+Machine learning project developed during my time at L'Oréal to forecast sales across luxury beauty brands and improve planning accuracy compared with manual estimation processes.
 
-📈 **Digital Business – UdeSA** – Degree focused on the intersection of technology, data and business: financial analysis, modeling and digital strategy.
+## Learning
 
-🎨 **Product Design & Digital Products** – Learning about UX, interface design and digital product development, applied in Luke and Fixit/Weave.
+🤖 **Agentic AI Developer Certification**
+Currently studying AI agents, tool use, multi-step workflows and the development of autonomous AI-powered systems at Instituto Tecnológico de Buenos Aires (ITBA).
 
-Always looking to learn something new — currently diving deeper into AI agents, product development and how to scale projects from scratch.
+🧠 **Professional Certificate in AI – ITBA**
+Training in Machine Learning and Data Science, with hands-on projects in R and Python covering clustering, classification, ensemble methods and NLP.
+
+📈 **Digital Business – UdeSA**
+Degree focused on the intersection of technology, data and business, including analytics, financial modeling, digital strategy and product development.
+
+⚡ **AI Product Engineering & Prototyping**
+Exploring how to turn AI capabilities into usable products — combining product thinking, interface development, automation and AI agents to rapidly prototype and build new tools.
+
+Always looking to learn something new — currently diving deeper into **agentic AI, machine learning, AI products and data-driven decision making**.
 
 ## Connect
 
-- 💼 LinkedIn: [linkedin.com/in/aaxelrad](https://www.linkedin.com/in/aaxelrad)
-- 📧 Email: [anntocamila@gmail.com](mailto:anntocamila@gmail.com)
-- 🐙 GitHub: [@anntocamila](https://github.com/anntocamila)
+* 💼 LinkedIn: [linkedin.com/in/aaxelrad](https://www.linkedin.com/in/aaxelrad)
+* 📧 Email: [anntocamila@gmail.com](mailto:anntocamila@gmail.com)
+* 🐙 GitHub: [@anntocamila](https://github.com/anntocamila)
