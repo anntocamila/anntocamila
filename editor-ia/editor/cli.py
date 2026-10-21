@@ -70,10 +70,14 @@ def guion(
     else:
         typer.echo(f"No encontré {marca}: el guion sale con un tono neutro.", err=True)
         texto_marca = ""
+    from editor.config import cargar_config
+    from editor.trazas import Traza
+
     try:
         proveedor = get_provider()
     except ValueError as error:
         _fallar(str(error))
+    proveedor.traza = Traza(cargar_config().trazas_dir, "guion")
 
     typer.echo(f"Escribiendo el guion con {proveedor.modelo}...")
     try:
@@ -108,11 +112,60 @@ def analizar(
 @app.command()
 def editar(
     clips: Path = typer.Argument(..., help="Carpeta con los clips."),
-    guion: Path = typer.Option(None, help="Guion en texto (opcional)."),
+    guion: Path = typer.Option(None, help="Guion: texto (una línea por frase) o el guion.json del comando guion."),
     marca: Path = typer.Option(Path("marca.md"), help="Archivo con el tono y estilo de la marca."),
+    duracion: float = typer.Option(None, help="Duración objetivo en segundos (opcional)."),
+    salida: Path = typer.Option(None, help="Dónde guardar el plan (por defecto, plan.json en la carpeta de clips)."),
 ):
-    """Analiza los clips, arma el plan de edición y genera una vista previa."""
-    _pendiente(4)
+    """Analiza los clips y arma el plan de edición con el agente."""
+    from editor.agente import ErrorAgente, armar_plan, lineas_de_guion
+    from editor.config import cargar_config
+    from editor.indice import crear_embedder
+    from editor.ingesta import clips_de
+    from editor.llm.base import ErrorLLM
+    from editor.llm.factory import get_provider
+    from editor.trazas import Traza
+
+    if not clips.is_dir():
+        _fallar(f"No existe la carpeta {clips}")
+    rutas = clips_de(clips)
+    if not rutas:
+        _fallar(f"No hay videos en {clips}")
+    if guion is not None and not guion.is_file():
+        _fallar(f"No existe el guion {guion}")
+    texto_guion = lineas_de_guion(guion) if guion else None
+    texto_marca = marca.read_text(encoding="utf-8") if marca.is_file() else ""
+
+    analisis = _analizar_clips(rutas)
+    config = cargar_config()
+    try:
+        proveedor = get_provider(config)
+        embedder = crear_embedder(config.embeddings_provider)
+    except ValueError as error:
+        _fallar(str(error))
+    traza = Traza(config.trazas_dir, f"editar_{clips.resolve().name}")
+    proveedor.traza = traza
+
+    typer.echo(f"Armando el plan con {proveedor.modelo} (hasta {config.agente_max_pasos} pasos)...")
+    try:
+        plan = armar_plan(
+            proveedor, analisis, texto_guion, texto_marca, duracion,
+            max_pasos=config.agente_max_pasos, avisar=typer.echo, embedder=embedder,
+        )
+    except (ErrorLLM, ErrorAgente) as error:
+        typer.echo(f"Uso: {proveedor.uso.resumen()}", err=True)
+        if traza.ruta:
+            typer.echo(f"Traza: {traza.ruta}", err=True)
+        _fallar(str(error))
+
+    salida = salida or clips / "plan.json"
+    salida.parent.mkdir(parents=True, exist_ok=True)
+    salida.write_text(plan.model_dump_json(indent=2), encoding="utf-8")
+    typer.echo(f"Plan: {salida} ({len(plan.segmentos)} segmentos)")
+    typer.echo(f"Uso: {proveedor.uso.resumen()}")
+    if traza.ruta:
+        typer.echo(f"Traza: {traza.ruta}")
+    typer.echo(f"Revisalo y renderizá con: python -m editor render --plan {salida} --clips {clips}")
 
 
 @app.command()

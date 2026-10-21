@@ -26,9 +26,9 @@ def test_python_m_editor_help():
 
 
 def test_comando_pendiente_avisa_la_fase():
-    resultado = CliRunner().invoke(app, ["editar", "clips"])
+    resultado = CliRunner().invoke(app, ["revisar", "--cambios", "sacá la toma 2"])
     assert resultado.exit_code == 1
-    assert "fase 4" in resultado.output
+    assert "fase 5" in resultado.output
 
 
 def test_config_lee_variables_de_entorno(monkeypatch, tmp_path):

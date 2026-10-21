@@ -11,7 +11,7 @@ from editor import cli
 from editor.guion import generar_guion, guion_a_markdown
 from editor.llm import factory
 from editor.modelos import Escena, Guion, errores_de_guion
-from test_llm import ProveedorGuionado
+from conftest import ProveedorGuionado
 
 
 def guion_dict(palabras_por_escena: int = 10, escenas: int = 3, textos: int = 1) -> dict:

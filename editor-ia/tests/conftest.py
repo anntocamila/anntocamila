@@ -6,7 +6,8 @@ from pathlib import Path
 
 import pytest
 
-from editor.ingesta import Frase, Palabra
+from editor.ingesta import AnalisisClip, Frase, InfoClip, Palabra
+from editor.llm.base import LLMProvider, Respuesta
 
 CARPETA_CLIPS = Path(__file__).resolve().parent / "clips_prueba"
 
@@ -104,7 +105,76 @@ class TranscriptorFalso:
 
 @pytest.fixture(autouse=True)
 def cache_aislada(monkeypatch, tmp_path) -> Path:
-    """Cada test usa su propia caché, nunca la .cache del proyecto."""
+    """Cada test usa su propia caché y sus trazas, nunca las del proyecto."""
     cache = tmp_path / "cache"
     monkeypatch.setenv("CACHE_DIR", str(cache))
+    monkeypatch.setenv("TRAZAS_DIR", str(tmp_path / "trazas"))
     return cache
+
+
+class ProveedorGuionado(LLMProvider):
+    """Devuelve respuestas escritas de antemano (texto o Respuesta armada) y guarda cada pedido."""
+
+    nombre = "guionado"
+
+    def __init__(self, respuestas: list, max_correcciones: int = 2):
+        super().__init__("modelo-falso", max_correcciones)
+        self.respuestas = list(respuestas)
+        self.pedidos: list[dict] = []
+
+    def _completar(self, system, mensajes, esquema, herramientas=None):
+        self.pedidos.append({"system": system, "mensajes": list(mensajes), "esquema": esquema, "herramientas": herramientas})
+        siguiente = self.respuestas.pop(0)
+        if isinstance(siguiente, Respuesta):
+            return siguiente
+        return Respuesta(texto=siguiente, contenido=siguiente, tokens_entrada=100, tokens_salida=50, costo_usd=0.001)
+
+    def mensaje_resultados(self, resultados):
+        return {"role": "user", "content": [vars(r) for r in resultados]}
+
+
+def analisis_falso(nombre: str, duracion: float, frases: list[tuple[str, float, float]], audio: bool = True) -> AnalisisClip:
+    """Análisis armado a mano: las palabras de cada frase se reparten parejo en su tramo."""
+    armadas = []
+    for texto, inicio, fin in frases:
+        palabras = texto.split()
+        paso = (fin - inicio) / len(palabras)
+        armadas.append(Frase(
+            texto=texto, inicio=inicio, fin=fin,
+            palabras=[
+                Palabra(texto=p, inicio=round(inicio + i * paso, 3), fin=round(inicio + (i + 1) * paso - 0.03, 3))
+                for i, p in enumerate(palabras)
+            ],
+        ))
+    return AnalisisClip(
+        hash=nombre, transcriptor="falso",
+        info=InfoClip(nombre=nombre, duracion=duracion, ancho=1080, alto=1920, tiene_audio=audio),
+        tramos_voz=[(f.inicio, f.fin) for f in armadas],
+        frases=armadas,
+    )
+
+
+# Proyecto con tomas repetidas: el gancho se grabó con una toma falsa, una trabada y una
+# limpia; la segunda línea, primero incompleta y después completa.
+GUION_TOMAS = [
+    "Hoy te voy a mostrar tres errores de prompts.",
+    "El primero es no dar contexto.",
+    "El segundo es pedir todo junto.",
+]
+TOMAS_ESPERADAS = [("toma1.mp4", 5.5, 8.0), ("toma2.mp4", 3.0, 5.0), ("toma2.mp4", 6.0, 8.0)]
+
+
+def proyecto_tomas() -> dict[str, AnalisisClip]:
+    return {
+        "toma1.mp4": analisis_falso("toma1.mp4", 10.0, [
+            ("Ahí va, ya grabo.", 0.5, 1.5),
+            ("Hoy te voy a mostrar eh hoy te voy a", 2.0, 4.5),
+            ("Hoy te voy a mostrar tres errores de prompts.", 5.5, 8.0),
+        ]),
+        "toma2.mp4": analisis_falso("toma2.mp4", 10.0, [
+            ("El primero es no", 0.8, 1.8),
+            ("El primero es no dar contexto.", 3.0, 5.0),
+            ("El segundo es pedir todo junto.", 6.0, 8.0),
+        ]),
+        "broll.mp4": analisis_falso("broll.mp4", 5.0, [], audio=False),
+    }

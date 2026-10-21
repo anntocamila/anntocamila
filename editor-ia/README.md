@@ -29,8 +29,29 @@ python -m editor revisar --cambios "más corto, sacá la toma 2"
 python -m editor render --plan plan.json
 ```
 
-Por ahora funcionan `guion`, `analizar` y `render` (fases 1 a 3); `editar` y
-`revisar` avisan en qué fase se implementan.
+Por ahora funcionan `guion`, `analizar`, `editar` y `render` (fases 1 a 4);
+`revisar` avisa en qué fase se implementa.
+
+### Edición con el agente
+
+```bash
+python -m editor editar clips/ --guion guion.txt --duracion 45
+python -m editor render --plan clips/plan.json
+```
+
+`editar` analiza los clips (con caché) y le pasa al agente el guion, `marca.md`
+y 5 herramientas: `listar_clips`, `leer_transcripcion`, `buscar_tomas`,
+`medir_plan` y `entregar_plan`. El agente busca la mejor toma para cada línea,
+corta pegado a la voz y entrega un plan que el código valida contra los clips
+reales; si falla, recibe el error y corrige. Si llega a `AGENTE_MAX_PASOS`
+(15) sin un plan válido, corta con un error. El guion puede ser texto (una
+línea por frase) o el `guion.json` del comando `guion`; sin guion, el agente
+arma el video en el orden de grabación.
+
+`buscar_tomas` compara con n-gramas de caracteres y similitud coseno: corre
+local, sin costo. Cada corrida deja una traza en `trazas/` (un `.jsonl` con
+tokens, costo, latencia y cada llamada a herramienta) para entender qué hizo
+el agente.
 
 ### Guion
 
@@ -91,5 +112,5 @@ del plan:
 
 ```bash
 python -m pytest
-EDITOR_TEST_API=1 python -m pytest tests/test_guion.py   # también contra la API real (cuesta plata)
+EDITOR_TEST_API=1 python -m pytest tests/test_guion.py tests/test_agente.py   # contra la API real (cuesta plata)
 ```

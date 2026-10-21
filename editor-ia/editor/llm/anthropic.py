@@ -2,16 +2,18 @@
 
 import anthropic
 
-from editor.llm.base import ErrorLLM, LLMProvider, Respuesta
+from editor.llm.base import ErrorLLM, Herramienta, LlamadaHerramienta, LLMProvider, Respuesta, ResultadoHerramienta
 
 MODELO_POR_DEFECTO = "claude-opus-5-5"
 
-# US$ por millón de tokens (entrada, salida). Si el modelo no está, el costo queda desconocido.
+# US$ por millón de tokens: (entrada, salida, lectura de caché). Escribir en caché cuesta
+# 1,25 veces la entrada. Si el modelo no está, el costo queda desconocido.
 TARIFAS = {
-    "claude-opus-5-5": (4.00, 20.00),
-    "claude-sonnet-5-5": (2.00, 10.00),
-    "claude-haiku-5-5": (0.10, 0.50),
+    "claude-opus-5-5": (4.00, 20.00, 0.20),
+    "claude-sonnet-5-5": (2.00, 10.00, 0.20),
+    "claude-haiku-5-5": (0.10, 0.50, 0.01),
 }
+RECARGO_ESCRITURA_CACHE = 1.25
 
 # La API de salidas estructuradas no acepta estas restricciones: se sacan del esquema,
 # se cuentan en la descripción para que el modelo las respete, y las valida Pydantic.
@@ -51,6 +53,22 @@ def esquema_compatible(esquema):
     return limpio
 
 
+def sin_referencias(esquema: dict) -> dict:
+    """Reemplaza cada $ref por su definición (los esquemas de herramientas van autocontenidos)."""
+    definiciones = esquema.get("$defs", {})
+
+    def resolver(nodo):
+        if isinstance(nodo, list):
+            return [resolver(x) for x in nodo]
+        if not isinstance(nodo, dict):
+            return nodo
+        if "$ref" in nodo:
+            return resolver(definiciones[nodo["$ref"].split("/")[-1]])
+        return {clave: resolver(valor) for clave, valor in nodo.items() if clave != "$defs"}
+
+    return resolver(esquema)
+
+
 class ProveedorAnthropic(LLMProvider):
     nombre = "anthropic"
 
@@ -69,11 +87,29 @@ class ProveedorAnthropic(LLMProvider):
         # El SDK reintenta solo los errores de red, 429 y 5xx con backoff exponencial.
         self._cliente = anthropic.Anthropic(max_retries=max_reintentos)
 
-    def _completar(self, system: str, mensajes: list[dict], esquema: dict | None) -> Respuesta:
+    def _completar(
+        self,
+        system: str,
+        mensajes: list[dict],
+        esquema: dict | None,
+        herramientas: list[Herramienta] | None = None,
+    ) -> Respuesta:
         output_config: dict = {"effort": self.esfuerzo}
         if esquema is not None:
             output_config["format"] = {"type": "json_schema", "schema": esquema_compatible(esquema)}
-        extra = {"system": system} if system else {}
+        extra: dict = {"system": system} if system else {}
+        if herramientas:
+            extra["tools"] = [
+                {
+                    "name": h.nombre,
+                    "description": h.descripcion,
+                    "input_schema": sin_referencias(esquema_compatible(h.esquema)),
+                }
+                for h in herramientas
+            ]
+            # El loop reenvía toda la conversación en cada paso: con caché, cada pedido
+            # paga entero solo lo que se agregó desde el paso anterior.
+            extra["cache_control"] = {"type": "ephemeral"}
         try:
             mensaje = self._cliente.beta.messages.create(
                 model=self.modelo,
@@ -107,18 +143,45 @@ class ProveedorAnthropic(LLMProvider):
             raise ErrorLLM(f"La respuesta se cortó al llegar a max_tokens={self.max_tokens}")
 
         texto = "".join(bloque.text for bloque in mensaje.content if bloque.type == "text")
-        entrada, salida = mensaje.usage.input_tokens, mensaje.usage.output_tokens
+        llamadas = [
+            LlamadaHerramienta(id=bloque.id, nombre=bloque.name, argumentos=dict(bloque.input or {}))
+            for bloque in mensaje.content
+            if bloque.type == "tool_use"
+        ]
+        uso = mensaje.usage
+        entrada, salida = uso.input_tokens, uso.output_tokens
+        leidos = uso.cache_read_input_tokens or 0
+        escritos = uso.cache_creation_input_tokens or 0
         return Respuesta(
             texto=texto,
             contenido=mensaje.content,  # con los bloques de razonamiento, tal cual llegaron
             tokens_entrada=entrada,
             tokens_salida=salida,
-            costo_usd=_costo(mensaje.model, entrada, salida),
+            costo_usd=_costo(mensaje.model, entrada, salida, leidos, escritos),
+            tokens_cache_leidos=leidos,
+            tokens_cache_escritos=escritos,
+            llamadas=llamadas,
+            motivo_fin=mensaje.stop_reason or "",
         )
 
+    def mensaje_resultados(self, resultados: list[ResultadoHerramienta]) -> dict:
+        # Todos los resultados van juntos en un solo turno, como pide la API.
+        return {
+            "role": "user",
+            "content": [
+                {"type": "tool_result", "tool_use_id": r.id, "content": r.texto, "is_error": r.es_error}
+                for r in resultados
+            ],
+        }
 
-def _costo(modelo: str, entrada: int, salida: int) -> float | None:
+
+def _costo(modelo: str, entrada: int, salida: int, leidos: int = 0, escritos: int = 0) -> float | None:
     if modelo not in TARIFAS:
         return None
-    precio_entrada, precio_salida = TARIFAS[modelo]
-    return (entrada * precio_entrada + salida * precio_salida) / 1_000_000
+    precio_entrada, precio_salida, precio_cache = TARIFAS[modelo]
+    return (
+        entrada * precio_entrada
+        + escritos * precio_entrada * RECARGO_ESCRITURA_CACHE
+        + leidos * precio_cache
+        + salida * precio_salida
+    ) / 1_000_000

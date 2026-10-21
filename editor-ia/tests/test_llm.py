@@ -7,25 +7,10 @@ import pytest
 
 from editor.config import cargar_config
 from editor.llm.anthropic import ProveedorAnthropic, esquema_compatible
-from editor.llm.base import ErrorLLM, ErrorSalidaInvalida, LLMProvider, Respuesta
+from conftest import ProveedorGuionado
+from editor.llm.base import ErrorLLM, ErrorSalidaInvalida
 from editor.llm.factory import get_provider
 from editor.modelos import Guion, PlanEdicion, errores_de_contenido
-
-
-class ProveedorGuionado(LLMProvider):
-    """Devuelve respuestas escritas de antemano y guarda cada pedido."""
-
-    nombre = "guionado"
-
-    def __init__(self, respuestas: list[str], max_correcciones: int = 2):
-        super().__init__("modelo-falso", max_correcciones)
-        self.respuestas = list(respuestas)
-        self.pedidos: list[dict] = []
-
-    def _completar(self, system, mensajes, esquema):
-        self.pedidos.append({"system": system, "mensajes": list(mensajes), "esquema": esquema})
-        texto = self.respuestas.pop(0)
-        return Respuesta(texto=texto, contenido=texto, tokens_entrada=100, tokens_salida=50, costo_usd=0.001)
 
 
 def plan_json(fin: float) -> str:
@@ -92,7 +77,9 @@ def mensaje_api(texto: str, stop: str = "end_turn", modelo: str = "claude-opus-5
         content=[SimpleNamespace(type="thinking", thinking=""), SimpleNamespace(type="text", text=texto)],
         stop_reason=stop,
         stop_details=detalles,
-        usage=SimpleNamespace(input_tokens=1000, output_tokens=200),
+        usage=SimpleNamespace(
+            input_tokens=1000, output_tokens=200, cache_read_input_tokens=None, cache_creation_input_tokens=None
+        ),
         model=modelo,
     )
 
@@ -223,3 +210,48 @@ def test_sin_credenciales_da_un_error_claro(anthropic_falso):
     proveedor._cliente.beta.messages.create = sin_clave
     with pytest.raises(ErrorLLM, match="Falta la clave de Anthropic"):
         proveedor.generate("x")
+
+
+# ---------- herramientas en el proveedor de Anthropic ----------
+
+def test_pedido_con_herramientas(anthropic_falso):
+    from editor.herramientas import definiciones
+    from editor.llm.base import ResultadoHerramienta
+
+    respuesta_api = SimpleNamespace(
+        content=[
+            SimpleNamespace(type="thinking", thinking=""),
+            SimpleNamespace(type="tool_use", id="toolu_1", name="buscar_tomas", input={"frase": "hola", "k": 2}),
+            SimpleNamespace(type="tool_use", id="toolu_2", name="listar_clips", input={}),
+        ],
+        stop_reason="tool_use",
+        stop_details=None,
+        usage=SimpleNamespace(input_tokens=200, output_tokens=100, cache_read_input_tokens=5000, cache_creation_input_tokens=1000),
+        model="claude-opus-5-5",
+    )
+    proveedor = anthropic_falso(respuesta_api)
+    respuesta = proveedor.generate_with_tools("sos editor", [{"role": "user", "content": "armá el plan"}], definiciones())
+
+    pedido = proveedor._cliente.pedidos[0]
+    assert pedido["cache_control"] == {"type": "ephemeral"}
+    assert "format" not in pedido["output_config"]
+    herramientas = {t["name"]: t for t in pedido["tools"]}
+    assert list(herramientas) == ["listar_clips", "leer_transcripcion", "buscar_tomas", "medir_plan", "entregar_plan"]
+    entregar = json.dumps(herramientas["entregar_plan"]["input_schema"])
+    assert "$ref" not in entregar and "$defs" not in entregar and "maxLength" not in entregar
+    assert herramientas["entregar_plan"]["input_schema"]["properties"]["plan"]["properties"]["segmentos"]["items"]["type"] == "object"
+
+    assert [(ll.id, ll.nombre, ll.argumentos) for ll in respuesta.llamadas] == [
+        ("toolu_1", "buscar_tomas", {"frase": "hola", "k": 2}), ("toolu_2", "listar_clips", {}),
+    ]
+    assert respuesta.motivo_fin == "tool_use"
+    # 200 de entrada a $4, 1000 escritos en caché a $5, 5000 leídos a $0,20 y 100 de salida a $20.
+    assert respuesta.costo_usd == pytest.approx((200 * 4 + 1000 * 5 + 5000 * 0.2 + 100 * 20) / 1e6)
+    assert proveedor.uso.tokens_cache_leidos == 5000
+    assert "5000 leídos y 1000 escritos en caché" in proveedor.uso.resumen()
+
+    mensaje = proveedor.mensaje_resultados([ResultadoHerramienta("toolu_1", "[]"), ResultadoHerramienta("toolu_2", "falló", True)])
+    assert mensaje == {"role": "user", "content": [
+        {"type": "tool_result", "tool_use_id": "toolu_1", "content": "[]", "is_error": False},
+        {"type": "tool_result", "tool_use_id": "toolu_2", "content": "falló", "is_error": True},
+    ]}

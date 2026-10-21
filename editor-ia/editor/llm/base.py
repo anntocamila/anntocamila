@@ -1,9 +1,9 @@
-"""Interfaz común de los proveedores de LLM y el ciclo generar, validar y corregir."""
+"""Interfaz común de los proveedores de LLM: generar, validar y corregir, y llamar herramientas."""
 
 import time
 from abc import ABC, abstractmethod
 from collections.abc import Callable
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import Any, TypeVar
 
 from pydantic import BaseModel, ValidationError
@@ -22,12 +22,37 @@ class ErrorSalidaInvalida(ErrorLLM):
 
 
 @dataclass
+class Herramienta:
+    nombre: str
+    descripcion: str
+    esquema: dict             # JSON Schema de los argumentos
+
+
+@dataclass
+class LlamadaHerramienta:
+    id: str
+    nombre: str
+    argumentos: dict
+
+
+@dataclass
+class ResultadoHerramienta:
+    id: str                   # el de la LlamadaHerramienta que responde
+    texto: str
+    es_error: bool = False
+
+
+@dataclass
 class Respuesta:
     texto: str
     contenido: Any            # lo que se reenvía como turno del asistente (formato del proveedor)
     tokens_entrada: int
     tokens_salida: int
     costo_usd: float | None   # None si no conocemos la tarifa del modelo
+    tokens_cache_leidos: int = 0
+    tokens_cache_escritos: int = 0
+    llamadas: list[LlamadaHerramienta] = field(default_factory=list)
+    motivo_fin: str = ""
 
 
 @dataclass
@@ -37,6 +62,8 @@ class Uso:
     llamadas: int = 0
     tokens_entrada: int = 0
     tokens_salida: int = 0
+    tokens_cache_leidos: int = 0
+    tokens_cache_escritos: int = 0
     costo_usd: float = 0.0
     segundos: float = 0.0
     costo_desconocido: bool = False
@@ -45,6 +72,8 @@ class Uso:
         self.llamadas += 1
         self.tokens_entrada += respuesta.tokens_entrada
         self.tokens_salida += respuesta.tokens_salida
+        self.tokens_cache_leidos += respuesta.tokens_cache_leidos
+        self.tokens_cache_escritos += respuesta.tokens_cache_escritos
         self.segundos += segundos
         if respuesta.costo_usd is None:
             self.costo_desconocido = True
@@ -53,8 +82,11 @@ class Uso:
 
     def resumen(self) -> str:
         costo = "costo desconocido" if self.costo_desconocido else f"US$ {self.costo_usd:.4f}"
+        cache = ""
+        if self.tokens_cache_leidos or self.tokens_cache_escritos:
+            cache = f" (más {self.tokens_cache_leidos} leídos y {self.tokens_cache_escritos} escritos en caché)"
         return (
-            f"{self.llamadas} llamadas, {self.tokens_entrada} tokens de entrada, "
+            f"{self.llamadas} llamadas, {self.tokens_entrada} tokens de entrada{cache}, "
             f"{self.tokens_salida} de salida, {costo}, {self.segundos:.1f} s"
         )
 
@@ -68,16 +100,41 @@ class LLMProvider(ABC):
         self.modelo = modelo
         self.max_correcciones = max_correcciones
         self.uso = Uso()
+        self.traza = None  # si se le asigna una Traza, registra cada llamada
 
     @abstractmethod
-    def _completar(self, system: str, mensajes: list[dict], esquema: dict | None) -> Respuesta:
-        """Una llamada al modelo. Con esquema, la respuesta tiene que ser JSON que lo cumpla."""
+    def _completar(
+        self,
+        system: str,
+        mensajes: list[dict],
+        esquema: dict | None,
+        herramientas: list[Herramienta] | None = None,
+    ) -> Respuesta:
+        """Una llamada al modelo. Con esquema, la respuesta tiene que ser JSON que lo cumpla;
+        con herramientas, el modelo puede pedir llamadas (Respuesta.llamadas)."""
 
-    def _llamar(self, system: str, mensajes: list[dict], esquema: dict | None) -> Respuesta:
+    def mensaje_resultados(self, resultados: list[ResultadoHerramienta]) -> dict:
+        """Turno con los resultados de las herramientas, en el formato del proveedor."""
+        raise NotImplementedError(f"El proveedor {self.nombre} no soporta herramientas")
+
+    def _llamar(
+        self,
+        system: str,
+        mensajes: list[dict],
+        esquema: dict | None,
+        herramientas: list[Herramienta] | None = None,
+    ) -> Respuesta:
         inicio = time.perf_counter()
-        respuesta = self._completar(system, mensajes, esquema)
-        self.uso.sumar(respuesta, time.perf_counter() - inicio)
+        respuesta = self._completar(system, mensajes, esquema, herramientas)
+        segundos = time.perf_counter() - inicio
+        self.uso.sumar(respuesta, segundos)
+        if self.traza is not None:
+            self.traza.llamada_llm(self.modelo, respuesta, segundos)
         return respuesta
+
+    def generate_with_tools(self, system: str, mensajes: list[dict], herramientas: list[Herramienta]) -> Respuesta:
+        """Un paso del loop de agente: el modelo responde o pide herramientas."""
+        return self._llamar(system, mensajes, None, herramientas)
 
     def generate(self, prompt: str, system: str = "") -> str:
         return self._llamar(system, [{"role": "user", "content": prompt}], None).texto

@@ -21,6 +21,7 @@ class Config:
     llm_max_reintentos: int
     llm_max_correcciones: int
     cache_dir: Path
+    trazas_dir: Path
 
 
 def _entero(nombre: str, por_defecto: int) -> int:
@@ -54,6 +55,7 @@ def cargar_config() -> Config:
         llm_max_reintentos=_entero("LLM_MAX_REINTENTOS", 3),
         llm_max_correcciones=_entero("LLM_MAX_CORRECCIONES", 3),
         cache_dir=Path(os.getenv("CACHE_DIR", ".cache").strip()),
+        trazas_dir=Path(os.getenv("TRAZAS_DIR", "trazas").strip()),
     )
 
 
