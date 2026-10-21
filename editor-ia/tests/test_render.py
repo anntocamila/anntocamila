@@ -12,7 +12,7 @@ from conftest import ffmpeg, ffprobe
 from editor.cli import app
 from editor.ingesta import probar
 from editor.modelos import PlanEdicion
-from editor.render import ErrorRender, renderizar, textos_ass, tramos_en_timeline
+from editor.render import ErrorRender, renderizar, generar_ass, tramos_en_timeline
 
 PLAN = {
     "titulo": "Prueba de render",
@@ -100,7 +100,7 @@ def test_la_medicion_detecta_un_corte_seco(tmp_path):
 def test_textos_en_el_tiempo_del_video_final():
     plan = PlanEdicion.model_validate(PLAN)
     assert tramos_en_timeline(plan)[-1] == (5.4, 6.8)
-    ass = textos_ass(plan)
+    ass = generar_ass(plan)
     assert "Dialogue: 0,0:00:00.00,0:00:01.50,Texto,,0,0,0,,Esto cambia todo" in ass
     assert "Dialogue: 0,0:00:05.40,0:00:06.80,Texto,,0,0,0,,Idea clave" in ass
     assert ass.count("Dialogue:") == 2
@@ -110,7 +110,7 @@ def test_texto_sin_comandos_ass():
     plan = PlanEdicion.model_validate({"titulo": "t", "segmentos": [
         {"clip": "a.mp4", "inicio": 0, "fin": 1, "texto": "{\\b1}hola\\N  mundo"},
     ]})
-    assert textos_ass(plan).endswith(",,b1holaN mundo\n")
+    assert generar_ass(plan).endswith(",,b1holaN mundo\n")
 
 
 def test_rotacion_de_celular(clips):

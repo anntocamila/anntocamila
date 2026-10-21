@@ -4,7 +4,9 @@ python-dotenv>=1.0
 pydantic>=2.7
 pytest>=8.0
 
+# Fase 2: transcripción local (el modelo se baja de Hugging Face la primera vez)
+faster-whisper>=1.1
+
 # Se agregan en su fase:
-# faster-whisper     # fase 2: transcripción local
 # anthropic          # fase 3: un SDK por proveedor que se use
 # numpy              # fase 4: similitud coseno en el índice

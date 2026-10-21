@@ -1,4 +1,4 @@
-"""Comandos del editor: guion, editar, revisar y render."""
+"""Comandos del editor: guion, analizar, editar, revisar y render."""
 
 from pathlib import Path
 
@@ -16,6 +16,43 @@ def _pendiente(fase: int) -> None:
     raise typer.Exit(code=1)
 
 
+def _fallar(mensaje: str) -> None:
+    typer.echo(mensaje, err=True)
+    raise typer.Exit(code=1)
+
+
+def _transcriptor():
+    from editor.config import cargar_config
+    from editor.ingesta import TranscriptorWhisper
+
+    config = cargar_config()
+    return TranscriptorWhisper(config.whisper_model, config.whisper_idioma, config.whisper_vocabulario)
+
+
+def _analizar_clips(rutas: list[Path]) -> dict:
+    """Analiza cada clip (o lo lee de la caché) e informa el resultado. Nombre -> AnalisisClip."""
+    from editor.config import cargar_config
+    from editor.ingesta import analizar
+
+    cache_dir = cargar_config().cache_dir
+    transcriptor = _transcriptor()
+    analisis = {}
+    for ruta in rutas:
+        try:
+            resultado, de_cache = analizar(ruta, cache_dir, transcriptor)
+        except Exception as error:  # ffprobe, ffmpeg o Whisper: se informa y se corta
+            _fallar(f"No se pudo analizar {ruta.name}: {error}")
+        info = resultado.info
+        origen = "caché" if de_cache else "analizado"
+        typer.echo(
+            f"{info.nombre}: {info.duracion:.1f} s, {info.ancho}x{info.alto}"
+            f"{', HDR' if info.hdr else ''}{'' if info.tiene_audio else ', sin audio'}, "
+            f"{len(resultado.tramos_voz)} tramos con voz, {len(resultado.frases)} frases ({origen})"
+        )
+        analisis[info.nombre] = resultado
+    return analisis
+
+
 @app.command()
 def guion(
     idea: str = typer.Argument(..., help="Idea del video en una o dos frases."),
@@ -23,6 +60,21 @@ def guion(
 ):
     """Genera un guion desde una idea, con el tono de tu marca."""
     _pendiente(3)
+
+
+@app.command()
+def analizar(
+    clips: Path = typer.Argument(..., help="Carpeta con los clips."),
+):
+    """Analiza los clips: duración, tramos con voz y transcripción por palabra (con caché)."""
+    from editor.ingesta import clips_de
+
+    if not clips.is_dir():
+        _fallar(f"No existe la carpeta {clips}")
+    rutas = clips_de(clips)
+    if not rutas:
+        _fallar(f"No hay videos en {clips}")
+    _analizar_clips(rutas)
 
 
 @app.command()
@@ -64,14 +116,16 @@ def render(
         _fallar(f"El plan {plan} no es válido:\n{describir_error(error)}")
 
     carpeta = clips or plan.parent
+    palabras = None
+    if plan_validado.subtitulos:
+        # Los clips que no existen los informa el render con el resto de los errores.
+        usados = sorted({seg.clip for seg in plan_validado.segmentos})
+        analisis = _analizar_clips([carpeta / n for n in usados if (carpeta / n).is_file()])
+        palabras = {nombre: a.palabras for nombre, a in analisis.items()}
+
     typer.echo(f"Renderizando {len(plan_validado.segmentos)} segmentos de {carpeta}...")
     try:
-        renderizar(plan_validado, carpeta, salida)
+        renderizar(plan_validado, carpeta, salida, palabras)
     except ErrorRender as error:
         _fallar(str(error))
     typer.echo(f"Listo: {salida}")
-
-
-def _fallar(mensaje: str) -> None:
-    typer.echo(mensaje, err=True)
-    raise typer.Exit(code=1)

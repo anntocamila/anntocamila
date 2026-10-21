@@ -22,14 +22,27 @@ cp .env.example .env             # completá proveedor, modelo y clave
 
 ```bash
 python -m editor --help
+python -m editor analizar clips/
 python -m editor guion "por qué tu prompt no funciona"
 python -m editor editar clips/ --guion guion.txt
 python -m editor revisar --cambios "más corto, sacá la toma 2"
 python -m editor render --plan plan.json
 ```
 
-Por ahora funciona `render` (fase 1); el resto de los comandos avisa en qué
-fase se implementa.
+Por ahora funcionan `analizar` y `render` (fases 1 y 2); el resto de los
+comandos avisa en qué fase se implementa.
+
+### Análisis de clips
+
+`analizar` lee cada clip (duración, tamaño, rotación, HDR), detecta los tramos
+con voz y transcribe con faster-whisper, con tiempos por palabra. El resultado
+queda en caché (`CACHE_DIR`, por defecto `.cache/`) por hash del archivo: la
+segunda corrida no vuelve a transcribir, aunque renombres el clip. Si cambiás
+`WHISPER_MODEL`, `WHISPER_IDIOMA` o `WHISPER_VOCABULARIO`, se retranscribe.
+
+La primera vez, faster-whisper baja el modelo de Hugging Face (`small` pesa
+unos 460 MB). Si Whisper confunde jerga, sumala a `WHISPER_VOCABULARIO` o
+probá `WHISPER_MODEL=medium`.
 
 ### Plan de edición
 
@@ -50,8 +63,11 @@ del plan:
 
 - `zoom`: `ninguno`, `golpe` (acercamiento fijo de 115 %) o `lento` (de 100 % a 112 %).
 - `texto`: hasta 40 caracteres, arriba al centro durante todo el segmento.
+- `subtitulos` (por defecto `true`): `render` transcribe los clips usados (o los
+  lee de la caché) y dibuja subtítulos de a 3 palabras, con la que suena resaltada.
 - Salida: mp4 1080x1920, 30 fps, H.264 y AAC 48 kHz a -14 LUFS.
-- Los clips horizontales se recortan al centro; la rotación de los celulares se respeta.
+- Los clips horizontales se recortan al centro; la rotación de los celulares se respeta
+  y los clips HDR (iPhone) se pasan a SDR.
 - Los clips sin audio llevan silencio.
 
 ## Tests

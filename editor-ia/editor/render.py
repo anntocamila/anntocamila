@@ -11,7 +11,7 @@ import subprocess
 import tempfile
 from pathlib import Path
 
-from editor.ingesta import InfoClip, probar
+from editor.ingesta import InfoClip, Palabra, probar
 from editor.modelos import PlanEdicion, Segmento, errores_de_contenido
 
 ANCHO, ALTO, FPS = 1080, 1920, 30
@@ -25,6 +25,16 @@ UMBRAL_SILENCIO_LUFS = -60.0  # por debajo de esto no se normaliza (video mudo)
 ZOOM_GOLPE = 1.15   # acercamiento fijo de todo el segmento
 ZOOM_LENTO = 1.12   # zoom final al terminar el segmento, arrancando en 1.0
 FUNDIDO_AUDIO_S = 0.01  # micro-fundido en cada borde para que no haya clics
+
+# Clips HDR (HLG o PQ, como los de iPhone) a SDR bt709: sin esto se ven lavados.
+TONEMAP_HDR = (
+    "zscale=t=linear:npl=100,format=gbrpf32le,zscale=p=bt709,"
+    "tonemap=tonemap=hable:desat=0,zscale=t=bt709:m=bt709:r=tv"
+)
+
+PALABRAS_POR_BLOQUE = 3
+PAUSA_ENTRE_BLOQUES_S = 0.6
+COLOR_RESALTADO = "&H0000D4FF&"  # #FFD400 escrito como ASS: &H + azul, verde, rojo
 
 FUENTE = "Inter"  # pendiente: tipografía de la marca (poner el archivo en fuentes/)
 CARPETA_FUENTES = Path(__file__).resolve().parent.parent / "fuentes"
@@ -49,7 +59,7 @@ def tramos_en_timeline(plan: PlanEdicion) -> list[tuple[float, float]]:
     return tramos
 
 
-# ---------- textos en pantalla (ASS) ----------
+# ---------- textos y subtítulos (ASS) ----------
 
 def _tiempo_ass(segundos: float) -> str:
     centesimas = round(segundos * 100)
@@ -66,16 +76,62 @@ def _limpiar_texto(texto: str) -> str:
     return " ".join(texto.split())
 
 
-def textos_ass(plan: PlanEdicion) -> str:
-    """Archivo ASS con el texto en pantalla de cada segmento; vacío si no hay textos."""
+def _bloques(palabras: list[tuple[str, float, float]]) -> list[list[tuple[str, float, float]]]:
+    """Agrupa palabras de a 3 como máximo; corta antes en pausas o al terminar una oración."""
+    bloques: list[list[tuple[str, float, float]]] = []
+    for palabra in palabras:
+        actual = bloques[-1] if bloques else None
+        if (
+            actual is None
+            or len(actual) == PALABRAS_POR_BLOQUE
+            or palabra[1] - actual[-1][2] > PAUSA_ENTRE_BLOQUES_S
+            or actual[-1][0].endswith((".", "?", "!"))
+        ):
+            bloques.append([palabra])
+        else:
+            actual.append(palabra)
+    return bloques
+
+
+def _eventos_subtitulos(plan: PlanEdicion, palabras_por_clip: dict[str, list[Palabra]]) -> list[str]:
+    """Subtítulos palabra por palabra: se ve el bloque entero y se resalta la palabra que suena."""
+    eventos = []
+    for seg, (desde, hasta) in zip(plan.segmentos, tramos_en_timeline(plan)):
+        # Palabras del clip que caen dentro del segmento, llevadas al tiempo del video final.
+        en_video = []
+        for p in palabras_por_clip.get(seg.clip, []):
+            if p.fin <= seg.inicio or p.inicio >= seg.fin:
+                continue
+            a = desde + max(p.inicio, seg.inicio) - seg.inicio
+            b = min(desde + min(p.fin, seg.fin) - seg.inicio, hasta)
+            texto = _limpiar_texto(p.texto)
+            if texto and b > a:
+                en_video.append((texto, a, b))
+
+        for bloque in _bloques(en_video):
+            for k, (_, a, b) in enumerate(bloque):
+                # Cada palabra queda resaltada hasta que arranca la siguiente del bloque.
+                hasta_k = bloque[k + 1][1] if k + 1 < len(bloque) else b
+                texto = " ".join(
+                    f"{{\\c{COLOR_RESALTADO}}}{t}{{\\r}}" if j == k else t for j, (t, _, _) in enumerate(bloque)
+                )
+                eventos.append(f"Dialogue: 1,{_tiempo_ass(a)},{_tiempo_ass(hasta_k)},Subtitulo,,0,0,0,,{texto}")
+    return eventos
+
+
+def generar_ass(plan: PlanEdicion, palabras_por_clip: dict[str, list[Palabra]] | None = None) -> str:
+    """Archivo ASS con textos en pantalla y subtítulos; vacío si no hay nada que dibujar."""
     eventos = [
         f"Dialogue: 0,{_tiempo_ass(desde)},{_tiempo_ass(hasta)},Texto,,0,0,0,,{_limpiar_texto(seg.texto)}"
         for seg, (desde, hasta) in zip(plan.segmentos, tramos_en_timeline(plan))
         if seg.texto.strip()
     ]
+    if plan.subtitulos and palabras_por_clip:
+        eventos += _eventos_subtitulos(plan, palabras_por_clip)
     if not eventos:
         return ""
-    # Alineación 8: arriba al centro, a 300 px del borde, para no tapar los subtítulos.
+    # Texto: arriba al centro (alineación 8). Subtítulo: abajo al centro (2), por encima
+    # de la zona que tapan los botones de TikTok y Reels.
     return "\n".join([
         "[Script Info]",
         "ScriptType: v4.00+",
@@ -90,6 +146,8 @@ def textos_ass(plan: PlanEdicion) -> str:
         "Shadow, Alignment, MarginL, MarginR, MarginV, Encoding",
         f"Style: Texto,{FUENTE},96,&H00FFFFFF,&H00FFFFFF,&H00000000,&H64000000,"
         "-1,0,0,0,100,100,0,0,1,6,0,8,90,90,300,1",
+        f"Style: Subtitulo,{FUENTE},80,&H00FFFFFF,&H00FFFFFF,&H00000000,&H64000000,"
+        "-1,0,0,0,100,100,0,0,1,5,0,2,90,90,560,1",
         "",
         "[Events]",
         "Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text",
@@ -104,7 +162,7 @@ def _par(valor: float) -> int:
     return int(round(valor / 2)) * 2
 
 
-def _filtro_video(seg: Segmento, entrada: int, salida: str) -> str:
+def _filtro_video(seg: Segmento, entrada: int, salida: str, hdr: bool) -> str:
     n = cuadros(seg)
     pasos = [
         "setpts=PTS-STARTPTS",
@@ -118,6 +176,8 @@ def _filtro_video(seg: Segmento, entrada: int, salida: str) -> str:
         f"crop={ANCHO}:{ALTO}",
         "setsar=1",
     ]
+    if hdr:
+        pasos.append(TONEMAP_HDR)
     if seg.zoom == "golpe":
         pasos += [f"scale={_par(ANCHO * ZOOM_GOLPE)}:{_par(ALTO * ZOOM_GOLPE)}", f"crop={ANCHO}:{ALTO}"]
     elif seg.zoom == "lento":
@@ -168,7 +228,7 @@ def _entradas_y_filtros(
             indice += 1
 
         if con_video:
-            filtros.append(_filtro_video(seg, entrada_video, f"v{i}"))
+            filtros.append(_filtro_video(seg, entrada_video, f"v{i}", infos[seg.clip].hdr))
             etiquetas.append(f"[v{i}]")
         filtros.append(_filtro_audio(seg, entrada_audio, f"a{i}"))
         etiquetas.append(f"[a{i}]")
@@ -215,8 +275,16 @@ def _medir_volumen(plan: PlanEdicion, carpeta: Path, infos: dict[str, InfoClip],
 
 # ---------- punto de entrada ----------
 
-def renderizar(plan: PlanEdicion, carpeta_clips: Path, salida: Path) -> Path:
-    """Renderiza el plan a un mp4 1080x1920 a 30 fps con audio normalizado a -14 LUFS."""
+def renderizar(
+    plan: PlanEdicion,
+    carpeta_clips: Path,
+    salida: Path,
+    palabras_por_clip: dict[str, list[Palabra]] | None = None,
+) -> Path:
+    """Renderiza el plan a un mp4 1080x1920 a 30 fps con audio normalizado a -14 LUFS.
+
+    Los subtítulos se dibujan si el plan los pide y se pasan las palabras de cada clip.
+    """
     infos = {}
     for nombre in {seg.clip for seg in plan.segmentos}:
         ruta = carpeta_clips / nombre
@@ -235,7 +303,7 @@ def renderizar(plan: PlanEdicion, carpeta_clips: Path, salida: Path) -> Path:
 
         args, filtros = _entradas_y_filtros(plan, carpeta_clips, infos, con_video=True)
 
-        ass = textos_ass(plan)
+        ass = generar_ass(plan, palabras_por_clip)
         if ass:
             # ffmpeg corre dentro de tmp para pasar rutas relativas al filtro ass
             # (las rutas absolutas con ":" o "\" rompen la sintaxis de filtros).

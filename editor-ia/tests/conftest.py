@@ -6,6 +6,8 @@ from pathlib import Path
 
 import pytest
 
+from editor.ingesta import Frase, Palabra
+
 CARPETA_CLIPS = Path(__file__).resolve().parent / "clips_prueba"
 
 
@@ -53,4 +55,56 @@ def clips() -> Path:
     )
     ffmpeg("-display_rotation", "90", "-i", str(sin_rotar), "-c", "copy", str(CARPETA_CLIPS / "rotado.mp4"))
     sin_rotar.unlink()
+    # Voz sintética (flite) en dos frases: "hello world" desde 1,0 s y "testing subtitles"
+    # desde 3,735 s. La voz suena en ~1,22-2,06 s y ~3,99-5,37 s (ver PALABRAS_VOZ).
+    ffmpeg(
+        "-f", "lavfi", "-i", "testsrc2=size=1280x720:rate=30:duration=6",
+        "-f", "lavfi", "-i", "flite=text='hello world':voice=slt",
+        "-f", "lavfi", "-i", "flite=text='testing subtitles':voice=slt",
+        "-filter_complex",
+        "[1:a]adelay=1000:all=1[a];[2:a]adelay=3735:all=1[b];"
+        "[a][b]amix=inputs=2:normalize=0,aresample=48000,apad[voz]",
+        "-map", "0:v", "-map", "[voz]", "-t", "6",
+        *video_h264, "-c:a", "aac", str(CARPETA_CLIPS / "voz.mp4"),
+    )
+    # HDR como el de iPhone: HLG, bt2020 y 10 bits.
+    ffmpeg(
+        "-f", "lavfi", "-i", "testsrc2=size=1920x1080:rate=30:duration=2",
+        "-vf", "format=yuv420p10le", "-c:v", "libx264", "-preset", "ultrafast",
+        "-color_primaries", "bt2020", "-color_trc", "arib-std-b67", "-colorspace", "bt2020nc",
+        str(CARPETA_CLIPS / "hdr.mp4"),
+    )
     return CARPETA_CLIPS
+
+
+# Lo que devolvería un Whisper perfecto para voz.mp4.
+PALABRAS_VOZ = [
+    Palabra(texto="Hello", inicio=1.22, fin=1.62),
+    Palabra(texto="world.", inicio=1.64, fin=2.05),
+    Palabra(texto="Testing", inicio=3.99, fin=4.60),
+    Palabra(texto="subtitles.", inicio=4.62, fin=5.37),
+]
+
+
+class TranscriptorFalso:
+    """Devuelve PALABRAS_VOZ para cualquier clip y cuenta cuántas veces lo llamaron."""
+
+    def __init__(self, nombre: str = "falso:v1"):
+        self.nombre = nombre
+        self.llamadas = 0
+
+    def transcribir(self, clip: Path) -> list[Frase]:
+        self.llamadas += 1
+        a, b, c, d = PALABRAS_VOZ
+        return [
+            Frase(texto="Hello world.", inicio=a.inicio, fin=b.fin, palabras=[a, b]),
+            Frase(texto="Testing subtitles.", inicio=c.inicio, fin=d.fin, palabras=[c, d]),
+        ]
+
+
+@pytest.fixture(autouse=True)
+def cache_aislada(monkeypatch, tmp_path) -> Path:
+    """Cada test usa su propia caché, nunca la .cache del proyecto."""
+    cache = tmp_path / "cache"
+    monkeypatch.setenv("CACHE_DIR", str(cache))
+    return cache

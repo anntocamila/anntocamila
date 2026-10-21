@@ -13,8 +13,10 @@ duraciones, validación) o render lo hace el código, nunca el modelo.
 
 - [x] Fase 0. Base: repo, `requirements.txt`, `.env.example`, `.gitignore`, CLI vacía.
 - [x] Fase 1. Render sin IA (`render --plan plan.json`): cortes, 9:16, zooms, textos (ASS),
-  audio a -14 LUFS. Los subtítulos (`subtitulos: true`) se dibujan recién en la fase 2.
-- [ ] Fase 2. Ingesta (ffprobe, silencios, Whisper, caché por hash).
+  audio a -14 LUFS.
+- [x] Fase 2. Ingesta (`analizar carpeta/`): ffprobe con HDR, tramos con voz, Whisper
+  con tiempos por palabra, caché por hash en `CACHE_DIR`, subtítulos palabra por palabra
+  y tonemapping HDR -> SDR en el render.
 - [ ] Fase 3. LLM y plan estructurado.
 - [ ] Fase 4. Agente con herramientas.
 - [ ] Fase 5. Revisión humana.
@@ -31,6 +33,10 @@ duraciones, validación) o render lo hace el código, nunca el modelo.
   después el código. Un commit por fase.
 - Los clips de prueba se generan con ffmpeg en cada corrida (`tests/conftest.py`)
   dentro de `tests/clips_prueba/`; no se commitean videos.
+- Los tests no usan Whisper: `TranscriptorFalso` (en `conftest.py`) devuelve tiempos
+  conocidos de la voz sintética de `voz.mp4`. El test con Whisper real se saltea si el
+  modelo `tiny` no está descargado.
+- Si cambia el formato de `AnalisisClip`, subir `VERSION_ANALISIS` para invalidar la caché.
 - El render arma todo en un solo grafo de ffmpeg: nada de archivos intermedios
   (los cortes de AAC entre partes meten huecos y clics).
 

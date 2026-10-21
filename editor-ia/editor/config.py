@@ -14,6 +14,8 @@ class Config:
     embeddings_provider: str
     embeddings_model: str
     whisper_model: str
+    whisper_idioma: str
+    whisper_vocabulario: str
     agente_max_pasos: int
     llm_max_reintentos: int
     cache_dir: Path
@@ -38,6 +40,8 @@ def cargar_config() -> Config:
         embeddings_provider=os.getenv("EMBEDDINGS_PROVIDER", "").strip().lower(),
         embeddings_model=os.getenv("EMBEDDINGS_MODEL", "").strip(),
         whisper_model=os.getenv("WHISPER_MODEL", "small").strip(),
+        whisper_idioma=os.getenv("WHISPER_IDIOMA", "es").strip(),
+        whisper_vocabulario=os.getenv("WHISPER_VOCABULARIO", "").strip(),
         agente_max_pasos=_entero("AGENTE_MAX_PASOS", 15),
         llm_max_reintentos=_entero("LLM_MAX_REINTENTOS", 3),
         cache_dir=Path(os.getenv("CACHE_DIR", ".cache").strip()),
