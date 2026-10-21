@@ -12,7 +12,8 @@ duraciones, validación) o render lo hace el código, nunca el modelo.
 ## Estado
 
 - [x] Fase 0. Base: repo, `requirements.txt`, `.env.example`, `.gitignore`, CLI vacía.
-- [ ] Fase 1. Render sin IA (`render --plan plan.json`).
+- [x] Fase 1. Render sin IA (`render --plan plan.json`): cortes, 9:16, zooms, textos (ASS),
+  audio a -14 LUFS. Los subtítulos (`subtitulos: true`) se dibujan recién en la fase 2.
 - [ ] Fase 2. Ingesta (ffprobe, silencios, Whisper, caché por hash).
 - [ ] Fase 3. LLM y plan estructurado.
 - [ ] Fase 4. Agente con herramientas.
@@ -28,8 +29,10 @@ duraciones, validación) o render lo hace el código, nunca el modelo.
 - El render nunca recibe un dict crudo: siempre un `PlanEdicion` validado.
 - Una fase por sesión: primero mostrar el plan de archivos, después los tests,
   después el código. Un commit por fase.
-- Los clips de prueba se generan con ffmpeg dentro de los tests; no se
-  commitean videos.
+- Los clips de prueba se generan con ffmpeg en cada corrida (`tests/conftest.py`)
+  dentro de `tests/clips_prueba/`; no se commitean videos.
+- El render arma todo en un solo grafo de ffmpeg: nada de archivos intermedios
+  (los cortes de AAC entre partes meten huecos y clics).
 
 ## Comandos
 

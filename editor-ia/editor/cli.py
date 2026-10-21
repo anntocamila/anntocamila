@@ -46,8 +46,32 @@ def revisar(
 
 @app.command()
 def render(
-    plan: Path = typer.Option(Path("plan.json"), help="Plan de edición validado."),
+    plan: Path = typer.Option(Path("plan.json"), help="Plan de edición en JSON."),
+    clips: Path = typer.Option(None, help="Carpeta con los clips (por defecto, la carpeta del plan)."),
     salida: Path = typer.Option(Path("video_final.mp4"), help="Archivo de salida."),
 ):
     """Renderiza el video final 1080x1920 a partir de un plan."""
-    _pendiente(1)
+    from pydantic import ValidationError
+
+    from editor.modelos import PlanEdicion, describir_error
+    from editor.render import ErrorRender, renderizar
+
+    if not plan.is_file():
+        _fallar(f"No existe el plan {plan}")
+    try:
+        plan_validado = PlanEdicion.model_validate_json(plan.read_text(encoding="utf-8"))
+    except ValidationError as error:
+        _fallar(f"El plan {plan} no es válido:\n{describir_error(error)}")
+
+    carpeta = clips or plan.parent
+    typer.echo(f"Renderizando {len(plan_validado.segmentos)} segmentos de {carpeta}...")
+    try:
+        renderizar(plan_validado, carpeta, salida)
+    except ErrorRender as error:
+        _fallar(str(error))
+    typer.echo(f"Listo: {salida}")
+
+
+def _fallar(mensaje: str) -> None:
+    typer.echo(mensaje, err=True)
+    raise typer.Exit(code=1)
