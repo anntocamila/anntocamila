@@ -29,8 +29,25 @@ python -m editor revisar --cambios "más corto, sacá la toma 2"
 python -m editor render --plan plan.json
 ```
 
-Por ahora funcionan `analizar` y `render` (fases 1 y 2); el resto de los
-comandos avisa en qué fase se implementa.
+Por ahora funcionan `guion`, `analizar` y `render` (fases 1 a 3); `editar` y
+`revisar` avisan en qué fase se implementan.
+
+### Guion
+
+`guion` escribe un guion desde una idea con el tono de `marca.md` y deja
+`guion.json` y `guion.md` (para leer mientras grabás). El modelo devuelve un
+`Guion` validado con Pydantic; el código estima la duración (unas 2,7 palabras
+por segundo) y, si se pasa del objetivo, le devuelve la cuenta para que
+recorte. Si no lo logra en `LLM_MAX_CORRECCIONES` intentos, falla con los
+últimos errores.
+
+```bash
+python -m editor guion "tres errores al escribir prompts" --duracion 30
+```
+
+Necesita `ANTHROPIC_API_KEY` en `.env`. El modelo por defecto es
+`claude-opus-5-5`; se cambia con `LLM_MODEL` y `LLM_ESFUERZO`. Al terminar
+muestra los tokens usados y el costo en dólares.
 
 ### Análisis de clips
 
@@ -74,4 +91,5 @@ del plan:
 
 ```bash
 python -m pytest
+EDITOR_TEST_API=1 python -m pytest tests/test_guion.py   # también contra la API real (cuesta plata)
 ```

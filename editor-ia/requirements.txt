@@ -7,6 +7,8 @@ pytest>=8.0
 # Fase 2: transcripción local (el modelo se baja de Hugging Face la primera vez)
 faster-whisper>=1.1
 
+# Fase 3: un SDK por proveedor que se use
+anthropic>=2.0,<3
+
 # Se agregan en su fase:
-# anthropic          # fase 3: un SDK por proveedor que se use
 # numpy              # fase 4: similitud coseno en el índice

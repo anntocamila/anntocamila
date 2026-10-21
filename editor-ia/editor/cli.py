@@ -57,9 +57,37 @@ def _analizar_clips(rutas: list[Path]) -> dict:
 def guion(
     idea: str = typer.Argument(..., help="Idea del video en una o dos frases."),
     marca: Path = typer.Option(Path("marca.md"), help="Archivo con el tono y estilo de la marca."),
+    duracion: float = typer.Option(45, help="Duración objetivo en segundos."),
+    salida: Path = typer.Option(Path("guion.json"), help="Guion en JSON; al lado se escribe la versión .md."),
 ):
     """Genera un guion desde una idea, con el tono de tu marca."""
-    _pendiente(3)
+    from editor.guion import generar_guion, guion_a_markdown
+    from editor.llm.base import ErrorLLM
+    from editor.llm.factory import get_provider
+
+    if marca.is_file():
+        texto_marca = marca.read_text(encoding="utf-8")
+    else:
+        typer.echo(f"No encontré {marca}: el guion sale con un tono neutro.", err=True)
+        texto_marca = ""
+    try:
+        proveedor = get_provider()
+    except ValueError as error:
+        _fallar(str(error))
+
+    typer.echo(f"Escribiendo el guion con {proveedor.modelo}...")
+    try:
+        resultado = generar_guion(proveedor, idea, texto_marca, duracion)
+    except ErrorLLM as error:
+        typer.echo(f"Uso: {proveedor.uso.resumen()}", err=True)
+        _fallar(str(error))
+
+    salida.parent.mkdir(parents=True, exist_ok=True)
+    salida.write_text(resultado.model_dump_json(indent=2), encoding="utf-8")
+    markdown = salida.with_suffix(".md")
+    markdown.write_text(guion_a_markdown(resultado), encoding="utf-8")
+    typer.echo(f"Listo: {markdown} (unos {round(resultado.segundos_estimados())} s hablados)")
+    typer.echo(f"Uso: {proveedor.uso.resumen()}")
 
 
 @app.command()

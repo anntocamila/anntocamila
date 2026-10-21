@@ -17,7 +17,9 @@ duraciones, validación) o render lo hace el código, nunca el modelo.
 - [x] Fase 2. Ingesta (`analizar carpeta/`): ffprobe con HDR, tramos con voz, Whisper
   con tiempos por palabra, caché por hash en `CACHE_DIR`, subtítulos palabra por palabra
   y tonemapping HDR -> SDR en el render.
-- [ ] Fase 3. LLM y plan estructurado.
+- [x] Fase 3. LLM y plan estructurado: `LLMProvider` (`editor/llm/base.py`) con
+  `generate_structured` (generar, validar y corregir), `ProveedorAnthropic`, `get_provider()`,
+  modelo `Guion` y comando `guion`. Solo está implementado Anthropic.
 - [ ] Fase 4. Agente con herramientas.
 - [ ] Fase 5. Revisión humana.
 - [ ] Fase 6. Evaluación.
@@ -37,6 +39,11 @@ duraciones, validación) o render lo hace el código, nunca el modelo.
   conocidos de la voz sintética de `voz.mp4`. El test con Whisper real se saltea si el
   modelo `tiny` no está descargado.
 - Si cambia el formato de `AnalisisClip`, subir `VERSION_ANALISIS` para invalidar la caché.
+- Los tests no llaman a la API: usan `ProveedorGuionado` (`tests/test_llm.py`) o un cliente
+  falso. El test contra la API real solo corre con `EDITOR_TEST_API=1`.
+- Las validaciones de contenido (duración del guion, tiempos del plan) son funciones
+  `errores_de_*` en `modelos.py` que devuelven una lista de errores en español con el dato
+  exacto; ese texto vuelve tal cual al modelo para que corrija.
 - El render arma todo en un solo grafo de ffmpeg: nada de archivos intermedios
   (los cortes de AAC entre partes meten huecos y clics).
 
