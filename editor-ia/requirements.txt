@@ -1,0 +1,10 @@
+# Fase 0: base
+typer>=0.15
+python-dotenv>=1.0
+pydantic>=2.7
+pytest>=8.0
+
+# Se agregan en su fase:
+# faster-whisper     # fase 2: transcripción local
+# anthropic          # fase 3: un SDK por proveedor que se use
+# numpy              # fase 4: similitud coseno en el índice

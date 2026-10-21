@@ -1,0 +1,25 @@
+# Credenciales
+.env
+
+# Entorno de Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Caché de análisis y salidas
+.cache/
+salida/
+trazas/
+
+# Videos y audio: no se commitean (los de prueba se generan en los tests)
+*.mp4
+*.mov
+*.m4v
+*.wav
+*.mp3
+*.m4a
+*.ass
+
+# Sistema
+.DS_Store

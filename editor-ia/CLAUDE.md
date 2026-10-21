@@ -1,0 +1,43 @@
+# editor-ia
+
+Agente de edición de video: recibe clips y un guion (o una idea), arma un
+`PlanEdicion` validado con Pydantic y renderiza un video 9:16 con ffmpeg.
+El plan completo está en `PLAN.md`; leelo antes de empezar una fase.
+
+## Regla principal
+
+El LLM decide qué tomas usar y dónde cortar. Todo lo que es cálculo (tiempos,
+duraciones, validación) o render lo hace el código, nunca el modelo.
+
+## Estado
+
+- [x] Fase 0. Base: repo, `requirements.txt`, `.env.example`, `.gitignore`, CLI vacía.
+- [ ] Fase 1. Render sin IA (`render --plan plan.json`).
+- [ ] Fase 2. Ingesta (ffprobe, silencios, Whisper, caché por hash).
+- [ ] Fase 3. LLM y plan estructurado.
+- [ ] Fase 4. Agente con herramientas.
+- [ ] Fase 5. Revisión humana.
+- [ ] Fase 6. Evaluación.
+
+## Convenciones
+
+- Comentarios, docstrings, mensajes de error y nombres del dominio en español.
+- Código simple: funciones chicas, sin abstracciones que la fase no necesite.
+- Sin claves en el código. Todo sale de `.env` a través de `editor/config.py`;
+  `.env` no se commitea, `.env.example` sí (sin valores reales).
+- El render nunca recibe un dict crudo: siempre un `PlanEdicion` validado.
+- Una fase por sesión: primero mostrar el plan de archivos, después los tests,
+  después el código. Un commit por fase.
+- Los clips de prueba se generan con ffmpeg dentro de los tests; no se
+  commitean videos.
+
+## Comandos
+
+```bash
+python -m venv .venv && source .venv/bin/activate
+pip install -r requirements.txt
+python -m editor --help      # CLI
+python -m pytest             # tests (correr desde editor-ia/)
+```
+
+Requiere `ffmpeg` y `ffprobe` en el PATH.
