@@ -15,7 +15,7 @@ from editor.indice import Indice, coseno
 from editor.ingesta import AnalisisClip, Palabra
 from editor.llm.base import Herramienta
 from editor.modelos import PlanEdicion, describir_error, errores_de_contenido
-from editor.render import FPS, cuadros
+from editor.render import duracion_plan
 
 MARGEN_MAX_S = 0.25           # más aire que esto antes o después de la voz se avisa
 SILENCIO_MAX_S = 0.4          # un silencio más largo dentro de un segmento se avisa
@@ -163,7 +163,7 @@ def _avisos(ctx: Contexto, plan: PlanEdicion) -> list[str]:
 
 def medir_plan(ctx: Contexto, args: ArgsPlan) -> dict:
     plan = args.plan
-    total = sum(cuadros(seg) for seg in plan.segmentos) / FPS
+    total = duracion_plan(plan)
     resultado: dict = {"duracion_total": round(total, 2), "segmentos": len(plan.segmentos)}
     if ctx.duracion_objetivo:
         resultado["duracion_objetivo"] = ctx.duracion_objetivo
@@ -180,7 +180,7 @@ def entregar_plan(ctx: Contexto, args: ArgsPlan) -> dict:
     if errores:
         raise ErrorHerramienta("El plan no se puede renderizar:\n" + "\n".join(f"- {e}" for e in errores))
     ctx.plan_entregado = args.plan
-    total = sum(cuadros(seg) for seg in args.plan.segmentos) / FPS
+    total = duracion_plan(args.plan)
     return {"estado": "plan recibido", "segmentos": len(args.plan.segmentos), "duracion_total": round(total, 2)}
 
 

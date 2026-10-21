@@ -29,13 +29,14 @@ python -m editor revisar --cambios "más corto, sacá la toma 2"
 python -m editor render --plan plan.json
 ```
 
-Por ahora funcionan `guion`, `analizar`, `editar` y `render` (fases 1 a 4);
-`revisar` avisa en qué fase se implementa.
+Usan la API de Anthropic, y cuestan plata, `guion`, `editar` y `revisar`.
+`analizar`, `render` y la vista previa corren en tu compu y son gratis.
 
 ### Edición con el agente
 
 ```bash
 python -m editor editar clips/ --guion guion.txt --duracion 45
+python -m editor revisar --plan clips/plan.json --cambios "más corto, sacá la toma 2"
 python -m editor render --plan clips/plan.json
 ```
 
@@ -47,6 +48,24 @@ reales; si falla, recibe el error y corrige. Si llega a `AGENTE_MAX_PASOS`
 (15) sin un plan válido, corta con un error. El guion puede ser texto (una
 línea por frase) o el `guion.json` del comando `guion`; sin guion, el agente
 arma el video en el orden de grabación.
+
+### Revisión y aprobación
+
+`editar` deja junto al plan:
+
+- `plan.json`: el plan, editable a mano.
+- `decisiones.md`: cada corte en una línea, con su nota.
+- `vista_previa.mp4`: render rápido a 540p para revisar.
+- `proyecto.json`: el análisis de los clips, para no volver a analizarlos.
+
+`revisar --cambios "..."` aplica cambios en lenguaje natural con una sola
+llamada al modelo ("la toma 2" es el corte 2 de `decisiones.md`), guarda el
+plan anterior como `plan.v1.json`, `plan.v2.json`... y genera una vista previa
+nueva. También podés editar `plan.json` a mano y mirar el resultado gratis
+con `render --vista-previa`.
+
+`render` hace el video final 1080x1920 solo después de que apruebes el plan
+(pregunta `¿Aprobás el plan? [s/N]`; con `--si` no pregunta).
 
 `buscar_tomas` compara con n-gramas de caracteres y similitud coseno: corre
 local, sin costo. Cada corrida deja una traza en `trazas/` (un `.jsonl` con

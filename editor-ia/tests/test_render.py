@@ -136,7 +136,7 @@ def test_cli_render_de_un_video_mudo(clips, tmp_path):
         {"clip": "sin_audio.mp4", "inicio": 0, "fin": 1, "texto": "Solo imagen"},
     ]}))
     salida = tmp_path / "mudo.mp4"
-    resultado = CliRunner().invoke(app, ["render", "--plan", str(plan), "--clips", str(clips), "--salida", str(salida)])
+    resultado = CliRunner().invoke(app, ["render", "--plan", str(plan), "--clips", str(clips), "--salida", str(salida), "--si"])
     assert resultado.exit_code == 0, resultado.output
     tipos = {s["codec_type"] for s in ffprobe(salida)["streams"]}
     assert tipos == {"video", "audio"}

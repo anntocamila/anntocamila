@@ -11,11 +11,6 @@ app = typer.Typer(
 )
 
 
-def _pendiente(fase: int) -> None:
-    typer.echo(f"Todavía no está implementado (fase {fase} de PLAN.md).", err=True)
-    raise typer.Exit(code=1)
-
-
 def _fallar(mensaje: str) -> None:
     typer.echo(mensaje, err=True)
     raise typer.Exit(code=1)
@@ -51,6 +46,47 @@ def _analizar_clips(rutas: list[Path]) -> dict:
         )
         analisis[info.nombre] = resultado
     return analisis
+
+
+def _cargar_plan(plan: Path):
+    from pydantic import ValidationError
+
+    from editor.modelos import PlanEdicion, describir_error
+
+    if not plan.is_file():
+        _fallar(f"No existe el plan {plan}")
+    try:
+        return PlanEdicion.model_validate_json(plan.read_text(encoding="utf-8"))
+    except ValidationError as error:
+        _fallar(f"El plan {plan} no es válido:\n{describir_error(error)}")
+
+
+def _guardar_revision(plan, ruta_plan: Path, proyecto, con_vista_previa: bool) -> None:
+    """Guarda el plan (versionando el anterior), decisiones.md y la vista previa a 540p."""
+    from editor.render import ErrorRender, renderizar
+    from editor.revision import ARCHIVO_DECISIONES, ARCHIVO_VISTA_PREVIA, decisiones_md, guardar_version
+
+    ruta_plan.parent.mkdir(parents=True, exist_ok=True)
+    anterior = guardar_version(ruta_plan)
+    ruta_plan.write_text(plan.model_dump_json(indent=2), encoding="utf-8")
+    decisiones = ruta_plan.parent / ARCHIVO_DECISIONES
+    decisiones.write_text(decisiones_md(plan, proyecto.cambios), encoding="utf-8")
+    typer.echo(f"Plan: {ruta_plan} ({len(plan.segmentos)} segmentos)" + (f", el anterior quedó en {anterior.name}" if anterior else ""))
+    typer.echo(f"Decisiones: {decisiones}")
+    if con_vista_previa:
+        previa = ruta_plan.parent / ARCHIVO_VISTA_PREVIA
+        typer.echo("Renderizando la vista previa a 540p...")
+        try:
+            renderizar(plan, Path(proyecto.clips), previa, proyecto.palabras(), vista_previa=True)
+        except ErrorRender as error:
+            _fallar(str(error))
+        typer.echo(f"Vista previa: {previa}")
+
+
+def _proximos_pasos(ruta_plan: Path) -> None:
+    typer.echo("Revisá la vista previa y decisiones.md. Después:")
+    typer.echo(f'  cambios:      python -m editor revisar --plan {ruta_plan} --cambios "sacá la toma 2"')
+    typer.echo(f"  render final: python -m editor render --plan {ruta_plan}")
 
 
 @app.command()
@@ -116,14 +152,16 @@ def editar(
     marca: Path = typer.Option(Path("marca.md"), help="Archivo con el tono y estilo de la marca."),
     duracion: float = typer.Option(None, help="Duración objetivo en segundos (opcional)."),
     salida: Path = typer.Option(None, help="Dónde guardar el plan (por defecto, plan.json en la carpeta de clips)."),
+    sin_vista_previa: bool = typer.Option(False, "--sin-vista-previa", help="No renderizar la vista previa."),
 ):
-    """Analiza los clips y arma el plan de edición con el agente."""
+    """Analiza los clips, arma el plan con el agente y genera una vista previa a 540p."""
     from editor.agente import ErrorAgente, armar_plan, lineas_de_guion
     from editor.config import cargar_config
     from editor.indice import crear_embedder
     from editor.ingesta import clips_de
     from editor.llm.base import ErrorLLM
     from editor.llm.factory import get_provider
+    from editor.revision import Proyecto, guardar_proyecto
     from editor.trazas import Traza
 
     if not clips.is_dir():
@@ -158,55 +196,103 @@ def editar(
             typer.echo(f"Traza: {traza.ruta}", err=True)
         _fallar(str(error))
 
-    salida = salida or clips / "plan.json"
-    salida.parent.mkdir(parents=True, exist_ok=True)
-    salida.write_text(plan.model_dump_json(indent=2), encoding="utf-8")
-    typer.echo(f"Plan: {salida} ({len(plan.segmentos)} segmentos)")
     typer.echo(f"Uso: {proveedor.uso.resumen()}")
     if traza.ruta:
         typer.echo(f"Traza: {traza.ruta}")
-    typer.echo(f"Revisalo y renderizá con: python -m editor render --plan {salida} --clips {clips}")
+
+    salida = salida or clips / "plan.json"
+    salida.parent.mkdir(parents=True, exist_ok=True)
+    # El análisis queda guardado junto al plan: revisar y render no vuelven a analizar.
+    proyecto = Proyecto(clips=str(clips.resolve()), guion=texto_guion, duracion_objetivo=duracion, analisis=analisis)
+    guardar_proyecto(proyecto, salida.parent)
+    _guardar_revision(plan, salida, proyecto, not sin_vista_previa)
+    _proximos_pasos(salida)
 
 
 @app.command()
 def revisar(
     plan: Path = typer.Option(Path("plan.json"), help="Plan de edición a revisar."),
     cambios: str = typer.Option(..., help='Cambios en lenguaje natural, por ejemplo "sacá la toma 2".'),
+    sin_vista_previa: bool = typer.Option(False, "--sin-vista-previa", help="No renderizar la vista previa."),
 ):
     """Aplica cambios pedidos en lenguaje natural sin volver a analizar los clips."""
-    _pendiente(5)
+    from editor.config import cargar_config
+    from editor.llm.base import ErrorLLM
+    from editor.llm.factory import get_provider
+    from editor.revision import cargar_proyecto, guardar_proyecto, revisar_plan
+    from editor.trazas import Traza
+
+    plan_actual = _cargar_plan(plan)
+    try:
+        proyecto = cargar_proyecto(plan.parent)
+    except FileNotFoundError as error:
+        _fallar(str(error))
+    config = cargar_config()
+    try:
+        proveedor = get_provider(config)
+    except ValueError as error:
+        _fallar(str(error))
+    proveedor.traza = Traza(config.trazas_dir, "revisar")
+
+    typer.echo(f"Aplicando los cambios con {proveedor.modelo}...")
+    try:
+        nuevo = revisar_plan(proveedor, proyecto, plan_actual, cambios)
+    except ErrorLLM as error:
+        typer.echo(f"Uso: {proveedor.uso.resumen()}", err=True)
+        _fallar(str(error))
+    typer.echo(f"Uso: {proveedor.uso.resumen()}")
+
+    proyecto.cambios.append(cambios)
+    guardar_proyecto(proyecto, plan.parent)
+    _guardar_revision(nuevo, plan, proyecto, not sin_vista_previa)
+    _proximos_pasos(plan)
 
 
 @app.command()
 def render(
     plan: Path = typer.Option(Path("plan.json"), help="Plan de edición en JSON."),
-    clips: Path = typer.Option(None, help="Carpeta con los clips (por defecto, la carpeta del plan)."),
-    salida: Path = typer.Option(Path("video_final.mp4"), help="Archivo de salida."),
+    clips: Path = typer.Option(None, help="Carpeta con los clips (por defecto, la del proyecto o la del plan)."),
+    salida: Path = typer.Option(None, help="Archivo de salida (por defecto, junto al plan)."),
+    vista_previa: bool = typer.Option(False, "--vista-previa", help="Render rápido a 540p, sin pedir aprobación."),
+    si: bool = typer.Option(False, "--si", help="Aprobar el plan sin preguntar."),
 ):
-    """Renderiza el video final 1080x1920 a partir de un plan."""
-    from pydantic import ValidationError
+    """Renderiza el video final 1080x1920 a partir de un plan, después de tu aprobación."""
+    from editor.render import ErrorRender, duracion_plan, renderizar
+    from editor.revision import ARCHIVO_VISTA_PREVIA, cargar_proyecto
 
-    from editor.modelos import PlanEdicion, describir_error
-    from editor.render import ErrorRender, renderizar
-
-    if not plan.is_file():
-        _fallar(f"No existe el plan {plan}")
+    plan_validado = _cargar_plan(plan)
     try:
-        plan_validado = PlanEdicion.model_validate_json(plan.read_text(encoding="utf-8"))
-    except ValidationError as error:
-        _fallar(f"El plan {plan} no es válido:\n{describir_error(error)}")
+        proyecto = cargar_proyecto(plan.parent)
+    except FileNotFoundError:
+        proyecto = None  # un plan escrito a mano, sin pasar por editar
 
-    carpeta = clips or plan.parent
+    carpeta = clips or (Path(proyecto.clips) if proyecto else plan.parent)
+    salida = salida or plan.parent / (ARCHIVO_VISTA_PREVIA if vista_previa else "video_final.mp4")
     palabras = None
     if plan_validado.subtitulos:
-        # Los clips que no existen los informa el render con el resto de los errores.
-        usados = sorted({seg.clip for seg in plan_validado.segmentos})
-        analisis = _analizar_clips([carpeta / n for n in usados if (carpeta / n).is_file()])
-        palabras = {nombre: a.palabras for nombre, a in analisis.items()}
+        if proyecto is not None:
+            palabras = proyecto.palabras()
+        else:
+            # Los clips que no existen los informa el render con el resto de los errores.
+            usados = sorted({seg.clip for seg in plan_validado.segmentos})
+            analisis = _analizar_clips([carpeta / n for n in usados if (carpeta / n).is_file()])
+            palabras = {nombre: a.palabras for nombre, a in analisis.items()}
 
-    typer.echo(f"Renderizando {len(plan_validado.segmentos)} segmentos de {carpeta}...")
+    if not vista_previa and not si:
+        respuesta = typer.prompt(
+            f"Render final de {plan} ({len(plan_validado.segmentos)} segmentos, "
+            f"{duracion_plan(plan_validado):.1f} s). ¿Aprobás el plan? [s/N]",
+            default="n",
+            show_default=False,
+        )
+        if respuesta.strip().lower() not in {"s", "si", "sí", "y", "yes"}:
+            typer.echo("Render final cancelado. Podés pedir cambios con revisar o mirar la vista previa.")
+            raise typer.Exit(code=1)
+
+    calidad = "la vista previa (540p)" if vista_previa else "el video final (1080p)"
+    typer.echo(f"Renderizando {calidad}: {len(plan_validado.segmentos)} segmentos de {carpeta}...")
     try:
-        renderizar(plan_validado, carpeta, salida, palabras)
+        renderizar(plan_validado, carpeta, salida, palabras, vista_previa=vista_previa)
     except ErrorRender as error:
         _fallar(str(error))
     typer.echo(f"Listo: {salida}")

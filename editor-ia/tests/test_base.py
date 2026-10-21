@@ -5,9 +5,6 @@ import subprocess
 import sys
 from pathlib import Path
 
-from typer.testing import CliRunner
-
-from editor.cli import app
 from editor.config import cargar_config
 
 RAIZ = Path(__file__).resolve().parent.parent
@@ -21,14 +18,8 @@ def test_python_m_editor_help():
         text=True,
     )
     assert resultado.returncode == 0, resultado.stderr
-    for comando in ("guion", "editar", "revisar", "render"):
+    for comando in ("guion", "analizar", "editar", "revisar", "render"):
         assert comando in resultado.stdout
-
-
-def test_comando_pendiente_avisa_la_fase():
-    resultado = CliRunner().invoke(app, ["revisar", "--cambios", "sacá la toma 2"])
-    assert resultado.exit_code == 1
-    assert "fase 5" in resultado.output
 
 
 def test_config_lee_variables_de_entorno(monkeypatch, tmp_path):

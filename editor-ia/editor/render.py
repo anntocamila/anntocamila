@@ -15,6 +15,8 @@ from editor.ingesta import InfoClip, Palabra, probar
 from editor.modelos import PlanEdicion, Segmento, errores_de_contenido
 
 ANCHO, ALTO, FPS = 1080, 1920, 30
+# Vista previa: la mitad de resolución y encoder rápido, para revisar antes del render final.
+ANCHO_PREVIA, ALTO_PREVIA = 540, 960
 AUDIO_HZ = 48000
 
 LUFS_OBJETIVO = -14.0
@@ -47,6 +49,11 @@ class ErrorRender(Exception):
 def cuadros(seg: Segmento) -> int:
     """Cantidad de cuadros del segmento a 30 fps: el tiempo real se redondea al cuadro."""
     return max(1, round(seg.duracion * FPS))
+
+
+def duracion_plan(plan: PlanEdicion) -> float:
+    """Duración del video final en segundos, contada en cuadros como la arma el render."""
+    return sum(cuadros(seg) for seg in plan.segmentos) / FPS
 
 
 def tramos_en_timeline(plan: PlanEdicion) -> list[tuple[float, float]]:
@@ -162,7 +169,7 @@ def _par(valor: float) -> int:
     return int(round(valor / 2)) * 2
 
 
-def _filtro_video(seg: Segmento, entrada: int, salida: str, hdr: bool) -> str:
+def _filtro_video(seg: Segmento, entrada: int, salida: str, hdr: bool, ancho: int, alto: int) -> str:
     n = cuadros(seg)
     pasos = [
         "setpts=PTS-STARTPTS",
@@ -172,21 +179,21 @@ def _filtro_video(seg: Segmento, entrada: int, salida: str, hdr: bool) -> str:
         f"trim=end_frame={n}",
         "setpts=PTS-STARTPTS",
         # Reencuadre a 9:16: llenar 1080x1920 y recortar al centro.
-        f"scale={ANCHO}:{ALTO}:force_original_aspect_ratio=increase",
-        f"crop={ANCHO}:{ALTO}",
+        f"scale={ancho}:{alto}:force_original_aspect_ratio=increase",
+        f"crop={ancho}:{alto}",
         "setsar=1",
     ]
     if hdr:
         pasos.append(TONEMAP_HDR)
     if seg.zoom == "golpe":
-        pasos += [f"scale={_par(ANCHO * ZOOM_GOLPE)}:{_par(ALTO * ZOOM_GOLPE)}", f"crop={ANCHO}:{ALTO}"]
+        pasos += [f"scale={_par(ancho * ZOOM_GOLPE)}:{_par(alto * ZOOM_GOLPE)}", f"crop={ancho}:{alto}"]
     elif seg.zoom == "lento":
         # Se agranda al doble antes de zoompan para que el movimiento no tiemble.
         pasos += [
-            f"scale={ANCHO * 2}:{ALTO * 2}",
+            f"scale={ancho * 2}:{alto * 2}",
             f"zoompan=z='1+{ZOOM_LENTO - 1}*on/{max(n - 1, 1)}'"
             ":x='iw/2-iw/zoom/2':y='ih/2-ih/zoom/2'"
-            f":d=1:s={ANCHO}x{ALTO}:fps={FPS}",
+            f":d=1:s={ancho}x{alto}:fps={FPS}",
         ]
     pasos.append("format=yuv420p")
     return f"[{entrada}:v]{','.join(pasos)}[{salida}]"
@@ -208,7 +215,8 @@ def _filtro_audio(seg: Segmento, entrada: int, salida: str) -> str:
 
 
 def _entradas_y_filtros(
-    plan: PlanEdicion, carpeta: Path, infos: dict[str, InfoClip], con_video: bool
+    plan: PlanEdicion, carpeta: Path, infos: dict[str, InfoClip], con_video: bool,
+    ancho: int = ANCHO, alto: int = ALTO,
 ) -> tuple[list[str], list[str]]:
     """Arma las entradas de ffmpeg y los filtros por segmento, más la unión final."""
     args, filtros, etiquetas = [], [], []
@@ -228,7 +236,7 @@ def _entradas_y_filtros(
             indice += 1
 
         if con_video:
-            filtros.append(_filtro_video(seg, entrada_video, f"v{i}", infos[seg.clip].hdr))
+            filtros.append(_filtro_video(seg, entrada_video, f"v{i}", infos[seg.clip].hdr, ancho, alto))
             etiquetas.append(f"[v{i}]")
         filtros.append(_filtro_audio(seg, entrada_audio, f"a{i}"))
         etiquetas.append(f"[a{i}]")
@@ -280,10 +288,12 @@ def renderizar(
     carpeta_clips: Path,
     salida: Path,
     palabras_por_clip: dict[str, list[Palabra]] | None = None,
+    vista_previa: bool = False,
 ) -> Path:
     """Renderiza el plan a un mp4 1080x1920 a 30 fps con audio normalizado a -14 LUFS.
 
     Los subtítulos se dibujan si el plan los pide y se pasan las palabras de cada clip.
+    Con vista_previa sale a 540x960 y mucho más rápido, para revisar antes de aprobar.
     """
     infos = {}
     for nombre in {seg.clip for seg in plan.segmentos}:
@@ -301,7 +311,9 @@ def renderizar(
         tmp = Path(nombre_tmp)
         medido = _medir_volumen(plan, carpeta_clips, infos, tmp)
 
-        args, filtros = _entradas_y_filtros(plan, carpeta_clips, infos, con_video=True)
+        ancho, alto = (ANCHO_PREVIA, ALTO_PREVIA) if vista_previa else (ANCHO, ALTO)
+        args, filtros = _entradas_y_filtros(plan, carpeta_clips, infos, True, ancho, alto)
+        calidad = ["-preset", "veryfast", "-crf", "28"] if vista_previa else ["-preset", "medium", "-crf", "20"]
 
         ass = generar_ass(plan, palabras_por_clip)
         if ass:
@@ -323,7 +335,7 @@ def renderizar(
             *args,
             "-filter_complex", ";".join(filtros),
             "-map", "[vo]", "-map", "[ao]",
-            "-c:v", "libx264", "-preset", "medium", "-crf", "20", "-pix_fmt", "yuv420p", "-r", str(FPS),
+            "-c:v", "libx264", *calidad, "-pix_fmt", "yuv420p", "-r", str(FPS),
             "-c:a", "aac", "-b:a", "192k", "-ar", str(AUDIO_HZ), "-ac", "2",
             "-movflags", "+faststart",
             str(salida),
