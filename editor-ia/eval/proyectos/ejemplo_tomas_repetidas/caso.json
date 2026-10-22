@@ -1,0 +1,26 @@
+{
+  "descripcion": "Ejemplo sintético (sin video): gancho grabado 3 veces con una toma falsa y una trabada; segunda línea incompleta y después completa.",
+  "analisis": "proyecto.json",
+  "guion": "guion.txt",
+  "duracion_objetivo": 7,
+  "tomas_esperadas": [
+    {
+      "linea": 1,
+      "clip": "toma1.mp4",
+      "inicio": 5.5,
+      "fin": 8.0
+    },
+    {
+      "linea": 2,
+      "clip": "toma2.mp4",
+      "inicio": 3.0,
+      "fin": 5.0
+    },
+    {
+      "linea": 3,
+      "clip": "toma2.mp4",
+      "inicio": 6.0,
+      "fin": 8.0
+    }
+  ]
+}

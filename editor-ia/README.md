@@ -30,7 +30,8 @@ python -m editor render --plan plan.json
 ```
 
 Usan la API de Anthropic, y cuestan plata, `guion`, `editar` y `revisar`.
-`analizar`, `render` y la vista previa corren en tu compu y son gratis.
+`analizar`, `render`, la vista previa y `editar --sin-llm` corren en tu compu y
+son gratis.
 
 ### Edición con el agente
 
@@ -48,6 +49,11 @@ reales; si falla, recibe el error y corrige. Si llega a `AGENTE_MAX_PASOS`
 (15) sin un plan válido, corta con un error. El guion puede ser texto (una
 línea por frase) o el `guion.json` del comando `guion`; sin guion, el agente
 arma el video en el orden de grabación.
+
+Con `--sin-llm`, `editar` no usa la API: arma un plan básico con la toma más
+parecida a cada línea del guion (o, sin guion, las frases en orden quedándose
+con la última toma de cada una), recortada a la voz. No saca muletillas ni
+elige zooms o textos como el agente, pero es gratis.
 
 ### Revisión y aprobación
 
@@ -126,6 +132,22 @@ del plan:
 - Los clips horizontales se recortan al centro; la rotación de los celulares se respeta
   y los clips HDR (iPhone) se pasan a SDR.
 - Los clips sin audio llevan silencio.
+
+## Evaluación
+
+```bash
+python -m eval.evaluar                                # línea de base sin LLM (gratis)
+python -m eval.evaluar --estrategia guardado          # el plan.json de cada caso (gratis)
+python -m eval.evaluar --estrategia agente --version "opus medium, prompt v1"   # usa la API
+python -m eval.evaluar --tabla                        # compara las versiones
+```
+
+Mide cada caso de `eval/proyectos/` (cómo armarlos: `eval/proyectos/README.md`)
+con las métricas del plan: toma correcta, cobertura del guion, silencios que
+quedaron, error de duración, plan válido al primer intento, costo, tiempo y
+retoques. Cada corrida suma filas a `eval/resultados.csv` y regenera
+`eval/tabla.md` con el promedio por versión. La estrategia `agente` pide
+confirmación antes de llamar a la API.
 
 ## Tests
 

@@ -153,6 +153,7 @@ def editar(
     duracion: float = typer.Option(None, help="Duración objetivo en segundos (opcional)."),
     salida: Path = typer.Option(None, help="Dónde guardar el plan (por defecto, plan.json en la carpeta de clips)."),
     sin_vista_previa: bool = typer.Option(False, "--sin-vista-previa", help="No renderizar la vista previa."),
+    sin_llm: bool = typer.Option(False, "--sin-llm", help="Plan básico sin la API (gratis): la toma más parecida a cada línea."),
 ):
     """Analiza los clips, arma el plan con el agente y genera una vista previa a 540p."""
     from editor.agente import ErrorAgente, armar_plan, lineas_de_guion
@@ -177,28 +178,43 @@ def editar(
     analisis = _analizar_clips(rutas)
     config = cargar_config()
     try:
-        proveedor = get_provider(config)
         embedder = crear_embedder(config.embeddings_provider)
     except ValueError as error:
         _fallar(str(error))
-    traza = Traza(config.trazas_dir, f"editar_{clips.resolve().name}")
-    proveedor.traza = traza
 
-    typer.echo(f"Armando el plan con {proveedor.modelo} (hasta {config.agente_max_pasos} pasos)...")
-    try:
-        plan = armar_plan(
-            proveedor, analisis, texto_guion, texto_marca, duracion,
-            max_pasos=config.agente_max_pasos, avisar=typer.echo, embedder=embedder,
-        )
-    except (ErrorLLM, ErrorAgente) as error:
-        typer.echo(f"Uso: {proveedor.uso.resumen()}", err=True)
+    if sin_llm:
+        from editor.basico import plan_basico
+
+        typer.echo("Armando el plan básico, sin la API...")
+        try:
+            plan, avisos = plan_basico(analisis, texto_guion, embedder)
+        except ValueError as error:
+            _fallar(str(error))
+        for aviso in avisos:
+            typer.echo(f"Aviso: {aviso}")
+    else:
+        try:
+            proveedor = get_provider(config)
+        except ValueError as error:
+            _fallar(str(error))
+        traza = Traza(config.trazas_dir, f"editar_{clips.resolve().name}")
+        proveedor.traza = traza
+
+        typer.echo(f"Armando el plan con {proveedor.modelo} (hasta {config.agente_max_pasos} pasos)...")
+        try:
+            plan = armar_plan(
+                proveedor, analisis, texto_guion, texto_marca, duracion,
+                max_pasos=config.agente_max_pasos, avisar=typer.echo, embedder=embedder,
+            )
+        except (ErrorLLM, ErrorAgente) as error:
+            typer.echo(f"Uso: {proveedor.uso.resumen()}", err=True)
+            if traza.ruta:
+                typer.echo(f"Traza: {traza.ruta}", err=True)
+            _fallar(str(error))
+
+        typer.echo(f"Uso: {proveedor.uso.resumen()}")
         if traza.ruta:
-            typer.echo(f"Traza: {traza.ruta}", err=True)
-        _fallar(str(error))
-
-    typer.echo(f"Uso: {proveedor.uso.resumen()}")
-    if traza.ruta:
-        typer.echo(f"Traza: {traza.ruta}")
+            typer.echo(f"Traza: {traza.ruta}")
 
     salida = salida or clips / "plan.json"
     salida.parent.mkdir(parents=True, exist_ok=True)

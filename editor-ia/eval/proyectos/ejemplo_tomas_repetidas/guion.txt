@@ -1,0 +1,3 @@
+Hoy te voy a mostrar tres errores de prompts.
+El primero es no dar contexto.
+El segundo es pedir todo junto.

@@ -27,7 +27,10 @@ duraciones, validación) o render lo hace el código, nunca el modelo.
   guion y cambios), `decisiones.md` y `vista_previa.mp4` a 540p junto al plan. `revisar`
   hace una sola llamada estructurada y versiona el plan anterior (`plan.vN.json`). `render`
   pide aprobación (o `--si`) antes del render final; `--vista-previa` no la pide.
-- [ ] Fase 6. Evaluación.
+- [x] Fase 6. Evaluación (`eval/evaluar.py`): `python -m eval.evaluar` corre cada caso de
+  `eval/proyectos/` con la estrategia `basica` (sin LLM, `editor/basico.py`), `guardado`
+  (el plan.json del caso) o `agente` (usa la API y pide confirmación). Agrega filas a
+  `eval/resultados.csv` y regenera `eval/tabla.md` con el promedio por versión.
 
 ## Convenciones
 
@@ -53,7 +56,8 @@ duraciones, validación) o render lo hace el código, nunca el modelo.
   modelo y genera el esquema que ve. Los errores vuelven como resultado con `es_error`.
 - El loop solo agrega mensajes, nunca edita los anteriores (lo exige el razonamiento
   preservado de los modelos nuevos y mantiene la caché de prompts).
-- Usan la API (cuestan plata): `guion`, `editar` y `revisar`. Todo lo demás corre local.
+- Usan la API (cuestan plata): `guion`, `editar` (salvo con `--sin-llm`), `revisar` y
+  `eval.evaluar --estrategia agente`. Todo lo demás corre local.
 - El render arma todo en un solo grafo de ffmpeg: nada de archivos intermedios
   (los cortes de AAC entre partes meten huecos y clics).
 

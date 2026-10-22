@@ -1,0 +1,357 @@
+{
+ "clips": "",
+ "guion": null,
+ "duracion_objetivo": null,
+ "analisis": {
+  "toma1.mp4": {
+   "version": 1,
+   "hash": "toma1.mp4",
+   "transcriptor": "falso",
+   "info": {
+    "nombre": "toma1.mp4",
+    "duracion": 10.0,
+    "ancho": 1080,
+    "alto": 1920,
+    "tiene_audio": true,
+    "hdr": false
+   },
+   "tramos_voz": [
+    [
+     0.5,
+     1.5
+    ],
+    [
+     2.0,
+     4.5
+    ],
+    [
+     5.5,
+     8.0
+    ]
+   ],
+   "frases": [
+    {
+     "texto": "Ahí va, ya grabo.",
+     "inicio": 0.5,
+     "fin": 1.5,
+     "palabras": [
+      {
+       "texto": "Ahí",
+       "inicio": 0.5,
+       "fin": 0.72,
+       "prob": 1.0
+      },
+      {
+       "texto": "va,",
+       "inicio": 0.75,
+       "fin": 0.97,
+       "prob": 1.0
+      },
+      {
+       "texto": "ya",
+       "inicio": 1.0,
+       "fin": 1.22,
+       "prob": 1.0
+      },
+      {
+       "texto": "grabo.",
+       "inicio": 1.25,
+       "fin": 1.47,
+       "prob": 1.0
+      }
+     ]
+    },
+    {
+     "texto": "Hoy te voy a mostrar eh hoy te voy a",
+     "inicio": 2.0,
+     "fin": 4.5,
+     "palabras": [
+      {
+       "texto": "Hoy",
+       "inicio": 2.0,
+       "fin": 2.22,
+       "prob": 1.0
+      },
+      {
+       "texto": "te",
+       "inicio": 2.25,
+       "fin": 2.47,
+       "prob": 1.0
+      },
+      {
+       "texto": "voy",
+       "inicio": 2.5,
+       "fin": 2.72,
+       "prob": 1.0
+      },
+      {
+       "texto": "a",
+       "inicio": 2.75,
+       "fin": 2.97,
+       "prob": 1.0
+      },
+      {
+       "texto": "mostrar",
+       "inicio": 3.0,
+       "fin": 3.22,
+       "prob": 1.0
+      },
+      {
+       "texto": "eh",
+       "inicio": 3.25,
+       "fin": 3.47,
+       "prob": 1.0
+      },
+      {
+       "texto": "hoy",
+       "inicio": 3.5,
+       "fin": 3.72,
+       "prob": 1.0
+      },
+      {
+       "texto": "te",
+       "inicio": 3.75,
+       "fin": 3.97,
+       "prob": 1.0
+      },
+      {
+       "texto": "voy",
+       "inicio": 4.0,
+       "fin": 4.22,
+       "prob": 1.0
+      },
+      {
+       "texto": "a",
+       "inicio": 4.25,
+       "fin": 4.47,
+       "prob": 1.0
+      }
+     ]
+    },
+    {
+     "texto": "Hoy te voy a mostrar tres errores de prompts.",
+     "inicio": 5.5,
+     "fin": 8.0,
+     "palabras": [
+      {
+       "texto": "Hoy",
+       "inicio": 5.5,
+       "fin": 5.748,
+       "prob": 1.0
+      },
+      {
+       "texto": "te",
+       "inicio": 5.778,
+       "fin": 6.026,
+       "prob": 1.0
+      },
+      {
+       "texto": "voy",
+       "inicio": 6.056,
+       "fin": 6.303,
+       "prob": 1.0
+      },
+      {
+       "texto": "a",
+       "inicio": 6.333,
+       "fin": 6.581,
+       "prob": 1.0
+      },
+      {
+       "texto": "mostrar",
+       "inicio": 6.611,
+       "fin": 6.859,
+       "prob": 1.0
+      },
+      {
+       "texto": "tres",
+       "inicio": 6.889,
+       "fin": 7.137,
+       "prob": 1.0
+      },
+      {
+       "texto": "errores",
+       "inicio": 7.167,
+       "fin": 7.414,
+       "prob": 1.0
+      },
+      {
+       "texto": "de",
+       "inicio": 7.444,
+       "fin": 7.692,
+       "prob": 1.0
+      },
+      {
+       "texto": "prompts.",
+       "inicio": 7.722,
+       "fin": 7.97,
+       "prob": 1.0
+      }
+     ]
+    }
+   ]
+  },
+  "toma2.mp4": {
+   "version": 1,
+   "hash": "toma2.mp4",
+   "transcriptor": "falso",
+   "info": {
+    "nombre": "toma2.mp4",
+    "duracion": 10.0,
+    "ancho": 1080,
+    "alto": 1920,
+    "tiene_audio": true,
+    "hdr": false
+   },
+   "tramos_voz": [
+    [
+     0.8,
+     1.8
+    ],
+    [
+     3.0,
+     5.0
+    ],
+    [
+     6.0,
+     8.0
+    ]
+   ],
+   "frases": [
+    {
+     "texto": "El primero es no",
+     "inicio": 0.8,
+     "fin": 1.8,
+     "palabras": [
+      {
+       "texto": "El",
+       "inicio": 0.8,
+       "fin": 1.02,
+       "prob": 1.0
+      },
+      {
+       "texto": "primero",
+       "inicio": 1.05,
+       "fin": 1.27,
+       "prob": 1.0
+      },
+      {
+       "texto": "es",
+       "inicio": 1.3,
+       "fin": 1.52,
+       "prob": 1.0
+      },
+      {
+       "texto": "no",
+       "inicio": 1.55,
+       "fin": 1.77,
+       "prob": 1.0
+      }
+     ]
+    },
+    {
+     "texto": "El primero es no dar contexto.",
+     "inicio": 3.0,
+     "fin": 5.0,
+     "palabras": [
+      {
+       "texto": "El",
+       "inicio": 3.0,
+       "fin": 3.303,
+       "prob": 1.0
+      },
+      {
+       "texto": "primero",
+       "inicio": 3.333,
+       "fin": 3.637,
+       "prob": 1.0
+      },
+      {
+       "texto": "es",
+       "inicio": 3.667,
+       "fin": 3.97,
+       "prob": 1.0
+      },
+      {
+       "texto": "no",
+       "inicio": 4.0,
+       "fin": 4.303,
+       "prob": 1.0
+      },
+      {
+       "texto": "dar",
+       "inicio": 4.333,
+       "fin": 4.637,
+       "prob": 1.0
+      },
+      {
+       "texto": "contexto.",
+       "inicio": 4.667,
+       "fin": 4.97,
+       "prob": 1.0
+      }
+     ]
+    },
+    {
+     "texto": "El segundo es pedir todo junto.",
+     "inicio": 6.0,
+     "fin": 8.0,
+     "palabras": [
+      {
+       "texto": "El",
+       "inicio": 6.0,
+       "fin": 6.303,
+       "prob": 1.0
+      },
+      {
+       "texto": "segundo",
+       "inicio": 6.333,
+       "fin": 6.637,
+       "prob": 1.0
+      },
+      {
+       "texto": "es",
+       "inicio": 6.667,
+       "fin": 6.97,
+       "prob": 1.0
+      },
+      {
+       "texto": "pedir",
+       "inicio": 7.0,
+       "fin": 7.303,
+       "prob": 1.0
+      },
+      {
+       "texto": "todo",
+       "inicio": 7.333,
+       "fin": 7.637,
+       "prob": 1.0
+      },
+      {
+       "texto": "junto.",
+       "inicio": 7.667,
+       "fin": 7.97,
+       "prob": 1.0
+      }
+     ]
+    }
+   ]
+  },
+  "broll.mp4": {
+   "version": 1,
+   "hash": "broll.mp4",
+   "transcriptor": "falso",
+   "info": {
+    "nombre": "broll.mp4",
+    "duracion": 5.0,
+    "ancho": 1080,
+    "alto": 1920,
+    "tiene_audio": false,
+    "hdr": false
+   },
+   "tramos_voz": [],
+   "frases": []
+  }
+ },
+ "cambios": []
+}

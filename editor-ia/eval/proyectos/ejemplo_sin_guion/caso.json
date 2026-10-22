@@ -1,0 +1,25 @@
+{
+  "descripcion": "Ejemplo sintético (sin video): las mismas tomas, sin guion. El video tiene que sacar la toma falsa y quedarse con la última de cada frase.",
+  "analisis": "proyecto.json",
+  "duracion_objetivo": 7,
+  "tomas_esperadas": [
+    {
+      "linea": 1,
+      "clip": "toma1.mp4",
+      "inicio": 5.5,
+      "fin": 8.0
+    },
+    {
+      "linea": 2,
+      "clip": "toma2.mp4",
+      "inicio": 3.0,
+      "fin": 5.0
+    },
+    {
+      "linea": 3,
+      "clip": "toma2.mp4",
+      "inicio": 6.0,
+      "fin": 8.0
+    }
+  ]
+}
