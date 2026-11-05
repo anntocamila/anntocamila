@@ -1,0 +1,888 @@
+<title>Prefoundly AI</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: a pitch read top to bottom, one section per talking point, closing on a live product screen. Motif: the prefunded balance as a water level in a tank. */
+:root {
+  --paper: #EEF3F1;
+  --panel: #FFFFFF;
+  --ink: #0E1B19;
+  --muted: #566764;
+  --line: #CFDAD6;
+  --accent: #0A6E66;
+  --accent-ink: #FFFFFF;
+  --accent-soft: #D4EAE5;
+  --water: #2F9C90;
+  --water-soft: #BFE3DC;
+  --warn: #9A5B00;
+  --warn-soft: #F6E7CF;
+  --bad: #B4232C;
+  --ok: #17703F;
+  --ok-soft: #D8EEDF;
+  --c-tarjeta: #0A6E66; --c-servicios: #C27A12; --c-fci: #2F5BB7; --c-cripto: #7B4BB3; --c-efectivo: #6B8E23; --c-remesas: #C2456B;
+  --shadow: 0 1px 2px rgba(14, 27, 25, .06), 0 8px 24px rgba(14, 27, 25, .06);
+  --f-display: "Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --f-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --f-data: "IBM Plex Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+  --s-hero: clamp(2.6rem, 6.4vw, 5.2rem);
+  --s-h2: clamp(1.8rem, 3.6vw, 2.8rem);
+  --s-h3: 1.15rem;
+  --s-body: 1.05rem;
+  --s-small: .875rem;
+  --radius: 10px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0A1312; --panel: #111D1B; --ink: #E4EEEB; --muted: #93A7A2; --line: #22332F;
+    --accent: #4FC4B4; --accent-ink: #062320; --accent-soft: #123A35; --water: #3BAA9C; --water-soft: #16403A;
+    --warn: #E5A646; --warn-soft: #3A2A10; --bad: #F07070; --ok: #5BCB8F; --ok-soft: #12321F;
+    --c-tarjeta: #4FC4B4; --c-servicios: #E5A646; --c-fci: #7FA2F0; --c-cripto: #B38DE6; --c-efectivo: #A6C45A; --c-remesas: #E57C9C;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 8px 24px rgba(0, 0, 0, .25);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #0A1312; --panel: #111D1B; --ink: #E4EEEB; --muted: #93A7A2; --line: #22332F;
+  --accent: #4FC4B4; --accent-ink: #062320; --accent-soft: #123A35; --water: #3BAA9C; --water-soft: #16403A;
+  --warn: #E5A646; --warn-soft: #3A2A10; --bad: #F07070; --ok: #5BCB8F; --ok-soft: #12321F;
+  --c-tarjeta: #4FC4B4; --c-servicios: #E5A646; --c-fci: #7FA2F0; --c-cripto: #B38DE6; --c-efectivo: #A6C45A; --c-remesas: #E57C9C;
+  --shadow: 0 1px 2px rgba(0, 0, 0, .3), 0 8px 24px rgba(0, 0, 0, .25);
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: calc(64px + env(safe-area-inset-top, 0px)); }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body { background: var(--paper); color: var(--ink); font-family: var(--f-body); font-size: var(--s-body); line-height: 1.55; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--paper); }
+a { color: var(--accent); text-underline-offset: 3px; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.num { font-family: var(--f-data); font-variant-numeric: tabular-nums; }
+
+.wrap { max-width: 1120px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+
+/* Top bar */
+.top { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 9; background: color-mix(in srgb, var(--paper) 88%, transparent); backdrop-filter: blur(8px); border-bottom: 1px solid var(--line); }
+.top .wrap { display: flex; align-items: center; gap: 24px; padding-block: 12px; }
+.mark { display: flex; align-items: center; gap: 8px; font-family: var(--f-display); font-weight: 800; font-size: 1.2rem; letter-spacing: -.01em; color: var(--ink); text-decoration: none; flex: none; }
+.mark svg { width: 22px; height: 22px; }
+.top nav { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; min-width: 0; }
+.top nav a { color: var(--muted); text-decoration: none; font-size: var(--s-small); padding: 6px 10px; border-radius: 999px; white-space: nowrap; }
+.top nav a:hover { color: var(--ink); }
+.top nav a[aria-current="true"] { color: var(--ink); background: var(--accent-soft); }
+.top .hint { margin-left: auto; color: var(--muted); font-size: .78rem; white-space: nowrap; flex: none; }
+@media (max-width: 760px) { .top .hint { display: none; } }
+
+/* Sections */
+section { padding-block: clamp(56px, 9vw, 112px); border-bottom: 1px solid var(--line); }
+section:last-of-type { border-bottom: 0; }
+.eyebrow { font-family: var(--f-data); font-size: .78rem; letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin: 0 0 14px; }
+h1, h2 { font-family: var(--f-display); font-weight: 800; letter-spacing: -.025em; line-height: 1.02; margin: 0; text-wrap: balance; }
+h1 { font-size: var(--s-hero); }
+h2 { font-size: var(--s-h2); max-width: 22ch; }
+h3 { font-family: var(--f-display); font-weight: 700; font-size: var(--s-h3); margin: 0; letter-spacing: -.01em; }
+p { margin: 0; max-width: 64ch; }
+.lead { font-size: 1.2rem; color: var(--ink); max-width: 58ch; }
+.muted { color: var(--muted); }
+.small { font-size: var(--s-small); }
+.stack { display: grid; gap: 20px; }
+.src { font-size: .78rem; color: var(--muted); }
+.src a { color: var(--muted); }
+
+/* Hero */
+.hero { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: clamp(32px, 5vw, 72px); align-items: end; }
+@media (max-width: 860px) { .hero { grid-template-columns: 1fr; } }
+.hero-stats { display: flex; flex-wrap: wrap; gap: 12px 28px; margin-top: 8px; }
+.hero-stats div { display: grid; }
+.hero-stats b { font-family: var(--f-display); font-size: 2.2rem; font-weight: 800; letter-spacing: -.02em; color: var(--accent); line-height: 1.1; }
+.hero-stats span { font-size: var(--s-small); color: var(--muted); }
+
+.tanks { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; align-items: end; }
+.tank { display: grid; gap: 8px; }
+.tank-body { position: relative; height: 240px; border: 2px solid var(--ink); border-top: 0; border-radius: 0 0 12px 12px; background: var(--panel); overflow: hidden; }
+.tank-fill { position: absolute; inset: auto 0 0 0; background: linear-gradient(var(--water), color-mix(in srgb, var(--water) 75%, var(--ink))); }
+.tank-fill::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 6px; background: var(--water-soft); opacity: .6; }
+.tank-val { position: absolute; left: 0; right: 0; text-align: center; font-family: var(--f-data); font-weight: 500; font-size: 1.05rem; color: var(--ink); }
+.tank-name { font-size: var(--s-small); line-height: 1.3; }
+.tank-name b { display: block; font-weight: 600; }
+.tank.is-us .tank-body { border-color: var(--accent); }
+.tank-cap { grid-column: 1 / -1; font-size: .78rem; color: var(--muted); }
+
+/* Problem */
+.flow { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; margin-top: 8px; }
+@media (max-width: 760px) { .flow { grid-template-columns: 1fr; } }
+.flow-step { position: relative; padding: 20px 28px 20px 0; display: grid; gap: 6px; align-content: start; }
+.flow-step + .flow-step { padding-left: 28px; border-left: 1px dashed var(--line); }
+@media (max-width: 760px) { .flow-step + .flow-step { padding-left: 0; border-left: 0; border-top: 1px dashed var(--line); } }
+.flow-step .k { font-family: var(--f-data); font-size: .78rem; color: var(--accent); letter-spacing: .06em; text-transform: uppercase; }
+.rails { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 4px; }
+.pill { display: inline-flex; align-items: center; gap: 6px; font-size: .8rem; padding: 3px 10px; border-radius: 999px; border: 1px solid var(--line); background: var(--panel); white-space: nowrap; }
+.pill.slow { color: var(--warn); border-color: currentColor; background: var(--warn-soft); }
+.pill.fast { color: var(--ok); border-color: currentColor; background: var(--ok-soft); }
+.twoways { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+@media (max-width: 680px) { .twoways { grid-template-columns: 1fr; } }
+.way { padding: 20px; border-radius: var(--radius); border: 1px solid var(--line); background: var(--panel); display: grid; gap: 6px; align-content: start; }
+.way .tag { font-family: var(--f-data); font-size: .75rem; text-transform: uppercase; letter-spacing: .06em; }
+.way.over .tag { color: var(--warn); }
+.way.under .tag { color: var(--bad); }
+
+/* Why now */
+.reasons { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; border-top: 2px solid var(--ink); }
+@media (max-width: 860px) { .reasons { grid-template-columns: 1fr; } }
+.reason { padding: 24px 24px 8px 0; display: grid; gap: 10px; align-content: start; }
+.reason + .reason { padding-left: 24px; border-left: 1px solid var(--line); }
+@media (max-width: 860px) { .reason + .reason { padding-left: 0; border-left: 0; border-top: 1px solid var(--line); } }
+.reason .big { font-family: var(--f-display); font-weight: 800; font-size: 2.4rem; letter-spacing: -.02em; line-height: 1; color: var(--accent); }
+.reason .big small { font-size: 1rem; font-weight: 700; color: var(--muted); letter-spacing: 0; }
+.callout { padding: 18px 20px; border-left: 3px solid var(--accent); background: var(--accent-soft); border-radius: 0 var(--radius) var(--radius) 0; max-width: 72ch; }
+
+/* How */
+.steps { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 16px; counter-reset: step; }
+@media (max-width: 960px) { .steps { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 560px) { .steps { grid-template-columns: 1fr; } }
+.steps li { counter-increment: step; padding: 20px; border-radius: var(--radius); background: var(--panel); border: 1px solid var(--line); display: grid; gap: 8px; align-content: start; }
+.steps li::before { content: counter(step); font-family: var(--f-data); font-size: .8rem; color: var(--accent-ink); background: var(--accent); width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; }
+.types { display: flex; flex-wrap: wrap; gap: 6px; }
+.types span { font-size: .75rem; padding: 2px 8px; border-radius: 999px; background: var(--accent-soft); color: var(--ink); }
+.proof { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+@media (max-width: 760px) { .proof { grid-template-columns: 1fr; } }
+.proof div { display: grid; gap: 4px; align-content: start; padding-top: 12px; border-top: 1px solid var(--line); }
+
+/* Money */
+.peruser { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; align-items: stretch; }
+@media (max-width: 760px) { .peruser { grid-template-columns: 1fr; } }
+.pu { padding: 22px; border-radius: var(--radius); border: 1px solid var(--line); background: var(--panel); display: grid; gap: 4px; align-content: start; }
+.pu .v { font-family: var(--f-display); font-weight: 800; font-size: clamp(1.9rem, 3.4vw, 2.6rem); letter-spacing: -.02em; line-height: 1.1; }
+.pu.freed { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.pu.freed .muted { color: inherit; opacity: .85; }
+.calc { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr); gap: 0; border-radius: var(--radius); border: 1px solid var(--line); background: var(--panel); box-shadow: var(--shadow); overflow: hidden; }
+@media (max-width: 860px) { .calc { grid-template-columns: 1fr; } }
+.calc-in { padding: 24px; display: grid; gap: 22px; align-content: start; border-right: 1px solid var(--line); }
+@media (max-width: 860px) { .calc-in { border-right: 0; border-bottom: 1px solid var(--line); } }
+.ctrl { display: grid; gap: 8px; }
+.ctrl label { display: flex; justify-content: space-between; gap: 12px; font-size: var(--s-small); color: var(--muted); }
+.ctrl label b { color: var(--ink); font-family: var(--f-data); font-weight: 500; }
+.ctrl input[type=range] { width: 100%; accent-color: var(--accent); margin: 0; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font: inherit; font-size: .8rem; color: var(--ink); background: transparent; border: 1px solid var(--line); border-radius: 999px; padding: 5px 12px; cursor: pointer; }
+.chip:hover { border-color: var(--accent); }
+.chip[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+.calc-out { padding: 24px; display: grid; gap: 18px; align-content: start; background: color-mix(in srgb, var(--accent-soft) 45%, var(--panel)); }
+.out-main { display: grid; gap: 2px; }
+.out-main .v { font-family: var(--f-display); font-weight: 800; font-size: clamp(2.2rem, 4.4vw, 3.4rem); letter-spacing: -.025em; line-height: 1.05; color: var(--accent); }
+.out-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.out-grid div { display: grid; gap: 2px; }
+.out-grid .v { font-family: var(--f-data); font-size: 1.15rem; font-weight: 500; }
+.story { font-size: .98rem; line-height: 1.6; padding-top: 14px; border-top: 1px solid var(--line); }
+.note-warn { font-size: .8rem; color: var(--warn); }
+
+/* Inside: user types */
+.seg { display: grid; grid-template-columns: minmax(0, .9fr) minmax(0, 1.3fr); gap: 0; border-radius: var(--radius); border: 1px solid var(--line); background: var(--panel); overflow: hidden; }
+@media (max-width: 860px) { .seg { grid-template-columns: 1fr; } }
+.seg-list { display: grid; align-content: start; border-right: 1px solid var(--line); }
+@media (max-width: 860px) { .seg-list { border-right: 0; border-bottom: 1px solid var(--line); } }
+.seg-btn { font: inherit; color: var(--ink); text-align: left; background: transparent; border: 0; border-bottom: 1px solid var(--line); padding: 12px 18px; cursor: pointer; display: grid; grid-template-columns: minmax(0, 1fr) 3rem; gap: 4px 12px; align-items: center; }
+.seg-btn:last-child { border-bottom: 0; }
+.seg-btn:hover { background: color-mix(in srgb, var(--accent-soft) 40%, transparent); }
+.seg-btn[aria-pressed="true"] { background: var(--accent-soft); box-shadow: inset 3px 0 0 var(--accent); }
+.seg-btn .n { font-weight: 600; font-size: .95rem; }
+.seg-btn .p { font-family: var(--f-data); font-size: .85rem; text-align: right; }
+.seg-btn .b { grid-column: 1 / -1; height: 4px; border-radius: 2px; background: var(--line); overflow: hidden; }
+.seg-btn .b i { display: block; height: 100%; background: var(--accent); }
+.seg-card { padding: 24px; display: grid; gap: 18px; align-content: start; }
+.seg-card .head { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 16px; }
+.seg-card .head h3 { font-size: 1.6rem; letter-spacing: -.02em; }
+.seg-facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+.seg-facts div { display: grid; gap: 2px; }
+.seg-facts .v { font-family: var(--f-display); font-weight: 800; font-size: 1.8rem; letter-spacing: -.02em; line-height: 1.1; }
+.mix { display: flex; height: 26px; border-radius: 6px; overflow: hidden; background: var(--line); }
+.mix i { display: block; height: 100%; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: .8rem; color: var(--muted); }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.legend i { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
+.seg-when { display: grid; gap: 4px; padding-top: 14px; border-top: 1px solid var(--line); }
+.pipeline { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; align-items: stretch; }
+@media (max-width: 860px) { .pipeline { grid-template-columns: 1fr; } }
+.pipe { position: relative; padding: 16px 28px 16px 0; display: grid; gap: 8px; align-content: start; }
+.pipe + .pipe { padding-left: 28px; }
+.pipe + .pipe::before { content: "→"; position: absolute; left: -8px; top: 14px; font-family: var(--f-data); color: var(--accent); font-size: 1.1rem; }
+@media (max-width: 860px) { .pipe + .pipe { padding-left: 0; padding-top: 28px; } .pipe + .pipe::before { content: "↓"; left: 0; top: 2px; } }
+.pipe .k { font-family: var(--f-data); font-size: .75rem; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); }
+.pipe .big { font-family: var(--f-display); font-weight: 800; font-size: 2rem; line-height: 1; letter-spacing: -.02em; }
+.cover { display: grid; gap: 10px; max-width: 720px; }
+.cover-row { display: grid; grid-template-columns: minmax(10rem, 17rem) minmax(0, 1fr) 3rem; gap: 12px; align-items: center; font-size: .88rem; }
+@media (max-width: 560px) { .cover-row { grid-template-columns: 1fr 3rem; } .cover-row .track { grid-column: 1 / -1; grid-row: 2; } }
+.cover-row .track { position: relative; height: 14px; background: color-mix(in srgb, var(--line) 60%, transparent); border-radius: 3px; }
+.cover-row .track i { position: absolute; inset: 0 auto 0 0; border-radius: 3px; background: var(--muted); }
+.cover-row.us .track i { background: var(--accent); }
+.cover-row.us { font-weight: 600; }
+.cover-row .track .goal { position: absolute; top: -4px; bottom: -4px; width: 2px; background: var(--ink); }
+.cover-row .v { font-family: var(--f-data); text-align: right; }
+
+/* Demo app */
+.app { border-radius: 14px; border: 1px solid var(--line); background: var(--panel); box-shadow: var(--shadow); overflow: hidden; }
+.app-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 18px; padding: 12px 18px; border-bottom: 1px solid var(--line); }
+.app-bar .mark { font-size: 1.05rem; }
+.app-bar .ctx { color: var(--muted); font-size: var(--s-small); }
+.app-bar .lvl { margin-left: auto; display: inline-flex; align-items: center; gap: 8px; font-size: var(--s-small); }
+.app-bar .lvl b { font-family: var(--f-data); font-weight: 500; padding: 2px 8px; border-radius: 6px; background: var(--accent-soft); }
+.app-body { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); min-height: 560px; }
+@media (max-width: 900px) { .app-body { grid-template-columns: 1fr; } }
+.props { padding: 18px; border-right: 1px solid var(--line); display: grid; gap: 12px; align-content: start; }
+@media (max-width: 900px) { .props { border-right: 0; border-bottom: 1px solid var(--line); } }
+.props-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.props-head .total { font-family: var(--f-data); font-size: var(--s-small); color: var(--muted); }
+.prop { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px 12px; padding: 12px 14px; border-radius: var(--radius); border: 1px solid var(--line); transition: border-color .2s, box-shadow .2s; }
+.prop.flash { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.prop .who { font-weight: 600; }
+.prop .amt { font-family: var(--f-data); font-weight: 500; text-align: right; }
+.prop .meta { grid-column: 1 / -1; display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; font-size: .8rem; color: var(--muted); }
+.prop .acts { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 6px; }
+.st { font-size: .74rem; padding: 2px 8px; border-radius: 999px; font-weight: 500; }
+.st.pend { color: var(--warn); background: var(--warn-soft); }
+.st.ok { color: var(--ok); background: var(--ok-soft); }
+.st.zero { color: var(--muted); background: color-mix(in srgb, var(--line) 50%, transparent); }
+.st.no { color: var(--bad); background: color-mix(in srgb, var(--bad) 12%, transparent); }
+.btn { font: inherit; font-size: .8rem; font-weight: 500; padding: 6px 12px; border-radius: 8px; cursor: pointer; border: 1px solid var(--line); background: var(--panel); color: var(--ink); }
+.btn:hover { border-color: var(--ink); }
+.btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+.btn.primary:hover { filter: brightness(1.08); }
+.props-foot { font-size: .78rem; color: var(--muted); padding-top: 4px; }
+
+.chat { display: grid; grid-template-rows: minmax(0, 1fr) auto; min-height: 0; background: color-mix(in srgb, var(--paper) 55%, var(--panel)); }
+.msgs { padding: 18px; display: flex; flex-direction: column; gap: 12px; overflow-y: auto; max-height: 640px; min-height: 360px; }
+.msg { max-width: 92%; padding: 12px 14px; border-radius: 12px; line-height: 1.5; font-size: .95rem; display: grid; gap: 10px; }
+.msg.bot { align-self: flex-start; background: var(--panel); border: 1px solid var(--line); border-top-left-radius: 4px; }
+.msg.me { align-self: flex-end; background: var(--ink); color: var(--paper); border-top-right-radius: 4px; }
+.msg .who { font-family: var(--f-data); font-size: .7rem; text-transform: uppercase; letter-spacing: .06em; color: var(--accent); }
+.msg p { max-width: none; }
+.msg .fine { font-size: .78rem; color: var(--muted); }
+.opts { width: 100%; border-collapse: collapse; font-size: .82rem; }
+.opts th { text-align: left; font-weight: 500; color: var(--muted); padding: 6px 8px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+.opts td { padding: 7px 8px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+.opts td.n, .opts th.n { text-align: right; font-family: var(--f-data); font-variant-numeric: tabular-nums; }
+.opts tr.cur td { background: var(--accent-soft); }
+.opts tr.ref td { color: var(--muted); }
+.opts .risk { color: var(--bad); }
+.tbl { overflow-x: auto; max-width: 100%; }
+.bars { display: grid; gap: 6px; }
+.bars div { display: grid; grid-template-columns: 9.5rem minmax(0, 1fr) 3rem; align-items: center; gap: 8px; font-size: .82rem; }
+.bars i { display: block; height: 10px; border-radius: 3px; background: var(--water); }
+.bars span:last-child { text-align: right; font-family: var(--f-data); }
+.ask { padding: 12px 18px 16px; border-top: 1px solid var(--line); display: grid; gap: 10px; background: var(--panel); }
+.ask form { display: flex; gap: 8px; }
+.ask input { flex: 1; min-width: 0; font: inherit; font-size: .95rem; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; background: var(--paper); color: var(--ink); }
+.typing { display: inline-flex; gap: 4px; }
+.typing i { width: 6px; height: 6px; border-radius: 50%; background: var(--muted); animation: blink 1s infinite; }
+.typing i:nth-child(2) { animation-delay: .15s; }
+.typing i:nth-child(3) { animation-delay: .3s; }
+@keyframes blink { 0%, 100% { opacity: .25; } 50% { opacity: 1; } }
+@media (prefers-reduced-motion: reduce) { .typing i { animation: none; opacity: .6; } .prop { transition: none; } }
+
+.limits { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 40px; }
+@media (max-width: 760px) { .limits { grid-template-columns: 1fr; } }
+.limits div { display: grid; gap: 6px; align-content: start; }
+footer { padding-block: 32px 48px; color: var(--muted); font-size: var(--s-small); }
+</style>
+
+<header class="top">
+  <div class="wrap">
+    <a class="mark" href="#inicio" aria-label="Prefoundly, inicio">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 3v15a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V3" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M6.2 12.5h11.6V18a1.6 1.6 0 0 1-1.6 1.6H7.8A1.6 1.6 0 0 1 6.2 18z" fill="var(--water)"/></svg>
+      Prefoundly AI
+    </a>
+    <nav aria-label="Secciones">
+      <a href="#problema">Problema</a>
+      <a href="#ahora">Por qué ahora</a>
+      <a href="#como">Cómo</a>
+      <a href="#usuarios">Usuarios</a>
+      <a href="#plata">En plata</a>
+      <a href="#demo">Demo</a>
+    </nav>
+    <span class="hint">← → para avanzar</span>
+  </div>
+</header>
+
+<main>
+  <section id="inicio">
+    <div class="wrap hero">
+      <div class="stack">
+        <p class="eyebrow">Tesorería predictiva para billeteras · Track AI</p>
+        <h1>Depositá lo justo, cuando hace falta.</h1>
+        <p class="lead">Las billeteras dejan plata adelantada en cada partner para que los pagos de sus usuarios no fallen. Prefoundly pronostica cuánto va a salir y propone el saldo justo. Una persona aprueba.</p>
+        <div class="hero-stats">
+          <div><b>−19 %</b><span>plata quieta, reponiendo por banco</span></div>
+          <div><b>−42 %</b><span>plata quieta, reponiendo por stablecoin</span></div>
+          <div><b>0</b><span>días en rojo en la prueba</span></div>
+        </div>
+      </div>
+      <div class="tanks" role="img" aria-label="Días de gasto inmovilizados: regla fija por banco 8,4; Prefoundly por banco 6,8; Prefoundly por stablecoin 3,5.">
+        <div class="tank"><div class="tank-body" data-days="8.376"></div><div class="tank-name"><b>Regla fija</b>banco, como hoy</div></div>
+        <div class="tank is-us"><div class="tank-body" data-days="6.781"></div><div class="tank-name"><b>Prefoundly</b>banco</div></div>
+        <div class="tank is-us"><div class="tank-body" data-days="3.508"></div><div class="tank-name"><b>Prefoundly</b>stablecoin</div></div>
+        <p class="tank-cap">Días de gasto que quedan quietos en los partners, a igual seguridad. Simulación de 100.000 usuarios.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="problema">
+    <div class="wrap stack" style="gap:36px">
+      <div class="stack">
+        <p class="eyebrow">El problema</p>
+        <h2>La plata que espera en los partners no trabaja</h2>
+        <p class="lead">Cada pago de un usuario sale de un saldo que la billetera le dejó adelantado a un partner. Reponer ese saldo tarda, así que hay que dejar plata de antemano.</p>
+      </div>
+      <div class="flow">
+        <div class="flow-step"><span class="k">Usuario</span><h3>Paga con la billetera</h3><p class="muted small">Tarjeta, una factura, efectivo, un fondo, cripto o una remesa.</p></div>
+        <div class="flow-step"><span class="k">Partner</span><h3>Descuenta del saldo adelantado</h3><p class="muted small">La red de tarjetas, el cobrador de servicios, el custodio del fondo. Si el saldo no alcanza, el pago falla.</p></div>
+        <div class="flow-step"><span class="k">Billetera</span><h3>Repone el saldo</h3><p class="muted small">La plata nueva tarda en llegar, según el riel.</p><div class="rails"><span class="pill slow">Banco: hasta 48 h hábiles</span><span class="pill fast">Stablecoin: unos 30 min</span></div></div>
+      </div>
+      <div class="twoways">
+        <div class="way over"><span class="tag">Si dejás de más</span><h3>Plata quieta</h3><p class="muted small">Cada peso adelantado en un partner rinde cero. A escala son miles de millones.</p></div>
+        <div class="way under"><span class="tag">Si dejás de menos</span><h3>Pagos rechazados</h3><p class="muted small">Cerca de 4 de cada 10 personas no reintentan después de un rechazo. <span class="src">(<a href="https://paymentsnext.com/?p=12925" target="_blank" rel="noopener">Forter vía PaymentsNext</a>)</span></p></div>
+      </div>
+      <p class="callout">Hoy se resuelve con una regla fija: dejar unos días de gasto. La guía de Marqeta recomienda un día de volumen en la semana y tres el fin de semana. Una regla fija no sabe que el día 1 cobran los sueldos, que viene un fin de semana largo o que saltó el dólar. <span class="src">(<a href="https://community.marqeta.com/t5/knowledge-base/program-funding-account-management-101-guide/ta-p/418" target="_blank" rel="noopener">Marqeta</a>)</span></p>
+    </div>
+  </section>
+
+  <section id="ahora">
+    <div class="wrap stack" style="gap:36px">
+      <div class="stack">
+        <p class="eyebrow">Por qué ahora</p>
+        <h2>Los rieles ya son rápidos. Falta saber cuánto mandar.</h2>
+      </div>
+      <div class="reasons">
+        <div class="reason">
+          <span class="big">×5,7 <small>en 10 meses</small></span>
+          <h3>Las redes ya liquidan los 7 días</h3>
+          <p class="small">Visa pasó de USD 3.500 M a más de USD 20.000 M anuales liquidados en stablecoin entre noviembre de 2025 y septiembre de 2026. Mastercard lo abrió en junio de 2026, con fines de semana y feriados. Visa habla de "posible reducción de colateral", pero nadie publica cuánto.</p>
+          <p class="src"><a href="https://usa.visa.com/about-visa/newsroom/press-releases.releaseId.21951.html" target="_blank" rel="noopener">Visa, dic-2025</a> · <a href="https://www.pymnts.com/news/payment-methods/2026/visas-stablecoin-strategy-turns-settlement-data-into-working-capital-infrastructure/" target="_blank" rel="noopener">PYMNTS, sep-2026</a> · <a href="https://www.crowdfundinsider.com/2026/06/283557-mastercard-enhances-settlement-options-with-stablecoins/" target="_blank" rel="noopener">Mastercard, jun-2026</a></p>
+        </div>
+        <div class="reason">
+          <span class="big">67,3 M <small>cuentas</small></span>
+          <h3>Las billeteras ya son masivas</h3>
+          <p class="small">Hay 67,3 millones de cuentas de pago en billeteras en Argentina. Cuatro de cada diez personas mueven su sueldo a una billetera en las primeras 48 horas. Los picos siguen al calendario, así que se pueden anticipar.</p>
+          <p class="src"><a href="https://www.bcra.gob.ar/archivos/Pdfs/PublicacionesEstadisticas/Informes/informe-mensual-pagos-minoristas-2026-07.pdf" target="_blank" rel="noopener">BCRA, jun-2026</a> · <a href="https://www.mdzol.com/dinero/adios-al-banco-4-cada-10-argentinos-mueven-su-sueldo-billeteras-virtuales-apenas-cobran-n1466121" target="_blank" rel="noopener">Cámara Argentina Fintech vía MDZ</a></p>
+        </div>
+        <div class="reason">
+          <span class="big">14–24 % <small>anual</small></span>
+          <h3>La plata quieta tiene costo</h3>
+          <p class="small">Es lo que pagan hoy los fondos en pesos de las billeteras. Cada peso adelantado en un partner deja de ganar eso.</p>
+          <p class="src"><a href="https://eleconomista.com.ar/economia/el-banco-central-cambia-reglas-mercado-pago-uala-otras-billeteras-pasara-noviembre-n99145/amp" target="_blank" rel="noopener">El Economista, oct-2026</a></p>
+        </div>
+      </div>
+      <p class="callout">Un riel rápido solo no alcanza. Con stablecoin y la misma regla fija, siguen quedando <b class="num">6,0</b> días de gasto quietos. Con stablecoin y Prefoundly, <b class="num">3,5</b>. El ahorro aparece cuando el pronóstico decide cuánto mandar.</p>
+    </div>
+  </section>
+
+  <section id="como">
+    <div class="wrap stack" style="gap:36px">
+      <div class="stack">
+        <p class="eyebrow">Cómo lo resolvimos</p>
+        <h2>Pronóstico por tipo de usuario, decisión con una persona</h2>
+      </div>
+      <ol class="steps">
+        <li><h3>Aprendemos los hábitos</h3><p class="small muted">Siete tipos de usuario, cada uno con su día de cobro, sus facturas y sus horarios.</p><div class="types"><span>asalariado</span><span>informal</span><span>jubilado o AUH</span><span>joven</span><span>inversor</span><span>cripto</span><span>comercio</span></div></li>
+        <li><h3>Pronosticamos un rango</h3><p class="small muted">Por partner y por día, miles de escenarios posibles. Tiene en cuenta feriados, aguinaldo, ANSES, campañas y saltos del dólar, y los días en que todos se mueven juntos.</p></li>
+        <li><h3>Calculamos el saldo justo</h3><p class="small muted">Lo que hace falta para llegar hasta la próxima reposición, según lo que tarda cada riel.</p></li>
+        <li><h3>Una persona aprueba</h3><p class="small muted">Un agente explica cada propuesta con números que se pueden verificar. Los montos grandes piden una o dos aprobaciones. Nada se mueve solo.</p></li>
+      </ol>
+      <div class="proof">
+        <div><h3>Sin ver el futuro</h3><p class="small muted">Lo probamos contra un año simulado, decidiendo cada día solo con lo que se sabía hasta ese día.</p></div>
+        <div><h3>Contra la regla fija</h3><p class="small muted">La comparamos con una regla de días fijos ajustada para dar la misma seguridad.</p></div>
+        <div><h3>Con un caso para perder</h3><p class="small muted">Armamos un escenario donde mirar el comportamiento no debería ayudar. El modelo pierde, como tiene que pasar.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="usuarios">
+    <div class="wrap stack" style="gap:36px">
+      <div class="stack">
+        <p class="eyebrow">Por dentro</p>
+        <h2>Cada tipo de usuario gasta distinto, y en días distintos</h2>
+        <p class="lead">Prefoundly no pronostica el total de golpe. Pronostica qué va a hacer cada tipo de usuario y lo suma. Así sabe qué partner se va a mover y cuándo.</p>
+      </div>
+
+      <div class="seg">
+        <div class="seg-list" id="seg-list" role="group" aria-label="Tipos de usuario"></div>
+        <div class="seg-card" aria-live="polite">
+          <div class="head"><h3 id="seg-name">—</h3><span class="muted small" id="seg-share">—</span></div>
+          <div class="seg-facts">
+            <div><span class="small muted">Cuánto mueve por mes</span><span class="v" id="seg-x">—</span><span class="small muted">frente al usuario promedio</span></div>
+            <div><span class="small muted">Dónde va más plata</span><span class="v" id="seg-top">—</span><span class="small muted" id="seg-top-p">—</span></div>
+          </div>
+          <div class="stack" style="gap:8px"><span class="small muted">En qué partner gasta</span><div class="mix" id="seg-mix" role="img"></div><div class="legend" id="seg-legend"></div></div>
+          <div class="seg-when"><span class="small muted">Cuándo se mueve</span><p id="seg-when">—</p></div>
+        </div>
+      </div>
+      <p class="src">Parámetros del simulador (config/archetypes.yaml): qué parte de cada tipo usa cada producto, cuántas veces por día y de cuánto es el pago típico. La mezcla por partner es neta de devoluciones y rescates, sin efectos de calendario.</p>
+
+      <div class="pipeline">
+        <div class="pipe"><span class="k">Quién</span><span class="big">7</span><h3>tipos de usuario</h3><p class="small muted">Cada uno con su día de cobro, sus facturas y sus horarios.</p></div>
+        <div class="pipe"><span class="k">Qué hace</span><span class="big">11</span><h3>movimientos</h3><p class="small muted">Compras, devoluciones, facturas, recargas, fondos, cripto, efectivo y remesas.</p></div>
+        <div class="pipe"><span class="k">Dónde sale la plata</span><span class="big">6</span><h3>partners</h3><p class="small muted">Cada movimiento descuenta del saldo de un partner, cuando ese partner liquida.</p></div>
+        <div class="pipe"><span class="k">Resultado</span><span class="big">2.000</span><h3>escenarios por día</h3><p class="small muted">Un rango de salida por partner, más un shock que mueve a todos juntos.</p></div>
+      </div>
+
+      <p class="callout"><b>Un ejemplo.</b> El cuarto día hábil del mes cobra el 40 % de los asalariados. Ese día triplican lo que pagan en facturas y lo que ponen en fondos. Prefoundly sube el saldo de Pago de servicios y de FCI, y deja quieto el de Cripto. Una regla fija sube todo o no sube nada.</p>
+
+      <div class="stack" style="gap:16px">
+        <h3>¿Sirve mirar a los usuarios?</h3>
+        <p class="muted">En el promedio, todos los modelos se equivocan parecido. Lo que cambia es si su rango es confiable: si dice "con 90 % de seguridad sale entre tanto y tanto", ¿cuántas veces el valor real cayó adentro? Para decidir cuánta plata dejar, eso es lo que importa.</p>
+        <div class="cover" id="cover" role="img" aria-label="Veces que el valor real cayó dentro del rango del 90 %, por modelo."></div>
+        <p class="src">Prueba sobre la simulación: 8 fechas de corte, pronóstico de 1 a 14 días, todos los partners. Línea negra: 90 %, lo que debería dar un rango bien hecho.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="plata">
+    <div class="wrap stack" style="gap:32px">
+      <div class="stack">
+        <p class="eyebrow">Resultados en plata</p>
+        <h2>Lo que queda libre, por usuario y para tu billetera</h2>
+        <p class="lead">A igual seguridad, por cada usuario activo:</p>
+      </div>
+      <div class="peruser">
+        <div class="pu"><span class="muted small">Regla fija por banco, como hoy</span><span class="v num-d" id="pu-hoy">$223.800</span><span class="muted small">inmovilizados por usuario</span></div>
+        <div class="pu"><span class="muted small">Prefoundly por banco</span><span class="v" id="pu-banco">$180.900</span><span class="muted small">inmovilizados por usuario</span></div>
+        <div class="pu freed"><span class="muted small">Quedan libres</span><span class="v" id="pu-libre">$42.900</span><span class="muted small">por usuario, un 19 % menos</span></div>
+      </div>
+
+      <div class="calc" id="calculadora">
+        <div class="calc-in">
+          <div class="ctrl">
+            <label for="in-users">Usuarios activos <b id="lbl-users">100.000</b></label>
+            <input id="in-users" type="range" min="4" max="6.7" step="0.01" value="5">
+            <div class="chips" data-group="users">
+              <button class="chip" type="button" data-v="100000">100 mil</button>
+              <button class="chip" type="button" data-v="1000000">1 millón</button>
+              <button class="chip" type="button" data-v="5000000">5 millones</button>
+            </div>
+          </div>
+          <div class="ctrl">
+            <label for="in-gasto">Gasto por usuario por mes en la billetera <b id="lbl-gasto">$800.000</b></label>
+            <input id="in-gasto" type="range" min="50000" max="1500000" step="10000" value="800000">
+            <div class="chips" data-group="gasto">
+              <button class="chip" type="button" data-v="800000">Como el simulado</button>
+              <button class="chip" type="button" data-v="200000">Un cuarto</button>
+            </div>
+          </div>
+          <div class="ctrl">
+            <span class="small muted">Cómo repone la billetera</span>
+            <div class="chips" data-group="rail">
+              <button class="chip" type="button" data-v="banco">Banco, como hoy</button>
+              <button class="chip" type="button" data-v="stable">Pasando a stablecoin</button>
+            </div>
+          </div>
+          <div class="ctrl">
+            <span class="small muted">Dónde se invierte lo que queda libre (ejemplo)</span>
+            <div class="chips" data-group="rate">
+              <button class="chip" type="button" data-v="fci14">Fondo en pesos, 14 %</button>
+              <button class="chip" type="button" data-v="fci20">Fondo en pesos, 20 %</button>
+              <button class="chip" type="button" data-v="sp">S&amp;P 500, ~10 % en USD</button>
+            </div>
+            <span class="small muted" id="rate-note"></span>
+          </div>
+        </div>
+        <div class="calc-out" aria-live="polite">
+          <div class="out-main"><span class="small muted">Plata que deja de estar quieta</span><span class="v" id="o-libre">—</span><span class="small muted" id="o-libre-usd">—</span></div>
+          <div class="out-grid">
+            <div><span class="small muted">Gana por año invertida</span><span class="v" id="o-gana">—</span></div>
+            <div><span class="small muted">Por usuario por año</span><span class="v" id="o-gana-u">—</span></div>
+            <div><span class="small muted">Inmovilizado hoy</span><span class="v" id="o-hoy">—</span></div>
+            <div><span class="small muted">Inmovilizado con Prefoundly</span><span class="v" id="o-pf">—</span></div>
+          </div>
+          <p class="story" id="o-story">—</p>
+          <p class="note-warn" id="o-extrap" hidden>Simulamos hasta 200.000 usuarios. Por encima, la plata crece en línea recta, así que lo proyectamos.</p>
+        </div>
+      </div>
+      <p class="small muted">El porcentaje es lo sólido. El monto en pesos depende de cuánto gasta cada usuario: el usuario simulado usa la billetera para todo, por eso podés bajar el gasto. Dólar mayorista de referencia: $1.513 (<a href="https://www.rava.com/cotizaciones/historico/dolar-mayorista/2026/10/14/" target="_blank" rel="noopener">Rava, 14-oct-2026</a>).</p>
+    </div>
+  </section>
+
+  <section id="demo">
+    <div class="wrap stack" style="gap:28px">
+      <div class="stack">
+        <p class="eyebrow">Demo</p>
+        <h2>El tesorero pregunta, Prefoundly responde, una persona decide</h2>
+        <p class="lead">Una billetera de 20.000 usuarios simulados, el lunes 26 de octubre de 2026 en la revisión de las 18:00. Las cifras salen de correr el modelo sobre la simulación. Acá no corre en vivo.</p>
+      </div>
+
+      <div class="app">
+        <div class="app-bar">
+          <span class="mark"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 3v15a3 3 0 0 0 3 3h10a3 3 0 0 0 3-3V3" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/><path d="M6.2 12.5h11.6V18a1.6 1.6 0 0 1-1.6 1.6H7.8A1.6 1.6 0 0 1 6.2 18z" fill="var(--water)"/></svg>Prefoundly AI</span>
+          <span class="ctx">Billetera demo · 20.000 usuarios · lun 26 oct, 18:00</span>
+          <span class="lvl">Protección <b id="lvl">99 %</b></span>
+        </div>
+        <div class="app-body">
+          <div class="props">
+            <div class="props-head"><h3>Propuestas de hoy</h3><span class="total" id="props-total">—</span></div>
+            <div id="props-list" class="stack" style="gap:10px"></div>
+            <p class="props-foot">En cada partner, la chance de no poder cubrir los pagos antes de la próxima reposición es menor a 1,5 %. Nada se envía sin aprobación.</p>
+          </div>
+          <div class="chat">
+            <div class="msgs" id="msgs" aria-live="polite"></div>
+            <div class="ask">
+              <div class="chips" id="sugg"></div>
+              <form id="ask-form" autocomplete="off">
+                <label for="ask-in" class="small muted" hidden>Tu pregunta</label>
+                <input id="ask-in" type="text" placeholder="Preguntale a Prefoundly…">
+                <button class="btn primary" type="submit">Preguntar</button>
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="limites">
+    <div class="wrap stack" style="gap:28px">
+      <div class="stack">
+        <p class="eyebrow">Antes de usar estos números</p>
+        <h2>Qué mostramos y qué sigue</h2>
+      </div>
+      <div class="limits">
+        <div><h3>Son datos simulados</h3><p class="small muted">Muestran cómo funciona el sistema y el orden de magnitud. Los hábitos de cada tipo de usuario los elegimos nosotros y los comparamos con datos del BCRA.</p></div>
+        <div><h3>La seguridad se midió en pocos días</h3><p class="small muted">Que no falte en dos meses simulados no quiere decir que nunca falte. Por eso la decisión final queda en manos de una persona.</p></div>
+        <div><h3>Stablecoin tiene costos que falta cotizar</h3><p class="small muted">Asumimos 0,10 % sobre lo enviado y que el partner usa la plata enseguida. Si la tiene que pasar a pesos en horario bancario, el ahorro baja.</p></div>
+        <div><h3>El próximo paso</h3><p class="small muted">Correr Prefoundly un mes en paralelo con los movimientos reales de una billetera, sin mover plata, y comparar contra lo que hizo su tesorería.</p></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap">Prefoundly · HackaTwin 2026 · Track AI</div>
+</footer>
+
+<script>
+(() => {
+  const es0 = new Intl.NumberFormat('es-AR', {maximumFractionDigits: 0});
+  const es1 = new Intl.NumberFormat('es-AR', {maximumFractionDigits: 1, minimumFractionDigits: 1});
+  const pesos = (v) => {
+    if (v >= 1e12) return '$' + es1.format(v / 1e12) + ' billones';
+    if (v >= 1e6) return '$' + es0.format(v / 1e6) + ' millones';
+    return '$' + es0.format(Math.round(v / 100) * 100);
+  };
+  const usd = (v) => v >= 1e6 ? 'USD ' + es1.format(v / 1e6) + ' millones' : 'USD ' + es0.format(Math.round(v / 1000)) + ' mil';
+
+  // Tanks: water level proportional to days of spend kept at the partners.
+  const tanks = [...document.querySelectorAll('.tank-body')];
+  const maxDays = Math.max(...tanks.map((t) => Number(t.dataset.days)));
+  for (const t of tanks) {
+    const d = Number(t.dataset.days), pct = d / maxDays * 86;
+    const fill = document.createElement('div'); fill.className = 'tank-fill'; fill.style.height = pct + '%';
+    const val = document.createElement('span'); val.className = 'tank-val'; val.textContent = es1.format(d) + ' días';
+    val.style.bottom = `calc(${pct}% + 8px)`;
+    t.append(fill, val);
+  }
+
+  // Results from the simulation, 100.000 users, Sept-Oct 2026, same safety level.
+  const SIM = {gasto: 800619, hoy: 223817, banco: 180910, stable: 93513, fx: 1513, maxUsers: 200000};
+  const RATES = {
+    fci14: {r: 0.14, usd: false, note: 'El rendimiento más bajo publicado de los fondos de billeteras.'},
+    fci20: {r: 0.20, usd: false, note: 'Un rendimiento típico de los fondos de billeteras.'},
+    sp: {r: 0.10, usd: true, note: 'Promedio histórico de largo plazo, en dólares. Tiene riesgo: es solo una referencia.'},
+  };
+  const st = {users: 100000, gasto: 800000, rail: 'banco', rate: 'fci14'};
+  const $ = (id) => document.getElementById(id);
+  const node = (tag, cls, text) => { const n = document.createElement(tag); if (cls) n.className = cls; if (text != null) n.textContent = text; return n; };
+  const puHoy = SIM.hoy, puBanco = SIM.banco;
+  $('pu-hoy').textContent = pesos(puHoy);
+  $('pu-banco').textContent = pesos(puBanco);
+  $('pu-libre').textContent = pesos(puHoy - puBanco);
+
+  function calc() {
+    const k = st.gasto / SIM.gasto;
+    const hoyU = SIM.hoy * k, pfU = (st.rail === 'banco' ? SIM.banco : SIM.stable) * k;
+    const libreU = hoyU - pfU, libre = libreU * st.users;
+    const rate = RATES[st.rate];
+    const gana = libre * rate.r;
+    $('lbl-users').textContent = es0.format(st.users);
+    $('lbl-gasto').textContent = '$' + es0.format(st.gasto);
+    $('o-libre').textContent = pesos(libre);
+    $('o-libre-usd').textContent = 'cerca de ' + usd(libre / SIM.fx) + ' · ' + es0.format((1 - pfU / hoyU) * 100) + ' % menos';
+    $('o-gana').textContent = rate.usd ? usd(gana / SIM.fx) : pesos(gana);
+    $('o-gana-u').textContent = rate.usd ? 'USD ' + es1.format(gana / SIM.fx / st.users) : pesos(gana / st.users);
+    $('o-hoy').textContent = pesos(hoyU * st.users);
+    $('o-pf').textContent = pesos(pfU * st.users);
+    $('rate-note').textContent = rate.note;
+    $('o-extrap').hidden = st.users <= SIM.maxUsers;
+    const where = st.rate === 'sp' ? 'en el S&P 500' : 'en un fondo en pesos al ' + es0.format(rate.r * 100) + ' %';
+    $('o-story').textContent = `Cada usuario tiene ${pesos(hoyU)} quietos en los partners. Con Prefoundly${st.rail === 'stable' ? ' y stablecoin' : ''} bajan a ${pesos(pfU)}. Quedan libres ${pesos(libreU)} por usuario: con ${es0.format(st.users)} usuarios son ${pesos(libre)}. Invertidos ${where}, rinden ${rate.usd ? usd(gana / SIM.fx) : pesos(gana)} por año.`;
+    document.querySelectorAll('.chips[data-group]').forEach((g) => {
+      g.querySelectorAll('.chip').forEach((b) => b.setAttribute('aria-pressed', String(String(st[g.dataset.group]) === b.dataset.v)));
+    });
+    const ui = $('in-users'); if (document.activeElement !== ui) ui.value = Math.log10(st.users);
+    const gi = $('in-gasto'); if (document.activeElement !== gi) gi.value = st.gasto;
+  }
+  $('in-users').addEventListener('input', (e) => { st.users = Math.round(10 ** Number(e.target.value) / 1000) * 1000; calc(); });
+  $('in-gasto').addEventListener('input', (e) => { st.gasto = Number(e.target.value); calc(); });
+  document.querySelectorAll('.chips[data-group]').forEach((g) => g.addEventListener('click', (e) => {
+    const b = e.target.closest('.chip'); if (!b) return;
+    const key = g.dataset.group;
+    st[key] = (key === 'users' || key === 'gasto') ? Number(b.dataset.v) : b.dataset.v;
+    calc();
+  }));
+  calc();
+
+  // User types: share of users, expected monthly net outflow by partner (ARS, from config/archetypes.yaml), calendar habits.
+  const PARTNERS = [['Tarjeta', '--c-tarjeta'], ['Pago de servicios', '--c-servicios'], ['Fondos (FCI)', '--c-fci'], ['Cripto', '--c-cripto'], ['Efectivo', '--c-efectivo'], ['Remesas', '--c-remesas']];
+  const TYPES = [
+    {name: 'Asalariado', share: 35, mix: [467926, 77873, 72412, 3710, 12499, 2479], when: 'Cobra entre el día hábil 1 y el 4. Ese día triplica lo que paga en facturas y lo que pone en fondos, y al día siguiente sigue alto. En la época del aguinaldo compra e invierte un 30 % más.'},
+    {name: 'Informal', share: 20, mix: [93189, 33937, 0, 1113, 78190, 3305], when: 'No tiene un día de cobro fijo. Retira mucho efectivo y hace recargas seguido, así que pesa más en Efectivo que en Tarjeta.'},
+    {name: 'Jubilado o AUH', share: 12, mix: [29539, 27985, 0, 0, 73701, 0], when: 'Cobra en su día de ANSES, entre el 9 y el 25 del mes. Ese día multiplica por 2,5 los retiros de efectivo y los pagos de facturas.'},
+    {name: 'Joven intensivo', share: 13, mix: [450800, 22962, 6925, 11747, 3448, 0], when: 'Compra con tarjeta casi todos los días, con tickets chicos. Sigue la semana: más compras el viernes y el sábado, menos el domingo.'},
+    {name: 'Inversor', share: 8, mix: [653312, 93942, 831697, 35612, 0, 4131], when: 'Mueve plata a fondos seguido y en montos grandes, en horario bancario y en días hábiles. Es el que más pesa en FCI.'},
+    {name: 'Cripto', share: 7, mix: [277951, 24925, 0, 266173, 0, 13943], when: 'Compra y vende cripto a toda hora, también el fin de semana. Cuando salta el dólar, compra más.'},
+    {name: 'Comercio', share: 5, mix: [606122, 227344, 0, 0, 306629, 61971], when: 'Paga proveedores y servicios en montos grandes, retira efectivo y es el que más remesas manda.'},
+  ];
+  const sum = (a) => a.reduce((s, v) => s + v, 0);
+  const avg = sum(TYPES.map((t) => t.share / 100 * sum(t.mix)));
+  let segSel = 0;
+  const segList = $('seg-list');
+  TYPES.forEach((t, i) => {
+    const b = node('button', 'seg-btn'); b.type = 'button';
+    const bar = node('span', 'b'); const fill = node('i'); fill.style.width = (t.share / 35 * 100) + '%'; bar.append(fill);
+    b.append(node('span', 'n', t.name), node('span', 'p', t.share + ' %'), bar);
+    b.addEventListener('click', () => { segSel = i; renderSeg(); });
+    segList.append(b);
+  });
+  function renderSeg() {
+    const t = TYPES[segSel], tot = sum(t.mix);
+    segList.querySelectorAll('.seg-btn').forEach((b, i) => b.setAttribute('aria-pressed', String(i === segSel)));
+    $('seg-name').textContent = t.name;
+    $('seg-share').textContent = t.share + ' de cada 100 usuarios';
+    const x = tot / avg;
+    $('seg-x').textContent = (x >= 1 ? '×' + es1.format(x) : es0.format(x * 100) + ' %');
+    const top = t.mix.indexOf(Math.max(...t.mix));
+    $('seg-top').textContent = PARTNERS[top][0];
+    $('seg-top-p').textContent = es0.format(t.mix[top] / tot * 100) + ' % de lo que mueve';
+    const mix = $('seg-mix'), leg = $('seg-legend');
+    mix.replaceChildren(); leg.replaceChildren();
+    mix.setAttribute('aria-label', PARTNERS.map(([n], k) => n + ' ' + es0.format(t.mix[k] / tot * 100) + ' %').join(', '));
+    PARTNERS.forEach(([n, c], k) => {
+      const pct = t.mix[k] / tot * 100;
+      if (pct <= 0) return;
+      const seg = node('i'); seg.style.width = pct + '%'; seg.style.background = `var(${c})`; mix.append(seg);
+      const l = node('span'); const sw = node('i'); sw.style.background = `var(${c})`;
+      l.append(sw, document.createTextNode(n + ' ' + (pct < 1 ? '<1' : es0.format(pct)) + ' %')); leg.append(l);
+    });
+    $('seg-when').textContent = t.when;
+  }
+  renderSeg();
+
+  // Coverage of the 90 % range per model (reports/experiments, ablation pooled).
+  const COVER = [
+    ['Igual que las últimas semanas', 73, false],
+    ['Por partner, con calendario y usuarios', 77, false],
+    ['Por partner, con débitos ya confirmados', 76, false],
+    ['Por tipo de usuario, sin shock común', 80, false],
+    ['Por tipo de usuario, con shock común (Prefoundly)', 89, true],
+  ];
+  const cover = $('cover');
+  for (const [name, v, us] of COVER) {
+    const r = node('div', 'cover-row' + (us ? ' us' : ''));
+    const track = node('span', 'track'); const fill = node('i'); fill.style.width = v + '%';
+    const goal = node('span', 'goal'); goal.style.left = '90%';
+    track.append(fill, goal);
+    r.append(node('span', null, name), track, node('span', 'v', v + ' %'));
+    cover.append(r);
+  }
+
+  // Demo: the agent's proposals for 2026-10-26 on the base simulation (wire rail), from the project's agent run.
+  const PROPS = [
+    {id: 'tarjeta', who: 'Tarjeta', amt: 319e6, rail: 'banco', need: 2},
+    {id: 'fci', who: 'Fondos (FCI)', amt: 86e6, rail: 'banco', need: 1},
+    {id: 'efectivo', who: 'Efectivo', amt: 51e6, rail: 'banco', need: 1},
+    {id: 'servicios', who: 'Pago de servicios', amt: 32e6, rail: 'banco', need: 0},
+    {id: 'cripto', who: 'Cripto', amt: 0, rail: 'stablecoin', need: 0},
+    {id: 'remesas', who: 'Remesas', amt: 0, rail: 'banco', need: 0},
+  ];
+  const APPROVERS = ['Ana', 'Beto'];
+  const approvals = Object.fromEntries(PROPS.map((p) => [p.id, []]));
+  const rejected = new Set();
+  const tierText = (p) => p.need === 2 ? 'más de $250 M: dos aprobaciones' : p.need === 1 ? 'hasta $250 M: una aprobación' : 'hasta $50 M: aprobación automática';
+
+  function renderProps() {
+    const list = $('props-list'); list.replaceChildren();
+    const total = PROPS.reduce((s, p) => s + p.amt, 0);
+    $('props-total').textContent = pesos(total) + ' en ' + PROPS.filter((p) => p.amt > 0).length + ' partners';
+    for (const p of PROPS) {
+      const el = document.createElement('div'); el.className = 'prop'; el.id = 'prop-' + p.id;
+      const who = document.createElement('span'); who.className = 'who'; who.textContent = p.who;
+      const amt = document.createElement('span'); amt.className = 'amt'; amt.textContent = p.amt ? pesos(p.amt) : '$0';
+      const meta = document.createElement('div'); meta.className = 'meta';
+      const s = document.createElement('span'); s.className = 'st';
+      const got = approvals[p.id];
+      if (!p.amt) { s.classList.add('zero'); s.textContent = 'El saldo alcanza'; }
+      else if (rejected.has(p.id)) { s.classList.add('no'); s.textContent = 'Rechazada'; }
+      else if (p.need === 0) { s.classList.add('ok'); s.textContent = 'Aprobada automáticamente'; }
+      else if (got.length >= p.need) { s.classList.add('ok'); s.textContent = 'Aprobada · en cola para enviar'; }
+      else { s.classList.add('pend'); s.textContent = got.length ? `${got.length} de ${p.need} · aprobó ${got.join(', ')}` : 'Pendiente'; }
+      meta.append(s);
+      if (p.amt) { const r = document.createElement('span'); r.textContent = 'por ' + p.rail + ' · ' + tierText(p); meta.append(r); }
+      el.append(who, amt, meta);
+      if (p.amt && p.need > 0 && got.length < p.need && !rejected.has(p.id)) {
+        const acts = document.createElement('div'); acts.className = 'acts';
+        const next = APPROVERS.find((a) => !got.includes(a));
+        const ok = document.createElement('button'); ok.className = 'btn primary'; ok.type = 'button'; ok.textContent = 'Aprobar como ' + next;
+        ok.addEventListener('click', () => { got.push(next); renderProps(); });
+        const no = document.createElement('button'); no.className = 'btn'; no.type = 'button'; no.textContent = 'Rechazar';
+        no.addEventListener('click', () => { rejected.add(p.id); renderProps(); });
+        acts.append(ok, no); el.append(acts);
+      }
+      list.append(el);
+    }
+  }
+  renderProps();
+
+  // Protection levels: results of the backtest on the same 20.000-user wallet, by bank (wire).
+  const LEVELS = [
+    {lvl: '99,5 %', cap: 3376604304, miss: 0},
+    {lvl: '99 %', cap: 3256104955, miss: 0},
+    {lvl: '95 %', cap: 2938541056, miss: 0},
+    {lvl: '90 %', cap: 2778603674, miss: 0},
+    {lvl: '70 %', cap: 2469330200, miss: 0.0032},
+    {lvl: '50 %', cap: 2277735562, miss: 0.016},
+  ];
+  const FIXED = {lvl: 'Regla fija, 10 días', cap: 4011209047, miss: 0};
+  const STABLE99 = 1680491025;
+  const SHARES = [['Tarjeta', 60.7], ['Fondos (FCI)', 14.9], ['Pago de servicios', 12.8], ['Efectivo', 9.0], ['Cripto', 1.7], ['Remesas', 0.9]];
+  let level = '99 %';
+
+  const msgs = $('msgs');
+  const scrollDown = () => { msgs.scrollTop = msgs.scrollHeight; };
+  function say(kind, parts) {
+    const m = node('div', 'msg ' + kind);
+    if (kind === 'bot') m.append(node('span', 'who', 'Prefoundly'));
+    for (const p of parts) m.append(typeof p === 'string' ? node('p', null, p) : p);
+    msgs.append(m); scrollDown(); return m;
+  }
+  function botReply(build) {
+    const m = node('div', 'msg bot'); m.append(node('span', 'who', 'Prefoundly'));
+    const t = node('span', 'typing'); t.append(node('i'), node('i'), node('i')); m.append(t);
+    msgs.append(m); scrollDown();
+    const delay = matchMedia('(prefers-reduced-motion: reduce)').matches ? 0 : 650;
+    setTimeout(() => { t.remove(); for (const p of build()) m.append(typeof p === 'string' ? node('p', null, p) : p); scrollDown(); }, delay);
+  }
+  const fine = (text) => node('p', 'fine', text);
+  function flash(id) {
+    const el = $('prop-' + id); if (!el) return;
+    el.scrollIntoView({block: 'nearest', behavior: 'smooth'}); el.classList.add('flash');
+    setTimeout(() => el.classList.remove('flash'), 1800);
+  }
+
+  function levelsTable() {
+    const wrap = node('div', 'tbl');
+    const t = node('table', 'opts');
+    const head = node('tr');
+    for (const [h, n] of [['Protección', false], ['Plata quieta', true], ['Días en rojo', true], ['Cuesta por año', true], ['', false]]) { const th = node('th', n ? 'n' : null, h); head.append(th); }
+    const thead = node('thead'); thead.append(head); t.append(thead);
+    const tb = node('tbody');
+    const row = (r, isRef) => {
+      const tr = node('tr', isRef ? 'ref' : (r.lvl === level ? 'cur' : null));
+      tr.append(node('td', null, r.lvl), node('td', 'n', pesos(r.cap)));
+      const miss = node('td', 'n' + (r.miss > 0 ? ' risk' : ''), r.miss > 0 ? es1.format(r.miss * 100) + ' %' : '0 %');
+      tr.append(miss, node('td', 'n', pesos(r.cap * 0.14)));
+      const act = node('td');
+      if (!isRef) {
+        if (r.lvl === level) act.append(node('span', 'small muted', 'actual'));
+        else { const b = node('button', 'btn', 'Usar'); b.type = 'button'; b.addEventListener('click', () => chooseLevel(r)); act.append(b); }
+      }
+      tr.append(act); return tr;
+    };
+    for (const r of LEVELS) tb.append(row(r, false));
+    tb.append(row(FIXED, true));
+    t.append(tb); wrap.append(t); return wrap;
+  }
+  function chooseLevel(r) {
+    const prev = LEVELS.find((x) => x.lvl === level);
+    level = r.lvl; $('lvl').textContent = level;
+    say('me', ['Usemos ' + r.lvl + '.']);
+    const diff = prev.cap - r.cap;
+    botReply(() => [
+      `Listo. Desde la próxima revisión, las propuestas usan ${r.lvl} de protección. Las de hoy quedan como están.`,
+      diff > 0 ? `Frente a ${prev.lvl}, deja libres unos ${pesos(diff)}, que a 14 % anual son ${pesos(diff * 0.14)} por año.` : `Frente a ${prev.lvl}, inmoviliza ${pesos(-diff)} más.`,
+      r.miss > 0 ? fine(`Ojo: con este nivel, en la prueba hubo días en rojo en el ${es1.format(r.miss * 100)} % de los casos.`) : fine('En la prueba no hubo días en rojo con este nivel, pero la prueba cubre pocos días.'),
+    ]);
+  }
+
+  const ANSWERS = {
+    tarjeta: {q: '¿Cuánto le mando hoy a Tarjeta y por qué?', run: () => { flash('tarjeta'); return [
+      'Propongo depositar $319 millones en Tarjeta, por banco.',
+      'La transferencia tarda hasta 48 horas hábiles, así que el saldo tiene que aguantar todo lo que se pague con tarjeta hasta que llegue. Con este depósito, la chance de quedarse corto antes de eso es menor a 1,5 %.',
+      'Como pasa los $250 millones, necesita dos aprobaciones de personas distintas.',
+      fine('El monto lo calcula la regla de Prefoundly. Yo lo explico con los números del pronóstico y no lo puedo cambiar.'),
+    ]; }},
+    riesgo: {q: '¿Cuánto me ahorro si acepto un poco más de riesgo?', run: () => [
+      'Esto es lo que habría pasado en la prueba con cada nivel de protección, para esta billetera y reponiendo por banco:',
+      levelsTable(),
+      'Bajar de 99 % a 95 % libera unos $318 millones sin días en rojo en la prueba. Por debajo de 70 % empiezan a fallar pagos. Elegí el nivel que prefieras.',
+      fine('Días en rojo: porcentaje de días en que algún partner se quedó sin saldo. Costo por año: plata quieta al 14 % anual.'),
+    ]},
+    stable: {q: '¿Y si mando por stablecoin?', run: () => [
+      `Con stablecoin la plata llega en unos 30 minutos y se puede reponer todos los días, así que el colchón es más chico. Con 99 % de protección quedarían ${pesos(STABLE99)} quietos, contra ${pesos(LEVELS[1].cap)} por banco: un ${es0.format((1 - STABLE99 / LEVELS[1].cap) * 100)} % menos.`,
+      'Hoy solo harían falta los depósitos de Fondos ($86 millones) y Efectivo ($51 millones), que no aceptan stablecoin y siguen por banco. Al resto se le repone en el momento.',
+      fine('Falta cotizar el costo de convertir. Asumimos 0,10 % de lo enviado.'),
+    ]},
+    porque: {q: '¿Por qué Tarjeta se lleva casi todo?', run: () => {
+      const bars = node('div', 'bars');
+      for (const [name, pct] of SHARES) {
+        const r = node('div'); const bar = node('i'); bar.style.width = (pct / 60.7 * 100) + '%';
+        const track = node('span'); track.append(bar);
+        r.append(node('span', null, name), track, node('span', null, es0.format(pct) + ' %')); bars.append(r);
+      }
+      return [
+        'Tarjeta tiene el 61 % de la plata inmovilizada. Es donde más gastan los usuarios, y liquida al día hábil siguiente, así que su saldo tiene que cubrir más días.',
+        bars,
+        fine('Reparto de la plata inmovilizada por partner con Prefoundly por banco, en la simulación.'),
+      ];
+    }},
+  };
+  const KEYS = [
+    ['riesgo', /riesg|ahorr|nivel|protec|menos plata|segur/i],
+    ['stable', /stable|cripto|usdc|usdt|r[aá]pid/i],
+    ['porque', /por ?qu[eé].*tarjeta|casi todo|reparto|partner.*m[aá]s/i],
+    ['tarjeta', /tarjeta|cu[aá]nto.*(mand|deposit)|hoy/i],
+  ];
+  function ask(key, text) {
+    say('me', [text || ANSWERS[key].q]);
+    botReply(ANSWERS[key].run);
+  }
+  const sugg = $('sugg');
+  for (const [k, a] of Object.entries(ANSWERS)) {
+    const b = node('button', 'chip', a.q); b.type = 'button'; b.addEventListener('click', () => ask(k)); sugg.append(b);
+  }
+  $('ask-form').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const inp = $('ask-in'); const text = inp.value.trim(); if (!text) return; inp.value = '';
+    const hit = KEYS.find(([, re]) => re.test(text));
+    if (hit) ask(hit[0], text);
+    else { say('me', [text]); botReply(() => ['En esta demo puedo responder sobre los depósitos de hoy, el nivel de protección, stablecoin y el reparto entre partners. Probá con una de las preguntas de abajo.']); }
+  });
+  say('bot', ['Hola. Para hoy propongo depositar $488 millones en 4 partners. Pago de servicios ya quedó aprobado porque es un monto chico. ¿Qué querés revisar?']);
+
+  // Presentation: arrow keys and PageUp/PageDown move between sections; the nav shows where you are.
+  const sections = [...document.querySelectorAll('main > section')];
+  const links = [...document.querySelectorAll('.top nav a')];
+  const current = () => {
+    const y = window.scrollY + 120;
+    let i = 0; sections.forEach((s, k) => { if (s.offsetTop <= y) i = k; }); return i;
+  };
+  document.addEventListener('keydown', (e) => {
+    if (e.target.closest('input, textarea, select')) return;
+    const fwd = e.key === 'ArrowRight' || e.key === 'PageDown';
+    const back = e.key === 'ArrowLeft' || e.key === 'PageUp';
+    if (!fwd && !back) return;
+    e.preventDefault();
+    const i = Math.max(0, Math.min(sections.length - 1, current() + (fwd ? 1 : -1)));
+    sections[i].scrollIntoView({behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'});
+  });
+  const mark = () => { const id = sections[current()].id; links.forEach((a) => a.setAttribute('aria-current', String(a.getAttribute('href') === '#' + id))); };
+  window.addEventListener('scroll', mark, {passive: true}); mark();
+})();
+</script>
