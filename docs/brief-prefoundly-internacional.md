@@ -165,7 +165,7 @@ No corre en vivo: lee `day.json`.
 - Que los números son ahorros reales: son simulados.
 - Que sabemos cómo opera Belo: son hipótesis.
 - Que el modelo "predice mejor": lo que hace mejor es medir el riesgo.
-- Que hay optimización, salvo que se haga la opción 3.7.
+- Que hay optimización, salvo que se haga la opción 3.6.
 - Que el agente decide cuánta plata mover: lo decide la regla, el agente la ejecuta y la explica.
 
 ## 7. Validaciones pendientes
