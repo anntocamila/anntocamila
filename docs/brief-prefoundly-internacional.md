@@ -140,7 +140,6 @@ Campos mínimos de `day.json`:
 4. **Cómo funciona por dentro.** Las cuatro piezas de la sección 1, en una lámina.
 5. **Resultados.** Los números nuevos en USD. Si no están, los actuales como "ejemplo en una billetera local".
 6. **Demo.** Un día del sistema (ver abajo).
-7. **Por qué en cada track.** Un renglón por jurado.
 
 ### Demo
 
