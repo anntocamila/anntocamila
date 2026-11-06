@@ -19,7 +19,7 @@ Por dentro combina cuatro piezas, y el valor está en la combinación:
 3. **Escenarios** con Monte Carlo: miles de futuros posibles, incluidos los días en que todos se mueven juntos.
 4. **Política de reposición** y **agente que ejecuta**: una regla decide el monto y el agente lo envía y lo explica.
 
-Cómo nombrarlo: "política de reposición bajo incertidumbre", no "optimización". Hoy el nivel de protección y la frecuencia los fijamos nosotros. Ver la opción 3.7 si queremos poder decir "optimización".
+Cómo nombrarlo: "política de reposición bajo incertidumbre", no "optimización". Hoy el nivel de protección y la frecuencia los fijamos nosotros. Ver la opción 3.6 si queremos poder decir "optimización".
 
 ## 2. El problema
 
@@ -90,11 +90,7 @@ Aclarar en el pitch que en datos simulados los grupos salen más limpios que en 
 - Arquetipos de ejemplo, hipótesis: freelancer que cobra del exterior, viajero, pyme importadora, remitente y ahorrista en dólares o cripto.
 - En `simulate/events.py` hay efectos fijos en el código (`PAYDAY_PRODUCTS`, `ANSES_PRODUCTS`, `SAC_PRODUCTS`). Pasarlos a la config por arquetipo.
 
-### 3.6 Transferencia real de stablecoin en red de prueba (Opción, para el track Stablecoins)
-
-Cuando el riel elegido es stablecoin, el agente hace una transferencia real de una stablecoin de prueba en una testnet, a una billetera que representa al partner. La demo muestra el comprobante de la transacción. Es lo mínimo para que el track Stablecoins tenga algo onchain.
-
-### 3.7 Elegir el nivel de protección por costos (Opción)
+### 3.6 Elegir el nivel de protección por costos (Opción)
 
 Si queremos decir "optimización": que el sistema elija el nivel de protección comparando el costo de la plata parada con el costo de un pago rechazado. Los dos costos ya están en `config/policy.yaml` (`cost_of_capital_annual`, `cost_per_usd_rejected`). Es la regla del fractil crítico. Hoy el 99 % está fijo.
 
@@ -126,7 +122,7 @@ Campos mínimos de `day.json`:
   "partners": [
     {"id": "partner_brl", "currency": "BRL", "forecast_tomorrow": {"p50": 0, "p90": 0},
      "deposit": 0, "rail": "stablecoin", "sent_at": "...", "lands_at": "...",
-     "guardrail": "dentro de tope", "rationale": "...", "tx_hash": null}
+     "guardrail": "dentro de tope", "rationale": "..."}
   ],
   "clusters": [{"id": 0, "share": 0.0, "label": "...", "traits": ["..."]}],
   "fx_stress": {"before": {}, "after": {}, "fx_loss_usd": 0},
@@ -162,7 +158,7 @@ No corre en vivo: lee `day.json`.
 | --- | --- | --- | --- |
 | **Fintech (Belo)**, principal | Producto financiero que resuelve un problema real | El producto entero y el caso de pagos internacionales | Nada esencial |
 | **AI (Vercel y Firecrawl)** | "No human in the loop" | El agente que ejecuta solo, con topes y corte de emergencia | 3.2 implementado |
-| **Stablecoins (Twin Finance)** | Stablecoins y pagos onchain | El ahorro con stablecoin y una transferencia real en testnet | 3.6. Sin eso, es el track más débil |
+| **Stablecoins (Twin Finance)** | Stablecoins y pagos onchain | El ahorro con stablecoin como riel, y la comparación contra la transferencia bancaria | Nada onchain: la stablecoin es un supuesto de la simulación. Es el track más débil; decidir si participan |
 
 ### Qué no decir
 
@@ -192,6 +188,6 @@ No corre en vivo: lee `day.json`.
 3. K-means (3.3).
 4. Tipo de cambio (3.4).
 5. Calendarios y arquetipos (3.5).
-6. Opciones: testnet (3.6) y nivel de protección por costos (3.7).
+6. Opción: nivel de protección por costos (3.6).
 
 Fijar una hora de corte. Si para entonces no hay una corrida completa con tests pasando, se presenta el modelo actual como "ejemplo en una billetera local" y lo internacional como diseño, sin porcentajes nuevos.
