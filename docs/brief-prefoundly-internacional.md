@@ -6,7 +6,9 @@ Nombre del producto: Prefoundly AI (provisorio).
 
 ## 1. La idea en tres líneas
 
-Una fintech que hace pagos internacionales tiene que dejar plata adelantada en cada partner que paga en destino (Pix en Brasil, ACH en Estados Unidos, remesas, redes de tarjetas). Hoy decide cuánta con una regla fija de "X días de gasto". Prefoundly AI descubre cómo se comportan sus usuarios, pronostica cuánto va a salir por cada partner y ejecuta solo el depósito justo, dentro de límites.
+Una fintech que hace pagos internacionales tiene que dejar plata adelantada en cada partner que paga en el país de destino. Hoy decide cuánta con una regla fija de "X días de gasto". Prefoundly AI descubre cómo se comportan sus usuarios, pronostica cuánto va a salir por cada partner y ejecuta solo el depósito justo, dentro de límites.
+
+**Aclaración sobre los partners.** Los destinos concretos (Pix en Brasil, ACH en Estados Unidos, remesas, tarjetas) son un ejemplo armado a partir de lo que Belo ofrece públicamente. No salen de la entrevista con Juanma, que habló de pagos internacionales por transferencia bancaria sin nombrar destinos. Por ejemplo, un usuario argentino que paga con un QR de Pix en Brasil: el comercio cobra en reales y la fintech necesita reales disponibles en el partner que paga ahí. Qué destinos usa Belo y cómo maneja ese saldo hay que preguntarlo, no darlo por hecho.
 
 ## 2. Cómo contar el problema
 
@@ -51,7 +53,7 @@ Hoy el modelo usa la etiqueta `segment` que pone el simulador. En la vida real l
 
 ### Partners (`config/partners.yaml`)
 
-Propuesta, a validar con Belo:
+Propuesta de ejemplo. Son hipótesis, no datos de Belo: los destinos y sus parámetros hay que validarlos con ellos.
 
 | Partner | Moneda | Calendario | Riel que acepta |
 | --- | --- | --- | --- |
