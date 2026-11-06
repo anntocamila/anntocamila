@@ -1,137 +1,122 @@
 # Brief: Prefoundly AI para pagos internacionales
 
-Para: Nico (y su Claude), repo `nicoespa/hackatwin-treasury`.
+Para: el equipo y el Claude de Nico, repo `nicoespa/hackatwin-treasury`.
 Fecha: 6-11-2026. Presentación: 7-11-2026.
-Nombre del producto: Prefoundly AI (provisorio).
+Nombre: Prefoundly AI.
 
-## 1. La idea en tres líneas
+Marcamos cada punto como **Decidido** u **Opción**. Las opciones son ideas para discutir, no tareas cerradas.
 
-Una fintech que hace pagos internacionales tiene que dejar plata adelantada en cada partner que paga en el país de destino. Hoy decide cuánta con una regla fija de "X días de gasto". Prefoundly AI descubre cómo se comportan sus usuarios, pronostica cuánto va a salir por cada partner y ejecuta solo el depósito justo, dentro de límites.
+## 1. Qué es
 
-**Aclaración sobre los partners.** Los destinos concretos (Pix en Brasil, ACH en Estados Unidos, remesas, tarjetas) son un ejemplo armado a partir de lo que Belo ofrece públicamente. No salen de la entrevista con Juanma, que habló de pagos internacionales por transferencia bancaria sin nombrar destinos. Por ejemplo, un usuario argentino que paga con un QR de Pix en Brasil: el comercio cobra en reales y la fintech necesita reales disponibles en el partner que paga ahí. Qué destinos usa Belo y cómo maneja ese saldo hay que preguntarlo, no darlo por hecho.
+**Decidido.** Lo presentamos como un **producto financiero**, no como "un agente de IA".
 
-## 2. Cómo contar el problema
+> Prefoundly AI es tesorería predictiva para fintechs que hacen pagos internacionales. Calcula cuánta plata dejar adelantada en cada partner y la envía sola, dentro de límites.
 
-- Cada pago internacional sale de un saldo que la fintech dejó adelantado en un partner del país de destino.
-- Reponer ese saldo tarda: una transferencia internacional puede tardar hasta 48 horas y no funciona de noche ni los fines de semana. Por stablecoin se mueve 24/7.
-- Los partners se fondean cada 1, 2 o 3 días, cada uno con su propio prefondeo.
-- Es un negocio de poco margen: cualquier capital que no queda parado pesa.
-- Además, la plata adelantada está en otra moneda (reales, pesos), así que un salto del tipo de cambio la hace perder valor.
+Por dentro combina cuatro piezas, y el valor está en la combinación:
 
-Fuente de los puntos 2 a 4: entrevista con Juanma del 30-10, según el resumen (no es transcripción). En el pitch, citarlo como "según nuestra entrevista", sin comillas. No atribuirle lo de cuantiles, LightGBM, el agente, ejemplos semanales ni montos en dólares.
+1. **Segmentación de usuarios** con K-means: descubre grupos por cómo se comportan.
+2. **Pronóstico** con LightGBM: cuánto va a salir por cada partner, día por día, por grupo.
+3. **Escenarios** con Monte Carlo: miles de futuros posibles, incluidos los días en que todos se mueven juntos.
+4. **Política de reposición** y **agente que ejecuta**: una regla decide el monto y el agente lo envía y lo explica.
 
-Que Belo opere exactamente así es una hipótesis: hay que presentarlo como "así se aplicaría" y preguntarlo.
+Cómo nombrarlo: "política de reposición bajo incertidumbre", no "optimización". Hoy el nivel de protección y la frecuencia los fijamos nosotros. Ver la opción 3.7 si queremos poder decir "optimización".
 
-## 3. Las variables, separadas
+## 2. El problema
 
-| Tipo | Qué es | Quién la fija |
-| --- | --- | --- |
-| **Decisión** | Cada cuánto se repone cada partner (1, 2 o 3 días), por qué riel (banco o stablecoin), nivel de protección (99 %), topes del agente | Nosotros, en config. **No se optimizan.** Los experimentos muestran qué pasa con cada valor |
-| **Parámetros** | Demora de cada riel, horario de corte, calendario de cada país, moneda del partner, saldo mínimo del contrato | Datos del partner, en config. Todos son supuestos a validar |
-| **Inciertas** | Cuánto sale por partner cada día, tipo de cambio, shock común, usuarios nuevos | Las modela el sistema |
-| **Resultado** | Cuánto depositar en cada partner en cada reposición | La regla de cuantil sobre los escenarios |
+**Decidido.** El planteo es general, sin depender de un país ni de un sistema de pagos:
 
-## 4. Cambio central: los tipos de usuario se descubren, no se etiquetan
+- Cuando un usuario paga en otro país, alguien en ese país tiene que pagarle al comercio en su moneda. Ese "alguien" es un partner.
+- Para que el partner pueda pagar en el momento, la fintech le deja plata adelantada. Eso es el prefondeo.
+- Si deja de menos, el pago falla. Si deja de más, la plata queda parada en otra moneda y puede perder valor.
+- Hoy se decide con una regla fija de "X días de gasto".
 
-Hoy el modelo usa la etiqueta `segment` que pone el simulador. En la vida real los datos no vienen etiquetados. Nuevo flujo:
+Lo que podemos contar de la entrevista con Juanma (30-10, según el resumen; en el pitch decir "según nuestra entrevista", sin comillas):
 
-1. **El simulador sigue generando usuarios desde arquetipos**, pero la etiqueta queda oculta: es la "verdad" para validar y el modelo no la ve.
-2. **Variables de comportamiento por usuario**, calculadas sobre la ventana de entrenamiento:
-   - volumen mensual (log) y participación de cada producto o partner;
-   - transacciones por día y ticket promedio (log);
-   - concentración en el cobro: participación del volumen en los días hábiles 1 a 4;
-   - participación de fin de semana;
-   - sensibilidad al tipo de cambio: cuánto cambia su volumen en días de salto;
-   - participación de pagos recurrentes.
-3. **K-means** sobre esas variables estandarizadas, con semilla fija. Elegir k entre 3 y 10 por silhouette. Reportar también k = cantidad de arquetipos.
-4. **Validar contra la verdad oculta** con el Adjusted Rand Index (ARI). Es un número para el pitch: "el sistema encuentra los grupos sin etiquetas". Aclarar que en datos simulados los grupos son más limpios que en la realidad.
-5. **El cluster reemplaza a `segment`** en `SegmentLGBM`. Los nodos pasan a ser cluster × producto × partner. Usuarios con poca historia van a un cluster "nuevo" hasta tener N días.
-6. **Ablación:** cobertura del intervalo del 90 % con clusters, con arquetipos verdaderos y sin segmentar. Hoy el modelo segmentado cubre 89 % y los demás entre 73 % y 80 %; ver si se sostiene.
-7. Opcional: que el agente le ponga nombre a cada cluster a partir de su centroide ("paga por Pix en temporada de vacaciones").
+- Cada función tiene su partner y su prefondeo.
+- Los partners se fondean cada 1, 2 o 3 días.
+- Lo internacional es lo más caro: va por transferencia bancaria, tarda hasta 48 horas y no funciona 24/7.
+- Con stablecoin se mueve 24/7 y las necesidades de fondos se acortan.
+- Es un negocio de poco margen: cualquier ahorro de capital pesa.
 
-## 5. Adaptación a pagos internacionales
+No atribuirle: cuantiles, LightGBM, el agente, ejemplos semanales, montos en dólares, ni lo de otras fintechs usando stablecoins (el audio no deja confirmar quiénes).
 
-### Partners (`config/partners.yaml`)
+**Ejemplo opcional para Belo** (hipótesis, no dato): un usuario argentino paga con un QR de Pix en Brasil. El comercio cobra en reales y la fintech necesita reales disponibles en el partner que paga ahí. Usarlo como "por ejemplo" y preguntarles cómo lo manejan.
 
-Propuesta de ejemplo. Son hipótesis, no datos de Belo: los destinos y sus parámetros hay que validarlos con ellos.
+## 3. Qué hay que cambiar en el modelo
 
-| Partner | Moneda | Calendario | Riel que acepta |
-| --- | --- | --- | --- |
-| `pix_brl`: pagos por Pix en Brasil | BRL | Brasil | stablecoin y transferencia |
-| `ach_usd`: transferencias en dólares | USD | Estados Unidos | transferencia |
-| `remesas`: pagador de remesas | moneda local | destino | stablecoin y transferencia |
-| `tarjeta_intl`: Visa o Mastercard | USD | Estados Unidos | stablecoin y transferencia |
+En orden de prioridad.
 
-Cada partner suma: `currency`, `calendar`, `replenish_every_days` (1, 2 o 3) y `min_balance` (0 por defecto).
+### 3.1 Partners internacionales, rieles y frecuencia (Decidido)
 
-### Rieles (`config/rails.yaml`)
+- **Partners** (`config/partners.yaml`). Ejemplo de destinos, todos hipótesis a validar: un pagador en Brasil (reales), uno en Estados Unidos (dólares), remesas y una red de tarjetas internacional. Cada partner suma `currency`, `calendar`, `replenish_every_days` y `min_balance` (0 por defecto).
+- **Rieles** (`config/rails.yaml`). Transferencia internacional: 48 horas hábiles, sin fines de semana, con horario de corte. Stablecoin: 24/7, unos 30 minutos más la conversión, costo 0,10 % (supuesto).
+- **Frecuencia de reposición por partner: 1, 2 o 3 días.** Es una **variable de decisión que fijamos nosotros**, no la optimiza el modelo. En `policy.py`, `review_times` y `next_review` pasan a calcularse por partner. La ventana a cubrir es la demora del riel más esa frecuencia.
 
-- Transferencia internacional: 48 horas hábiles, sin fines de semana, con horario de corte.
-- Stablecoin: 24/7, unos 30 minutos más la conversión a moneda local, con costo de 0,10 % (supuesto).
-
-### Calendarios
-
-Hoy hay uno solo, `config/calendar_ar.yaml`. Hace falta uno por país (Argentina, Brasil, Estados Unidos) y que cada partner use el suyo. Implica tocar `calendar.py` y los lugares que reciben un único `Calendar`.
-
-### Arquetipos (`config/archetypes.yaml`), verdad oculta del simulador
-
-Hipótesis para validar con Belo:
-
-- **Freelancer:** cobra del exterior y paga en el país; picos cuando cobra.
-- **Viajero:** paga por Pix en Brasil; temporada de enero y febrero, y feriados largos.
-- **Pyme importadora:** paga proveedores por ACH; ciclo mensual.
-- **Remitente:** manda plata a su familia; sigue el día de cobro.
-- **Ahorrista en dólares o cripto:** sensible al tipo de cambio.
-
-En `simulate/events.py` hay efectos fijos en el código (`PAYDAY_PRODUCTS`, `ANSES_PRODUCTS`, `SAC_PRODUCTS`). Hay que moverlos a la config por arquetipo: día de cobro, temporada y sensibilidad al tipo de cambio.
-
-### Tipo de cambio
-
-- Simular las trayectorias de ARS/USD y BRL/USD: variación diaria más saltos ocasionales. Hay que reutilizar el escenario `FxJump`.
-- Efecto en la demanda: los clusters sensibles mueven su volumen en días de salto.
-- Efecto en el valor: la plata adelantada en BRL o ARS pierde valor si la moneda cae. Reportar "pérdida por tipo de cambio".
-- Reportar todo en **USD**.
-- No optimizar cuántas monedas tener: queda como costo y escenario de estrés.
-
-## 6. Cuánto poner (la regla no cambia)
-
-Se mantiene la regla actual: el depósito que cubre el 99 % de los escenarios desde que llega hasta que llega la próxima reposición.
-
-El cambio es que **la ventana sale de la frecuencia fija de cada partner**: demora del riel más `replenish_every_days`. En `policy.py`, `review_times` y `next_review` pasan a calcularse por partner.
-
-Se mantiene la comparación contra la regla fija ajustada al mismo nivel de seguridad (`reference_matched`).
-
-## 7. Sin humano en el circuito: el agente ejecuta
+### 3.2 Agente que ejecuta solo, con límites (Decidido)
 
 Reemplazar la cola de aprobación (`agent/queue.py`, `agent/tools.py`) por **ejecución simulada**:
 
-- `execute_transfer`: registra la orden en un libro que no se puede editar y actualiza el saldo simulado del partner cuando la plata llega.
-- **Topes:** por transferencia y por día, por partner. Si un monto pasa el tope, se ejecuta el tope y se genera una alerta.
-- Solo a partners autorizados, y una orden por partner y por reposición. La cola actual ya lo hace.
-- **Corte de emergencia:** si el error del pronóstico de los últimos días o la chance de quedarse corto pasan un umbral, se vuelve a la regla fija conservadora y se avisa.
-- El LLM sigue sin decidir montos: solo escribe la explicación de cada orden.
-- Todo simulado: no hay plata real ni conexión con bancos.
+- `execute_transfer`: registra la orden en un libro que no se puede editar y actualiza el saldo del partner cuando la plata llega.
+- Topes por transferencia y por día, por partner. Si un monto pasa el tope, se ejecuta el tope y se genera una alerta.
+- Solo partners autorizados y una orden por partner y por reposición.
+- **Corte de emergencia:** si el error del pronóstico o la chance de quedarse corto pasan un umbral, vuelve a la regla fija conservadora y avisa.
+- El LLM no decide montos: escribe la explicación de cada orden.
+- Sin plata real ni conexión con bancos.
 
-## 8. Qué tiene que salir para el pitch
+### 3.3 Segmentación con K-means (Decidido)
+
+En la vida real los datos no vienen etiquetados por tipo de usuario.
+
+1. El simulador sigue generando usuarios desde arquetipos, pero **la etiqueta queda oculta**: sirve solo para validar.
+2. Variables por usuario, sobre la ventana de entrenamiento: volumen mensual (log), participación de cada producto o partner, transacciones por día, ticket promedio (log), concentración en los días de cobro, participación de fin de semana, sensibilidad al tipo de cambio y participación de pagos recurrentes.
+3. K-means sobre variables estandarizadas, semilla fija. Elegir k entre 3 y 10 por silhouette, y reportar también k = cantidad de arquetipos.
+4. Validar contra la verdad oculta con el **ARI** (Adjusted Rand Index).
+5. El cluster reemplaza a `segment` en `SegmentLGBM`. Usuarios con poca historia van a un cluster "nuevo".
+6. Ablación: cobertura del intervalo del 90 % con clusters, con arquetipos verdaderos y sin segmentar. Hoy el modelo segmentado cubre 89 % y los demás entre 73 % y 80 %.
+
+Aclarar en el pitch que en datos simulados los grupos salen más limpios que en la realidad.
+
+### 3.4 Tipo de cambio (Decidido: como costo y estrés)
+
+- Trayectorias de ARS/USD y BRL/USD con variación diaria y saltos. Reutilizar el escenario `FxJump`.
+- Los grupos sensibles al tipo de cambio mueven su volumen en días de salto.
+- Reportar la **pérdida por tipo de cambio** de la plata adelantada en otra moneda.
+- Todo en **USD**.
+- No optimizar cuánto tener de cada moneda.
+
+### 3.5 Calendarios por país y arquetipos internacionales (Decidido, si da el tiempo)
+
+- Hoy hay un solo calendario (`config/calendar_ar.yaml`). Hace falta uno por país y que cada partner use el suyo.
+- Arquetipos de ejemplo, hipótesis: freelancer que cobra del exterior, viajero, pyme importadora, remitente y ahorrista en dólares o cripto.
+- En `simulate/events.py` hay efectos fijos en el código (`PAYDAY_PRODUCTS`, `ANSES_PRODUCTS`, `SAC_PRODUCTS`). Pasarlos a la config por arquetipo.
+
+### 3.6 Transferencia real de stablecoin en red de prueba (Opción, para el track Stablecoins)
+
+Cuando el riel elegido es stablecoin, el agente hace una transferencia real de una stablecoin de prueba en una testnet, a una billetera que representa al partner. La demo muestra el comprobante de la transacción. Es lo mínimo para que el track Stablecoins tenga algo onchain.
+
+### 3.7 Elegir el nivel de protección por costos (Opción)
+
+Si queremos decir "optimización": que el sistema elija el nivel de protección comparando el costo de la plata parada con el costo de un pago rechazado. Los dos costos ya están en `config/policy.yaml` (`cost_of_capital_annual`, `cost_per_usd_rejected`). Es la regla del fractil crítico. Hoy el 99 % está fijo.
+
+## 4. Las variables
+
+| Tipo | Cuáles | Quién las fija |
+| --- | --- | --- |
+| **Decisión** | Frecuencia por partner (1, 2 o 3 días), riel, nivel de protección, topes del agente | Nosotros, en config. Los experimentos muestran qué pasa con cada valor |
+| **Parámetros** | Demora y horario de cada riel, calendario de cada país, moneda, saldo mínimo | Datos del partner. Todos son supuestos a validar |
+| **Inciertas** | Cuánto sale por partner cada día, tipo de cambio, shock común, usuarios nuevos | Las modela el sistema |
+| **Resultado** | Cuánto depositar en cada partner | La política de reposición |
+
+## 5. Qué tiene que salir
 
 Correr `treasury simulate` y `treasury experiments` con la nueva config y entregar:
 
-1. **Capital inmovilizado en USD**, regla fija contra Prefoundly AI, por riel, con frecuencia de 1, 2 y 3 días.
-2. **Días con faltante** de cada política.
-3. **Pérdida por tipo de cambio** en el escenario de salto.
-4. **Clusters:** ARI contra la verdad oculta, descripción de cada cluster y ablación de cobertura.
-5. **`reports/demo/day.json`** para la demo (ver abajo).
-6. `uv run pytest -q` pasa, las semillas son fijas y el README está actualizado.
-
-## 9. Demo
-
-No corre en vivo: lee `reports/demo/day.json`. Un día del sistema, con estas pantallas:
-
-1. **"Mañana vas a tener que pagar esto"**: pronóstico por partner para el día siguiente, con su rango. Es el desafío que planteó Juanma.
-2. **Lo que hizo el agente solo**: por partner, monto, riel, hora de envío, cuándo llega y qué tope aplicó.
-3. **Los grupos que encontró**: cada cluster con su tamaño y su comportamiento.
-4. **Estrés**: salto del tipo de cambio, y cómo cambian el pronóstico, los depósitos y la pérdida por tipo de cambio.
-5. **Resultado**: regla fija contra Prefoundly AI en USD, con frecuencia de 1 y 3 días.
+1. Capital inmovilizado en **USD**: regla fija contra Prefoundly AI, por riel, con frecuencia de 1, 2 y 3 días.
+2. Días con faltante de cada política.
+3. Pérdida por tipo de cambio en el escenario de salto.
+4. Clusters: ARI, descripción de cada grupo y ablación de cobertura.
+5. `reports/demo/day.json` para la demo.
+6. `uv run pytest -q` pasa, semillas fijas, README actualizado.
 
 Campos mínimos de `day.json`:
 
@@ -139,9 +124,9 @@ Campos mínimos de `day.json`:
 {
   "as_of": "2026-10-26",
   "partners": [
-    {"id": "pix_brl", "currency": "BRL", "forecast_tomorrow": {"p50": 0, "p90": 0},
+    {"id": "partner_brl", "currency": "BRL", "forecast_tomorrow": {"p50": 0, "p90": 0},
      "deposit": 0, "rail": "stablecoin", "sent_at": "...", "lands_at": "...",
-     "guardrail": "dentro de tope", "rationale": "..."}
+     "guardrail": "dentro de tope", "rationale": "...", "tx_hash": null}
   ],
   "clusters": [{"id": 0, "share": 0.0, "label": "...", "traits": ["..."]}],
   "fx_stress": {"before": {}, "after": {}, "fx_loss_usd": 0},
@@ -149,21 +134,64 @@ Campos mínimos de `day.json`:
 }
 ```
 
-## 10. Orden y corte
+## 6. Cómo lo vamos a presentar
 
-En orden de prioridad:
+### Estructura del pitch
 
-1. Partners, rieles y frecuencia por partner.
-2. Ejecución autónoma con topes.
-3. K-means y su validación.
-4. Tipo de cambio.
-5. Calendarios por país y arquetipos internacionales.
+1. **El producto.** "Prefoundly AI: tesorería predictiva para pagos internacionales. Calcula cuánta plata dejar en cada partner y la envía sola."
+2. **El problema.** El planteo general de la sección 2, con lo de Juanma.
+3. **Por qué ahora.** Las redes de tarjetas ya liquidan en stablecoin, el negocio tiene poco margen y la plata en otra moneda tiene riesgo.
+4. **Cómo funciona por dentro.** Las cuatro piezas de la sección 1, en una lámina.
+5. **Resultados.** Los números nuevos en USD. Si no están, los actuales como "ejemplo en una billetera local".
+6. **Demo.** Un día del sistema (ver abajo).
+7. **Por qué en cada track.** Un renglón por jurado.
 
-Si a la hora de corte que fijemos no hay una corrida completa y con tests pasando, se presenta el modelo actual como "ejemplo en una billetera local" y lo internacional como diseño, sin porcentajes nuevos.
+### Demo
 
-## 11. Qué no decir
+No corre en vivo: lee `day.json`.
+
+1. **"Mañana vas a tener que pagar esto":** pronóstico por partner para el día siguiente. Es el desafío que planteó Juanma.
+2. **Lo que hizo el agente solo:** monto, riel, hora de envío, cuándo llega y qué tope aplicó.
+3. **Los grupos que encontró:** tamaño y comportamiento de cada uno.
+4. **Estrés:** salto del tipo de cambio y cómo cambian el pronóstico, los depósitos y la pérdida.
+5. **Resultado:** regla fija contra Prefoundly AI en USD.
+
+### Tracks (Opción: confirmado que se puede participar en más de uno)
+
+| Track | Qué mira el jurado | Qué mostramos | Qué falta |
+| --- | --- | --- | --- |
+| **Fintech (Belo)**, principal | Producto financiero que resuelve un problema real | El producto entero y el caso de pagos internacionales | Nada esencial |
+| **AI (Vercel y Firecrawl)** | "No human in the loop" | El agente que ejecuta solo, con topes y corte de emergencia | 3.2 implementado |
+| **Stablecoins (Twin Finance)** | Stablecoins y pagos onchain | El ahorro con stablecoin y una transferencia real en testnet | 3.6. Sin eso, es el track más débil |
+
+### Qué no decir
 
 - Que los números son ahorros reales: son simulados.
-- Que conocemos cómo opera Belo: son hipótesis.
-- Que el modelo "predice mejor": lo que hace mejor es medir el riesgo (cobertura del intervalo).
+- Que sabemos cómo opera Belo: son hipótesis.
+- Que el modelo "predice mejor": lo que hace mejor es medir el riesgo.
+- Que hay optimización, salvo que se haga la opción 3.7.
 - Que el agente decide cuánta plata mover: lo decide la regla, el agente la ejecuta y la explica.
+
+## 7. Validaciones pendientes
+
+**Con el CPO de Prex** (planteo del problema):
+
+1. ¿Cómo deciden hoy cuánto prefondear y cada cuánto?
+2. ¿De qué depende que un partner se reponga cada 1, 2 o 3 días?
+3. ¿Hay saldos mínimos, colateral o reservas obligatorias?
+4. ¿Lo internacional va por transferencia bancaria, con hasta 48 horas y sin operar 24/7?
+5. ¿Qué harían con la plata que quedara libre, y a qué tasa?
+6. ¿Cuánto cuesta un pago rechazado, y qué nivel de seguridad aceptan?
+
+**Con Belo** (en la presentación): ¿dejan plata adelantada en cada destino? ¿Cuánto tarda y cuánto cuesta tener stablecoin usable en moneda local? ¿Cómo manejan el riesgo de cambio?
+
+## 8. Orden y corte
+
+1. Partners, rieles y frecuencia por partner (3.1).
+2. Agente que ejecuta solo (3.2).
+3. K-means (3.3).
+4. Tipo de cambio (3.4).
+5. Calendarios y arquetipos (3.5).
+6. Opciones: testnet (3.6) y nivel de protección por costos (3.7).
+
+Fijar una hora de corte. Si para entonces no hay una corrida completa con tests pasando, se presenta el modelo actual como "ejemplo en una billetera local" y lo internacional como diseño, sin porcentajes nuevos.
