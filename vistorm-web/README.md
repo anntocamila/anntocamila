@@ -46,7 +46,7 @@ Sitio de Vistorm Labs listo para Vercel: landing de una sola acción («Pedí un
 
 ## Estructura
 
-Hero → qué medimos (ocho tarjetas, cada una dibuja su medición) → para quién → el panel (réplica del software con un local de ejemplo) → cómo funciona → demo (título y botón) → preguntas frecuentes. Todos los botones «Pedí una demo» abren el agendador en un pop-up.
+Hero → qué medimos (cinco tarjetas de colección en abanico, con ilustraciones de personas) → para quién → el panel (réplica del software con un local de ejemplo) → cómo funciona → demo (título y botón) → preguntas frecuentes. Todos los botones «Pedí una demo» abren el agendador en un pop-up.
 
 Redes sociales: completar los enlaces de Instagram y LinkedIn en `SOCIAL` (en el generador) para que aparezcan en el pie.
 

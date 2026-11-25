@@ -90,33 +90,30 @@
   });
 
   later(function () {
-    /* ---------- 1 · qué medimos: cada tarjeta dibuja su propia medición ---------- */
-    var cards = $$('.mcard');
-    if (!cards.length) return;
-    var draw = function (el) { var L = el.getTotalLength ? el.getTotalLength() : 300; return [{ strokeDasharray: L + ' ' + L, strokeDashoffset: L }, { strokeDashoffset: 0 }]; };
-    var build = function (c) {
-      var tl = G.timeline({ paused: true });
-      var b = $$('.a-bars rect', c); if (b.length) tl.fromTo(b, { scaleY: 0, transformOrigin: '50% 100%' }, { scaleY: 1, duration: 0.6, ease: 'back.out(1.4)', stagger: 0.05 }, 0);
-      var hb = $$('.a-hbars rect', c); if (hb.length) tl.fromTo(hb, { scaleX: 0, transformOrigin: '0% 50%' }, { scaleX: 1, duration: 0.7, ease: 'power3.out', stagger: 0.12 }, 0);
-      ['.a-path', '.a-timer', '.a-line'].forEach(function (sel, k) {
-        var p = $(sel, c); if (!p) return; var dd = draw(p);
-        tl.fromTo(p, dd[0], Object.assign(dd[1], { duration: k === 1 ? 0.9 : 1.1, ease: 'power2.inOut', clearProps: 'strokeDasharray,strokeDashoffset' }), 0);
+    /* ---------- 1 · qué medimos: el mazo se reparte y se abre en abanico ---------- */
+    var deck = $('#deck'), cards = $$('.tcard');
+    if (!deck || !cards.length) return;
+    if ('IntersectionObserver' in window) new IntersectionObserver(function (es) { deck.classList.toggle('is-live', es[0].isIntersecting); }, { rootMargin: '100px' }).observe(deck);
+    var wide = window.innerWidth > 1000, mid = (cards.length - 1) / 2;
+    if (wide) {
+      cards.forEach(function (c) { c.classList.add('is-dealing'); });
+      G.fromTo(cards, { '--dx': function (i) { return ((mid - i) * 240) + 'px'; }, '--dy': '90px', '--fan': 0, opacity: 0 },
+        { '--dx': '0px', '--dy': '0px', '--fan': 1, opacity: 1, duration: 1.1, ease: 'back.out(1.15)', stagger: { each: 0.07, from: 'center' },
+          scrollTrigger: { trigger: deck, start: 'top 80%' },
+          onComplete: function () { cards.forEach(function (c) { c.classList.remove('is-dealing'); }); } });
+      G.from('.confetti i', { opacity: 0, scale: 0, rotation: function () { return (Math.random() - 0.5) * 180; }, y: 30, duration: 0.8, ease: 'back.out(2)', stagger: { each: 0.03, from: 'random' }, delay: 0.5, scrollTrigger: { trigger: deck, start: 'top 80%' } });
+      G.to('.confetti i', { y: function (i) { return (i % 2 ? -1 : 1) * (20 + (i % 5) * 8); }, ease: 'none', scrollTrigger: { trigger: '.deck-wrap', start: 'top bottom', end: 'bottom top', scrub: true } });
+    } else {
+      G.from(cards, { y: 50, opacity: 0, duration: 0.8, ease: 'power3.out', stagger: 0.07, scrollTrigger: { trigger: deck, start: 'top 85%' } });
+    }
+    if (hover) cards.forEach(function (c) {
+      c.addEventListener('pointermove', function (e) {
+        var r = c.getBoundingClientRect(), x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
+        c.style.setProperty('--ry', ((x - 0.5) * 12).toFixed(2) + 'deg'); c.style.setProperty('--rx', ((0.5 - y) * 10).toFixed(2) + 'deg');
+        c.style.setProperty('--mx', (x * 100).toFixed(1) + '%'); c.style.setProperty('--my', (y * 100).toFixed(1) + '%');
       });
-      var fo = $('.a-fore', c); if (fo) tl.fromTo(fo, { opacity: 0, x: -10 }, { opacity: 1, x: 0, duration: 0.5, ease: 'power2.out' }, 0.9);
-      var end = $('.a-end', c); if (end) tl.fromTo(end, { scale: 0, transformOrigin: '50% 50%' }, { scale: 1, duration: 0.35, ease: 'back.out(2)' }, 1);
-      var tp = $$('.a-topo ellipse', c); if (tp.length) tl.fromTo(tp, { scale: 0.2, transformOrigin: '50% 50%', opacity: 0 }, { scale: 1, opacity: 1, duration: 0.6, ease: 'back.out(1.3)', stagger: 0.07 }, 0);
-      var arc = $('.a-arc', c); if (arc) tl.fromTo(arc, { attr: { 'stroke-dasharray': '0 264' } }, { attr: { 'stroke-dasharray': '190 264' }, duration: 1, ease: 'power2.inOut' }, 0);
-      var hand = $('.a-hand', c); if (hand) tl.fromTo(hand, { rotation: 0, svgOrigin: '120 72' }, { rotation: 260, svgOrigin: '120 72', duration: 1, ease: 'power2.inOut' }, 0);
-      var q = $$('.a-queue circle', c); if (q.length) tl.fromTo(q, { x: -50, opacity: 0 }, { x: 0, opacity: 1, duration: 0.5, ease: 'power3.out', stagger: 0.08 }, 0);
-      return tl;
-    };
-    cards.forEach(function (c) {
-      var tl = build(c); tl.progress(0);
-      ST.create({ trigger: c, start: 'top 85%', once: true, onEnter: function () { tl.play(0); } });
-      // al pasar el mouse, la tarjeta vuelve a dibujar su medición
-      if (hover) c.addEventListener('pointerenter', function () { if (!tl.isActive()) tl.play(0); });
+      c.addEventListener('pointerleave', function () { c.style.setProperty('--rx', '0deg'); c.style.setProperty('--ry', '0deg'); });
     });
-    G.from(cards, { y: 60, opacity: 0, duration: 0.9, ease: 'power3.out', stagger: 0.07, scrollTrigger: { trigger: '#mcards', start: 'top 88%' } });
   });
 
   later(function () {

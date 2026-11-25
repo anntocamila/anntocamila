@@ -41,65 +41,115 @@
 </header>
 
 <main id="main">
-  <!-- 1. Qué medimos -->
+  <!-- 1. Qué medimos: tarjetas de colección -->
   <section class="measure" id="medimos" aria-labelledby="t-medimos">
     <div class="wrap">
-      <div class="sechead">
-        <div><span class="kick">Qué medimos</span><h2 class="big split" id="t-medimos">Ocho respuestas para decidir qué cambiar.</h2></div>
-        <p class="lead" data-reveal>Todo se mide en personas y en tiempo. Ninguna cifra viene en pesos.</p>
+      <div class="measure__head">
+        <span class="kick">Qué medimos</span>
+        <h2 class="big split" id="t-medimos">Mirá lo que podés medir con Vistorm Labs.</h2>
+        <p class="lead" data-reveal>Todo en personas y en tiempo. Ninguna cifra viene en pesos.</p>
       </div>
-      <ul class="mcards" id="mcards" tabindex="0" aria-label="Las ocho mediciones">
-        <li class="mcard"><div class="mcard__art" aria-hidden="true"><span class="mcard__n">01</span><svg viewBox="0 0 240 140">
-          <line x1="22" x2="218" y1="118" y2="118" stroke="#6A3243"/>
-          <g class="a-bars"><rect x="28" y="96" width="14" height="22" rx="2" fill="#8E5E69"/><rect x="48" y="88" width="14" height="30" rx="2" fill="#8E5E69"/><rect x="68" y="92" width="14" height="26" rx="2" fill="#8E5E69"/><rect x="88" y="80" width="14" height="38" rx="2" fill="#8E5E69"/><rect x="108" y="70" width="14" height="48" rx="2" fill="#8E5E69"/><rect x="128" y="60" width="14" height="58" rx="2" fill="#C7BCAC"/><rect x="148" y="44" width="14" height="74" rx="2" fill="#E6DFD7"/><rect x="168" y="30" width="14" height="88" rx="2" fill="#C1774B"/><rect x="188" y="58" width="14" height="60" rx="2" fill="#C7BCAC"/></g>
-          <text x="175" y="22" text-anchor="middle" fill="#C1774B" font-size="9" font-weight="600" font-family="Inter, sans-serif" letter-spacing=".08em">PICO</text>
-        </svg></div><h3>Visitas y horario pico</h3><p>Cuánta gente entra y a qué hora se llena el local.</p></li>
-
-        <li class="mcard"><div class="mcard__art" aria-hidden="true"><span class="mcard__n">02</span><svg viewBox="0 0 240 140">
-          <g class="a-hbars" font-family="Inter, sans-serif" font-size="10"><rect x="24" y="40" width="192" height="16" rx="3" fill="#8E5E69"/><text x="28" y="34" fill="#C7BCAC">Pasan</text>
-          <rect x="24" y="74" width="118" height="16" rx="3" fill="#C7BCAC"/><text x="28" y="68" fill="#C7BCAC">Miran</text>
-          <rect x="24" y="108" width="72" height="16" rx="3" fill="#C1774B"/><text x="28" y="102" fill="#C7BCAC">Entran</text></g>
-        </svg></div><h3>Vidriera</h3><p>Cuánta gente pasa, cuánta frena a mirar y cuánta entra.</p></li>
-
-        <li class="mcard"><div class="mcard__art" aria-hidden="true"><span class="mcard__n">03</span><svg viewBox="0 0 240 140">
-          <rect x="70" y="34" width="44" height="26" rx="4" fill="#6A3243"/><rect x="150" y="30" width="60" height="18" rx="4" fill="#6A3243"/><rect x="132" y="84" width="50" height="28" rx="4" fill="#6A3243"/>
-          <path class="a-path" d="M20 122 C 60 118 52 82 92 76 C 132 70 124 58 150 60 C 186 62 204 72 214 98" fill="none" stroke="#C1774B" stroke-width="3.5" stroke-linecap="round"/>
-          <circle cx="20" cy="122" r="5" fill="#F4F2F1"/><circle class="a-end" cx="214" cy="98" r="5" fill="#C1774B"/>
-        </svg></div><h3>Recorrido</h3><p>Por dónde camina la gente adentro.</p></li>
-
-        <li class="mcard"><div class="mcard__art" aria-hidden="true"><span class="mcard__n">04</span><svg viewBox="0 0 240 140">
-          <g class="a-topo"><ellipse cx="128" cy="74" rx="98" ry="52" fill="#6A3243"/><ellipse cx="124" cy="76" rx="72" ry="38" fill="#8E5E69"/><ellipse cx="120" cy="78" rx="48" ry="26" fill="#C7BCAC"/><ellipse cx="118" cy="79" rx="28" ry="15" fill="#E6DFD7"/><ellipse cx="117" cy="80" rx="12" ry="6.5" fill="#C1774B"/>
-          <ellipse cx="52" cy="112" rx="26" ry="12" fill="#6A3243"/><ellipse cx="52" cy="112" rx="12" ry="5.5" fill="#8E5E69"/></g>
-        </svg></div><h3>Zonas y mapa de calor</h3><p>Qué sectores atraen y cuáles quedan vacíos.</p></li>
-
-        <li class="mcard"><div class="mcard__art" aria-hidden="true"><span class="mcard__n">05</span><svg viewBox="0 0 240 140">
-          <circle cx="120" cy="72" r="42" fill="none" stroke="#6A3243" stroke-width="10"/>
-          <circle class="a-arc" cx="120" cy="72" r="42" fill="none" stroke="#C1774B" stroke-width="10" stroke-linecap="round" stroke-dasharray="190 264" transform="rotate(-90 120 72)"/>
-          <g stroke="#C7BCAC" stroke-width="2" stroke-linecap="round"><line x1="120" y1="44" x2="120" y2="50"/><line x1="148" y1="72" x2="142" y2="72"/><line x1="120" y1="100" x2="120" y2="94"/><line x1="92" y1="72" x2="98" y2="72"/></g>
-          <line class="a-hand" x1="120" y1="72" x2="120" y2="54" stroke="#F4F2F1" stroke-width="3" stroke-linecap="round"/><circle cx="120" cy="72" r="4" fill="#F4F2F1"/>
-        </svg></div><h3>Permanencia</h3><p>Cuánto tiempo se queda la gente, en total y en cada zona.</p></li>
-
-        <li class="mcard"><div class="mcard__art" aria-hidden="true"><span class="mcard__n">06</span><svg viewBox="0 0 240 140">
-          <rect x="182" y="40" width="36" height="76" rx="5" fill="#6A3243"/><rect x="186" y="44" width="28" height="10" rx="2" fill="#C1774B"/>
-          <line x1="24" x2="176" y1="110" y2="110" stroke="#6A3243" stroke-dasharray="4 5"/>
-          <g class="a-queue"><circle cx="160" cy="96" r="9" fill="#F4F2F1"/><circle cx="134" cy="96" r="9" fill="#E6DFD7"/><circle cx="108" cy="96" r="9" fill="#C7BCAC"/><circle cx="82" cy="96" r="9" fill="#C7BCAC"/><circle cx="56" cy="96" r="9" fill="#8E5E69"/></g>
-          <path class="a-timer" d="M60 52 A 24 24 0 1 1 108 52" fill="none" stroke="#C1774B" stroke-width="4" stroke-linecap="round"/><circle cx="84" cy="52" r="3" fill="#C1774B"/>
-        </svg></div><h3>Filas y espera</h3><p>Cuánto tarda la atención y cuándo se arma cola.</p></li>
-
-        <li class="mcard"><div class="mcard__art" aria-hidden="true"><span class="mcard__n">07</span><svg viewBox="0 0 240 140">
-          <path d="M140 64 C 160 52 176 40 190 44 C 204 48 210 34 222 30 L 222 70 C 210 72 204 84 190 82 C 176 80 160 90 140 84 Z" fill="#6A3243"/>
-          <path class="a-line" d="M20 104 C 40 98 52 82 70 88 C 88 94 100 70 118 72 C 130 74 134 72 140 74" fill="none" stroke="#F4F2F1" stroke-width="3" stroke-linecap="round"/>
-          <path class="a-fore" d="M140 74 C 160 70 176 62 190 63 C 204 64 210 52 222 50" fill="none" stroke="#C1774B" stroke-width="3" stroke-linecap="round" stroke-dasharray="6 6"/>
-          <line x1="140" x2="140" y1="22" y2="122" stroke="#8E5E69" stroke-dasharray="2 4"/>
-        </svg></div><h3>Pronóstico</h3><p>Cuánta gente esperar mañana y la semana que viene.</p></li>
-
-        <li class="mcard"><div class="mcard__art" aria-hidden="true"><span class="mcard__n">08</span><svg viewBox="0 0 240 140">
-          <line x1="24" x2="216" y1="118" y2="118" stroke="#6A3243"/>
-          <g class="a-bars"><rect x="38" y="74" width="20" height="44" rx="2" fill="#8FB5AE"/><rect x="62" y="56" width="20" height="62" rx="2" fill="#E6DFD7"/>
-          <rect x="106" y="62" width="20" height="56" rx="2" fill="#8FB5AE"/><rect x="130" y="40" width="20" height="78" rx="2" fill="#E6DFD7"/>
-          <rect x="174" y="82" width="20" height="36" rx="2" fill="#8FB5AE"/><rect x="198" y="64" width="20" height="54" rx="2" fill="#C1774B"/></g>
-        </svg></div><h3>Cambios y campañas</h3><p>Qué le pasó a la gente después de mover algo o lanzar una promo.</p></li>
-      </ul>
+      <div class="deck-wrap">
+        <div class="confetti" aria-hidden="true">
+          <i style="left:6%;top:18%;--r:24deg;background:#C1774B"></i><i style="left:12%;top:78%;--r:-30deg;background:#542433"></i><i style="left:19%;top:8%;--r:62deg;background:#C7BCAC"></i>
+          <i style="left:27%;top:90%;--r:12deg;background:#C1774B"></i><i style="left:35%;top:4%;--r:-48deg;background:#8E5E69"></i><i style="left:44%;top:94%;--r:80deg;background:#C7BCAC"></i>
+          <i style="left:52%;top:6%;--r:18deg;background:#542433"></i><i style="left:60%;top:92%;--r:-22deg;background:#C1774B"></i><i style="left:68%;top:3%;--r:40deg;background:#C7BCAC"></i>
+          <i style="left:76%;top:88%;--r:-70deg;background:#8E5E69"></i><i style="left:84%;top:12%;--r:30deg;background:#C1774B"></i><i style="left:92%;top:72%;--r:-12deg;background:#542433"></i>
+          <i style="left:3%;top:52%;--r:55deg;background:#E6DFD7"></i><i style="left:97%;top:38%;--r:-35deg;background:#C1774B"></i><i style="left:48%;top:-2%;--r:5deg;background:#E6DFD7"></i>
+        </div>
+        <ul class="deck" id="deck">
+          <li class="tcard tcard--caliza" tabindex="0">
+            <div class="tcard__art" aria-hidden="true"><svg viewBox="0 0 200 150">
+              <defs><pattern id="pt-ging" width="20" height="20" patternUnits="userSpaceOnUse"><rect width="20" height="20" fill="#EAE2D7"/><rect width="10" height="20" fill="#DED2C3" opacity=".6"/><rect width="20" height="10" fill="#DED2C3" opacity=".6"/></pattern></defs>
+              <rect width="200" height="150" fill="url(#pt-ging)"/>
+              <rect x="0" y="118" width="200" height="32" fill="#D8CBBB"/>
+              <path d="M120 120V58a24 24 0 0 1 48 0v62Z" fill="#542433"/><path d="M127 120V60a17 17 0 0 1 34 0v60Z" fill="#F4F2F1"/>
+              <g class="art-clock"><circle cx="144" cy="26" r="15" fill="#FBFAF9" stroke="#542433" stroke-width="3"/><path class="art-hand" d="M144 26V16" stroke="#542433" stroke-width="2.6" stroke-linecap="round"/><path d="M144 26l7 4" stroke="#C1774B" stroke-width="2.6" stroke-linecap="round"/></g>
+              <g class="art-walk">
+                <g transform="translate(30 0)"><rect x="-6" y="92" width="12" height="27" rx="6" fill="#8E5E69"/><circle cy="84" r="6.5" fill="#542433"/></g>
+                <g transform="translate(56 0)"><rect x="-6" y="90" width="12" height="29" rx="6" fill="#C1774B"/><circle cy="82" r="6.5" fill="#6A3243"/></g>
+                <g transform="translate(82 0)"><rect x="-6" y="93" width="12" height="26" rx="6" fill="#C7BCAC"/><circle cy="85" r="6.5" fill="#542433"/></g>
+                <g transform="translate(106 0)"><rect x="-6" y="91" width="12" height="28" rx="6" fill="#542433"/><circle cy="83" r="6.5" fill="#8E5E69"/></g>
+              </g>
+            </svg></div>
+            <div class="tcard__body"><h3>Visitas y horario pico</h3><span class="tcard__tag">Pico</span></div>
+            <p class="tcard__desc">Cuánta gente entra y a qué hora se llena el local.</p>
+            <div class="tcard__foot"><span>N.º 01 / 05</span><span><i></i>Personas</span></div>
+          </li>
+          <li class="tcard tcard--rosa" tabindex="0">
+            <div class="tcard__art" aria-hidden="true"><svg viewBox="0 0 200 150">
+              <defs><pattern id="pt-dots" width="14" height="14" patternUnits="userSpaceOnUse"><rect width="14" height="14" fill="#F1E2DC"/><circle cx="7" cy="7" r="1.8" fill="#E3C9C0"/></pattern></defs>
+              <rect width="200" height="150" fill="url(#pt-dots)"/>
+              <rect x="0" y="122" width="200" height="28" fill="#E5D2CA"/>
+              <ellipse cx="100" cy="94" rx="34" ry="7" fill="#C1774B"/><rect x="97" y="96" width="6" height="26" fill="#87695C"/><rect x="84" y="120" width="32" height="4" rx="2" fill="#87695C"/>
+              <rect x="88" y="82" width="8" height="11" rx="2" fill="#FBFAF9"/><rect x="104" y="84" width="8" height="9" rx="2" fill="#FBFAF9"/>
+              <g><rect x="44" y="78" width="14" height="30" rx="7" fill="#542433"/><circle cx="51" cy="69" r="7" fill="#8E5E69"/><rect x="40" y="104" width="22" height="5" rx="2.5" fill="#6A3243"/><rect x="40" y="108" width="4" height="14" fill="#6A3243"/></g>
+              <g><rect x="142" y="78" width="14" height="30" rx="7" fill="#C1774B"/><circle cx="149" cy="69" r="7" fill="#542433"/><rect x="138" y="104" width="22" height="5" rx="2.5" fill="#6A3243"/><rect x="156" y="108" width="4" height="14" fill="#6A3243"/></g>
+              <g class="art-glass" transform="translate(100 34)"><path d="M-11 -18H11L2 0 11 18H-11L-2 0Z" fill="#FBFAF9" stroke="#542433" stroke-width="2.6" stroke-linejoin="round"/><path class="art-sand" d="M-6 14H6L0 6Z" fill="#C1774B"/><path d="M-1 1h2v5h-2z" fill="#C1774B"/></g>
+            </svg></div>
+            <div class="tcard__body"><h3>Permanencia</h3><span class="tcard__tag">Minutos</span></div>
+            <p class="tcard__desc">Cuánto tiempo se queda la gente, en total y en cada zona.</p>
+            <div class="tcard__foot"><span>N.º 02 / 05</span><span><i></i>Tiempo</span></div>
+          </li>
+          <li class="tcard tcard--granate" tabindex="0">
+            <div class="tcard__art" aria-hidden="true"><svg viewBox="0 0 200 150">
+              <defs><pattern id="pt-stripe" width="16" height="16" patternUnits="userSpaceOnUse" patternTransform="rotate(35)"><rect width="16" height="16" fill="#5E2A3A"/><rect width="8" height="16" fill="#6A3243"/></pattern></defs>
+              <rect width="200" height="150" fill="url(#pt-stripe)"/>
+              <rect x="0" y="120" width="200" height="30" fill="#4A1F2D"/>
+              <rect x="150" y="74" width="40" height="48" rx="4" fill="#F4F2F1"/><rect x="146" y="68" width="48" height="9" rx="3" fill="#C1774B"/><rect x="160" y="56" width="20" height="12" rx="2" fill="#C7BCAC"/>
+              <path d="M18 124H142" stroke="#C7BCAC" stroke-width="1.5" stroke-dasharray="4 5"/>
+              <g class="art-queue">
+                <g transform="translate(130 0)"><rect x="-7" y="88" width="14" height="32" rx="7" fill="#F4F2F1"/><circle cy="79" r="7.5" fill="#C7BCAC"/></g>
+                <g transform="translate(104 0)"><rect x="-7" y="89" width="14" height="31" rx="7" fill="#C1774B"/><circle cy="80" r="7.5" fill="#F4F2F1"/></g>
+                <g transform="translate(78 0)"><rect x="-7" y="90" width="14" height="30" rx="7" fill="#C7BCAC"/><circle cy="81" r="7.5" fill="#E6DFD7"/></g>
+                <g transform="translate(52 0)"><rect x="-7" y="88" width="14" height="32" rx="7" fill="#8E5E69"/><circle cy="79" r="7.5" fill="#C7BCAC"/></g>
+                <g transform="translate(26 0)"><rect x="-7" y="90" width="14" height="30" rx="7" fill="#E6DFD7"/><circle cy="81" r="7.5" fill="#8E5E69"/></g>
+              </g>
+              <g transform="translate(70 36)"><circle r="17" fill="#FBFAF9"/><circle r="12" fill="none" stroke="#E6DFD7" stroke-width="4"/><circle class="art-timer" r="12" fill="none" stroke="#C1774B" stroke-width="4" stroke-linecap="round" stroke-dasharray="52 76" transform="rotate(-90)"/><path d="M-10 17l-4 9 12-7" fill="#FBFAF9"/></g>
+            </svg></div>
+            <div class="tcard__body"><h3>Filas y espera</h3><span class="tcard__tag">Espera</span></div>
+            <p class="tcard__desc">Cuánta gente espera, cuánto tarda la atención y cuándo se arma cola.</p>
+            <div class="tcard__foot"><span>N.º 03 / 05</span><span><i></i>Personas y tiempo</span></div>
+          </li>
+          <li class="tcard tcard--holo" tabindex="0">
+            <div class="tcard__art" aria-hidden="true"><svg viewBox="20 6 160 120">
+              <defs><linearGradient id="g-holo" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3A1823"/><stop offset=".55" stop-color="#6A3243"/><stop offset="1" stop-color="#8E5E69"/></linearGradient></defs>
+              <rect width="200" height="150" fill="url(#g-holo)"/>
+              <path d="M100 34 178 76 100 118 22 76Z" fill="#4A1F2D"/>
+              <path d="M22 76V50L100 8V34Z" fill="#6A3243"/><path d="M100 34V8L178 50V76Z" fill="#542433"/>
+              <path d="M30 51 34 49V71L30 73Z" fill="#E6DFD7" opacity=".7"/><path d="M118 24l22 12v14l-22-12Z" fill="#C7BCAC" opacity=".5"/>
+              <g class="art-heat">
+                <ellipse cx="104" cy="80" rx="46" ry="22" fill="#6A3243"/><ellipse cx="104" cy="81" rx="33" ry="16" fill="#8E5E69"/><ellipse cx="104" cy="82" rx="22" ry="10.5" fill="#C7BCAC"/><ellipse cx="104" cy="82.5" rx="12" ry="6" fill="#E6DFD7"/><ellipse cx="104" cy="83" rx="5" ry="2.6" fill="#C1774B"/>
+                <ellipse cx="56" cy="88" rx="16" ry="7" fill="#6A3243"/><ellipse cx="56" cy="88" rx="8" ry="3.5" fill="#8E5E69"/>
+              </g>
+              <path d="M88 70 104 62 120 70 104 78Z" fill="#F4F2F1"/><path d="M88 70V76L104 84V78Z" fill="#C7BCAC"/><path d="M120 70V76L104 84V78Z" fill="#DDD5CA"/>
+              <g><rect x="78" y="72" width="7" height="15" rx="3.5" fill="#F4F2F1"/><circle cx="81.5" cy="69" r="3.6" fill="#F4F2F1"/></g>
+              <g><rect x="124" y="74" width="7" height="15" rx="3.5" fill="#C1774B"/><circle cx="127.5" cy="71" r="3.6" fill="#F4F2F1"/></g>
+              <g><rect x="100" y="86" width="7" height="15" rx="3.5" fill="#E6DFD7"/><circle cx="103.5" cy="83" r="3.6" fill="#F4F2F1"/></g>
+              <g><rect x="52" y="82" width="7" height="15" rx="3.5" fill="#C7BCAC"/><circle cx="55.5" cy="79" r="3.6" fill="#F4F2F1"/></g>
+            </svg></div>
+            <div class="tcard__body"><h3>Zonas y mapa de calor</h3><span class="tcard__tag">Calor</span></div>
+            <p class="tcard__desc">Dónde se junta la gente en tu local y qué sectores quedan vacíos.</p>
+            <div class="tcard__foot"><span>N.º 04 / 05</span><span><i></i>Personas</span></div>
+          </li>
+          <li class="tcard tcard--cobre" tabindex="0">
+            <div class="tcard__art" aria-hidden="true"><svg viewBox="0 0 200 150">
+              <g transform="translate(100 75)"><circle r="160" fill="#E9B48F"/><g fill="#F1CDB2">
+                <path d="M0 0L-16 -160H16Z"/><path d="M0 0L-16 -160H16Z" transform="rotate(30)"/><path d="M0 0L-16 -160H16Z" transform="rotate(60)"/><path d="M0 0L-16 -160H16Z" transform="rotate(90)"/><path d="M0 0L-16 -160H16Z" transform="rotate(120)"/><path d="M0 0L-16 -160H16Z" transform="rotate(150)"/><path d="M0 0L-16 -160H16Z" transform="rotate(180)"/><path d="M0 0L-16 -160H16Z" transform="rotate(210)"/><path d="M0 0L-16 -160H16Z" transform="rotate(240)"/><path d="M0 0L-16 -160H16Z" transform="rotate(270)"/><path d="M0 0L-16 -160H16Z" transform="rotate(300)"/><path d="M0 0L-16 -160H16Z" transform="rotate(330)"/></g></g>
+              <rect x="30" y="16" width="140" height="118" rx="6" fill="#FBFAF9" stroke="#542433" stroke-width="5"/>
+              <rect x="40" y="26" width="46" height="12" rx="2" fill="#C7BCAC"/><rect x="114" y="26" width="46" height="12" rx="2" fill="#C7BCAC"/>
+              <rect x="86" y="62" width="32" height="24" rx="4" fill="#E6DFD7" stroke="#87695C" stroke-width="1.4"/><rect x="138" y="86" width="20" height="34" rx="3" fill="#C1774B"/>
+              <path d="M88 136h26" stroke="#FBFAF9" stroke-width="7"/>
+              <path class="art-path" d="M101 132 C 100 112 70 112 66 96 C 62 78 78 60 100 54 C 124 48 132 66 128 80 C 124 94 132 104 140 104" fill="none" stroke="#C1774B" stroke-width="3.2" stroke-linecap="round" stroke-dasharray="2 7"/>
+              <circle cx="101" cy="132" r="4" fill="#542433"/>
+              <g class="art-walker"><circle cx="140" cy="104" r="7.5" fill="#542433"/><circle cx="140" cy="104" r="3.2" fill="#C1774B"/></g>
+            </svg></div>
+            <div class="tcard__body"><h3>Recorrido</h3><span class="tcard__tag">Camino</span></div>
+            <p class="tcard__desc">Por dónde camina la gente desde que entra hasta que se va.</p>
+            <div class="tcard__foot"><span>N.º 05 / 05</span><span><i></i>Personas</span></div>
+          </li>
+        </ul>
+      </div>
     </div>
   </section>
 

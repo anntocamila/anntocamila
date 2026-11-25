@@ -366,19 +366,6 @@ a.hero__cta { text-decoration: none }
   .kiln__card, .kiln__card img, .kiln__more { transition: none }
 }
 
-/* ---------- 1 · qué medimos: tarjetas ---------- */
-.measure { padding-block: clamp(80px, 9vw, 140px) clamp(56px, 6vw, 96px) }
-.measure .sechead .big { font-size: clamp(40px, 5.2vw, 80px) }
-.mcards { list-style: none; margin: clamp(40px, 5vw, 64px) 0 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px }
-.mcard { position: relative; background: var(--raised); border-radius: 18px; padding: 12px 12px 22px; display: grid; gap: 14px; align-content: start; box-shadow: 0 0 0 1px var(--line), 4px 5px 0 #E6DFD7; transition: transform .45s var(--ease-paper), box-shadow .45s var(--ease) }
-.mcard:hover { transform: translateY(-6px); box-shadow: 0 0 0 1px var(--line), 6px 10px 0 #E6DFD7, 0 24px 40px -24px rgba(39,33,36,.35) }
-.mcard__art { position: relative; aspect-ratio: 12 / 7; border-radius: 12px; background: var(--brand-deep); overflow: hidden }
-.mcard__art::after { content: ""; position: absolute; inset: 0; border-radius: inherit; box-shadow: inset 0 0 0 1px rgba(244,242,241,.06) }
-.mcard__art svg { position: absolute; inset: 0; width: 100%; height: 100% }
-.mcard__n { position: absolute; z-index: 1; left: 12px; top: 10px; font-family: var(--display); font-weight: 600; font-size: 13px; color: var(--on-brand-muted) }
-.mcard h3 { font-family: var(--display); font-weight: 600; font-size: 21px; line-height: 1.15; color: var(--brand); padding: 0 8px }
-.mcard p { font-size: 15px; color: var(--ink-muted); padding: 0 8px; margin-top: -6px }
-
 /* ---------- 4 · cómo funciona: una tarjeta con ilustración ---------- */
 .process-block { padding-block: clamp(56px, 7vw, 112px) }
 .howcard { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); background: var(--brand); color: var(--on-brand); border-radius: 22px; overflow: hidden; box-shadow: 0 40px 80px -40px rgba(39,33,36,.6) }
@@ -497,6 +484,86 @@ html.modal-open { overflow: hidden }
 }
 @media (max-width: 700px) {
   .ic { padding: 18px 16px 12px }
+}
+
+/* ---------- 1 · qué medimos: tarjetas de colección en abanico ---------- */
+.measure { padding-block: clamp(80px, 9vw, 140px) clamp(48px, 6vw, 96px); overflow: hidden }
+.measure__head { text-align: center; max-width: 920px; margin: 0 auto }
+.measure__head .kick { justify-content: center }
+.measure__head .big { font-size: clamp(38px, 5vw, 76px); margin-top: 20px }
+.measure__head .lead { margin: 22px auto 0 }
+.deck-wrap { position: relative; margin-top: clamp(40px, 5vw, 72px); padding-block: 36px 56px }
+.confetti { position: absolute; inset: 0; pointer-events: none }
+.confetti i { position: absolute; width: 11px; height: 5px; border-radius: 1px; transform: rotate(var(--r)); opacity: .9 }
+.deck { list-style: none; margin: 0; padding: 0; display: flex; justify-content: center; align-items: flex-start; perspective: 1400px; position: relative }
+.tcard { --rot: 0deg; --lift: 0px; --dx: 0px; --dy: 0px; --fan: 1; --rx: 0deg; --ry: 0deg; --mx: 50%; --my: 30%;
+  position: relative; flex: 0 0 228px; min-height: 340px; margin-left: 12px; border-radius: 18px; padding: 10px 10px 12px; display: flex; flex-direction: column; gap: 8px; color: var(--ink);
+  transform: translate(var(--dx), calc(var(--lift) + var(--dy))) rotate(calc(var(--rot) * var(--fan))) rotateX(var(--rx)) rotateY(var(--ry));
+  transition: transform .55s var(--ease-paper), box-shadow .45s var(--ease); box-shadow: 0 1px 0 rgba(39,33,36,.08), 0 20px 34px -20px rgba(39,33,36,.5); outline-offset: 4px; will-change: transform }
+.tcard:first-child { margin-left: 0 }
+.deck .tcard:nth-child(1) { --rot: -6deg; --lift: 28px }
+.deck .tcard:nth-child(2) { --rot: -3deg; --lift: 8px }
+.deck .tcard:nth-child(4) { --rot: 3deg; --lift: 8px }
+.deck .tcard:nth-child(5) { --rot: 6deg; --lift: 28px }
+.tcard:hover, .tcard:focus-visible { --lift: -18px; --rot: 0deg; z-index: 3; box-shadow: 0 1px 0 rgba(39,33,36,.08), 0 34px 50px -24px rgba(39,33,36,.6) }
+.tcard.is-dealing { transition: none }
+.tcard::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; background: radial-gradient(circle at var(--mx) var(--my), rgba(255,255,255,.28), rgba(255,255,255,0) 45%); opacity: 0; transition: opacity .35s var(--ease) }
+.tcard:hover::after { opacity: 1 }
+.tcard__art { border-radius: 12px; overflow: hidden; aspect-ratio: 4 / 3; box-shadow: inset 0 0 0 1px rgba(39,33,36,.06) }
+.tcard__art svg { display: block; width: 100%; height: 100% }
+.tcard__body { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 6px 6px 0 }
+.tcard h3 { font-family: var(--display); font-weight: 600; font-size: 19px; line-height: 1.1; letter-spacing: -.01em }
+.tcard__tag { flex: none; font-size: 9.5px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; padding: 4px 8px; border-radius: 999px; background: rgba(39,33,36,.08) }
+.tcard__desc { font-size: 13.5px; line-height: 1.45; padding: 0 6px; color: #4E4347 }
+.tcard__foot { margin-top: auto; display: flex; justify-content: space-between; align-items: center; gap: 8px; border-top: 1px solid rgba(39,33,36,.14); padding: 9px 6px 0; font-size: 11px; color: #5E5458; font-variant-numeric: tabular-nums }
+.tcard__foot span:last-child { display: inline-flex; align-items: center; gap: 6px; font-weight: 600 }
+.tcard__foot i { width: 6px; height: 6px; border-radius: 50%; background: var(--cobre) }
+.tcard--caliza { background: #F1ECE4 }
+.tcard--rosa { background: #F6EAE5 }
+.tcard--granate { background: var(--brand); color: var(--on-brand) }
+.tcard--holo { background: linear-gradient(155deg, #3A1823 0%, #6A3243 45%, #8E5E69 75%, #B97A5A 100%); color: var(--on-brand) }
+.tcard--granate .tcard__desc, .tcard--holo .tcard__desc { color: #EDE2DF }
+.tcard--granate .tcard__tag, .tcard--holo .tcard__tag { background: rgba(244,242,241,.16) }
+.tcard--granate .tcard__foot, .tcard--holo .tcard__foot { color: #E3D8D5; border-top-color: rgba(244,242,241,.22) }
+.tcard--cobre { background: linear-gradient(160deg, #F4D2B8 0%, #EAAF87 55%, #DE9468 100%) }
+.tcard--cobre .tcard__desc { color: #3D3034 }
+.tcard--cobre .tcard__foot { color: #3D3034; border-top-color: rgba(39,33,36,.18) }
+.tcard--cobre .tcard__foot i { background: var(--brand) }
+.tcard--cobre .tcard__tag { background: rgba(84,36,51,.12) }
+
+/* pequeñas animaciones dentro de cada ilustración (solo cuando la sección está a la vista) */
+.deck.is-live .art-hand { transform-box: view-box; transform-origin: 144px 26px; animation: art-spin 6s linear infinite }
+.deck.is-live .art-walk { animation: art-walk 2.4s var(--ease) infinite alternate }
+.deck.is-live .art-sand { transform-box: fill-box; transform-origin: 50% 100%; animation: art-sand 3s ease-in-out infinite }
+.deck.is-live .art-queue { animation: art-walk 3s var(--ease) infinite alternate }
+.deck.is-live .art-timer { animation: art-timer 4s var(--ease) infinite }
+.deck.is-live .art-heat { transform-box: fill-box; transform-origin: 50% 50%; animation: art-heat 3.2s ease-in-out infinite alternate }
+.deck.is-live .art-path { animation: art-path 2.2s linear infinite }
+.deck.is-live .art-walker { transform-box: fill-box; transform-origin: 50% 50%; animation: art-heat 1.6s ease-in-out infinite alternate }
+@keyframes art-spin { to { transform: rotate(360deg) } }
+@keyframes art-walk { to { transform: translateX(8px) } }
+@keyframes art-sand { 50% { transform: scaleY(.55) } }
+@keyframes art-timer { 0% { stroke-dasharray: 6 76 } 80%, 100% { stroke-dasharray: 70 76 } }
+@keyframes art-heat { to { transform: scale(1.07) } }
+@keyframes art-path { to { stroke-dashoffset: -54 } }
+
+@media (max-width: 1240px) {
+  .tcard { flex-basis: 194px; min-height: 330px; margin-left: 8px }
+  .tcard h3 { font-size: 17px }
+}
+@media (max-width: 1000px) {
+  /* en pantallas angostas las tarjetas se deslizan de costado, apenas inclinadas */
+  .deck { justify-content: flex-start; overflow-x: auto; scroll-snap-type: x mandatory; padding: 28px max(24px, env(safe-area-inset-left, 0px)) 36px; margin-inline: calc(-1 * max(24px, env(safe-area-inset-left, 0px))); scrollbar-width: none }
+  .deck::-webkit-scrollbar { display: none }
+  .tcard { flex: 0 0 min(72vw, 260px); margin-left: 14px; scroll-snap-align: center; --lift: 0px !important }
+  .deck .tcard:nth-child(odd) { --rot: -1.5deg }
+  .deck .tcard:nth-child(even) { --rot: 1.5deg }
+  .deck-wrap { padding-block: 8px 24px }
+  .confetti { display: none }
+}
+@media (prefers-reduced-motion: reduce) {
+  .tcard { transition: none }
+  .deck .art-hand, .deck .art-walk, .deck .art-sand, .deck .art-queue, .deck .art-timer, .deck .art-heat, .deck .art-path, .deck .art-walker { animation: none !important }
 }
 
 /* ===== el hero (paleta fija de marca: no cambia con el tema) ===== */
