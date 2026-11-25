@@ -184,25 +184,46 @@
     </div>
   </section>
 
-  <!-- 4. Vistorm en acción: un local de ejemplo -->
-  <section class="vxsec" id="panel" aria-labelledby="t-panel">
+  <!-- 2. El panel: el software tal como se ve -->
+  <section class="panelsec" id="panel" aria-labelledby="t-panel">
     <div class="wrap">
       <div class="sechead">
         <span class="kick">Vistorm en acción</span>
         <h2 class="big split" id="t-panel">Encontrá qué mejorar en tu local.</h2>
         <p class="lead" data-reveal>Explorá un local de ejemplo. Mirá qué zonas reciben más visitas, cuándo se acumula la espera y qué cambió después de una prueba.</p>
       </div>
-      <div class="vx" id="vx">
-        <div class="vx__surface">
-          <div class="vx__tabs" role="tablist" aria-label="Qué mirar del local de ejemplo">
-            <button class="vx__tab" role="tab" type="button" id="vx-t-visitas" aria-controls="vx-view" data-tab="visitas">Visitas</button>
-            <button class="vx__tab" role="tab" type="button" id="vx-t-zonas" aria-controls="vx-view" data-tab="zonas">Zonas</button>
-            <button class="vx__tab" role="tab" type="button" id="vx-t-espera" aria-controls="vx-view" data-tab="espera">Espera</button>
-            <button class="vx__tab" role="tab" type="button" id="vx-t-cambio" aria-controls="vx-view" data-tab="cambio">Antes y después</button>
+      <div class="device-wrap">
+        <svg class="pc-defs" width="0" height="0" aria-hidden="true" focusable="false"><defs><pattern id="mq-dark" width="7" height="48" patternUnits="userSpaceOnUse"><rect width="7" height="48" fill="#542433"/><path d="M1.5 0C2.6 12 .6 24 1.6 48M4.6 0C3.6 16 5.6 30 4.4 48" fill="none" stroke="#FFFFFF" stroke-opacity=".14" stroke-width=".7"/></pattern><pattern id="mq-mid" width="7" height="48" patternUnits="userSpaceOnUse"><rect width="7" height="48" fill="#8E5E69"/><path d="M1.5 0C2.6 12 .6 24 1.6 48M4.6 0C3.6 16 5.6 30 4.4 48" fill="none" stroke="#FFFFFF" stroke-opacity=".16" stroke-width=".7"/></pattern><pattern id="mq-light" width="7" height="48" patternUnits="userSpaceOnUse"><rect width="7" height="48" fill="#E4D2C6"/><path d="M1.5 0C2.6 12 .6 24 1.6 48M4.6 0C3.6 16 5.6 30 4.4 48" fill="none" stroke="#542433" stroke-opacity=".16" stroke-width=".7"/></pattern><pattern id="mq-cop" width="7" height="48" patternUnits="userSpaceOnUse"><rect width="7" height="48" fill="#C1774B"/><path d="M1.5 0C2.6 12 .6 24 1.6 48M4.6 0C3.6 16 5.6 30 4.4 48" fill="none" stroke="#3A1823" stroke-opacity=".22" stroke-width=".7"/></pattern><pattern id="mq-verde" width="7" height="48" patternUnits="userSpaceOnUse"><rect width="7" height="48" fill="#8FB5AE"/><path d="M1.5 0C2.6 12 .6 24 1.6 48M4.6 0C3.6 16 5.6 30 4.4 48" fill="none" stroke="#2F5D5A" stroke-opacity=".22" stroke-width=".7"/></pattern></defs></svg>
+        <div class="device" id="device">
+          <div class="sw" id="sw">
+            <div class="sw__side">
+              <img class="sw__logo" src="/assets/img/logo-negativo.svg" alt="" width="124" height="42">
+              <div class="sw__local"><small>Bar, restaurante o café</small><b>Local de ejemplo</b></div>
+              <nav class="sw__nav" aria-label="Secciones del panel de ejemplo">
+                <button class="sw__item" type="button" data-view="hoy">Hoy<i class="sw__prog" aria-hidden="true"></i></button>
+                <button class="sw__item" type="button" data-view="hacer">Qué hacer<span class="sw__badge" aria-hidden="true">2</span><span class="sr"> · 2 sugerencias</span><i class="sw__prog" aria-hidden="true"></i></button>
+                <p class="sw__group">Tus preguntas</p>
+                <button class="sw__item" type="button" data-view="mesas">Mesas<small>¿Qué mesa espera?</small><i class="sw__prog" aria-hidden="true"></i></button>
+                <button class="sw__item" type="button" data-view="atencion">Atención<small>¿Quién se va sin atención?</small><i class="sw__prog" aria-hidden="true"></i></button>
+                <button class="sw__item" type="button" data-view="personal">Personal<small>¿Cuándo reforzar?</small><i class="sw__prog" aria-hidden="true"></i></button>
+                <button class="sw__item" type="button" data-view="salon">Salón<small>¿Qué parte no se usa?</small><i class="sw__prog" aria-hidden="true"></i></button>
+                <button class="sw__item" type="button" data-view="resultados">Resultados<small>¿Funcionó el cambio?</small><i class="sw__prog" aria-hidden="true"></i></button>
+              </nav>
+              <ul class="sw__more" aria-hidden="true"><li>Informe semanal</li><li>Alertas</li><li>Cámaras y plano</li><li>Ajustes</li></ul>
+            </div>
+            <div class="sw__main">
+              <div class="sw__top">
+                <p class="sw__crumbs" id="sw-crumbs">Local de ejemplo / <b>Hoy</b></p>
+                <div class="sw__status" aria-hidden="true">
+                  <span class="sw__live">EN LÍNEA</span>
+                </div>
+              </div>
+              <div class="sw__view" id="sw-view"></div>
+            </div>
           </div>
-          <div class="vx__view" id="vx-view" role="tabpanel" tabindex="0"></div>
         </div>
       </div>
+      <div class="panel-foot"><span class="datanote"><span class="dot" aria-hidden="true"></span>Local de ejemplo · datos simulados</span><span class="hint">Tocá cualquier sección del panel para recorrerlo.</span></div>
     </div>
   </section>
 

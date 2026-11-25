@@ -46,7 +46,7 @@ Sitio de Vistorm Labs listo para Vercel: landing de una sola acción («Pedí un
 
 ## Estructura
 
-Hero («Entendé qué pasa dentro de tu local.») → qué medimos (cinco cuadros de papel cortado; el activo se abre con su texto) → para quién (Retail y comercio; Centros comerciales; Gastronomía y hotelería; Servicios, salud y educación) → Vistorm en acción (un local de ejemplo con pestañas Visitas, Zonas, Espera y Antes y después: arriba el hallazgo, debajo el gráfico; papel en capas afuera y superficie lisa para leer) → cómo funciona → demo («Conocé Vistorm.») → preguntas frecuentes. Todos los botones dicen «Agendá una demo» y abren el agendador en un pop-up.
+Hero («Entendé qué pasa dentro de tu local.») → qué medimos (cinco cuadros de papel cortado; el activo se abre con su texto) → para quién (Retail y comercio; Centros comerciales; Gastronomía y hotelería; Servicios, salud y educación) → Vistorm en acción (la réplica del software con un local de ejemplo, arranca en Mesas; papel en capas alrededor y superficie lisa para los datos) → cómo funciona → demo («Conocé Vistorm.») → preguntas frecuentes. Todos los botones dicen «Agendá una demo» y abren el agendador en un pop-up.
 
 Redes sociales: completar los enlaces de Instagram y LinkedIn en `SOCIAL` (en el generador) para que aparezcan en el pie.
 
