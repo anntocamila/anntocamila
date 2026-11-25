@@ -1,5 +1,5 @@
 /* Vistorm Labs · movimiento de la landing (Lenis + GSAP ScrollTrigger) */
-/* ===== Vistorm Labs · movimiento de la landing v3 =====
+/* ===== Vistorm Labs · movimiento de la landing v4 =====
    Scroll suave (Lenis) + escenas guiadas por scroll (GSAP ScrollTrigger).
    Personalidad "premium": curvas suaves, nada lineal salvo el scrub, rebote de papel chico (3–5 %). */
 (function () {
@@ -66,17 +66,6 @@
     }).observe(walk);
   }
 
-  /* ---------- 4 · puntos de personas sobre el shopping ---------- */
-  var dotsSvg = $('#brk-dots'), brkDots = [];
-  if (dotsSvg) {
-    [[31, 57], [44, 62], [60, 53], [87, 51], [96, 38], [107, 45], [105, 83], [147, 61], [135, 50], [14, 16], [43, 20], [68, 25], [78, 27], [117, 26], [133, 24], [148, 20], [86, 64], [61, 72]].forEach(function (p, i) {
-      var g = document.createElementNS(NS, 'g');
-      var r = document.createElementNS(NS, 'circle'); r.setAttribute('cx', p[0]); r.setAttribute('cy', p[1]); r.setAttribute('r', 3.2); r.setAttribute('fill', 'none'); r.setAttribute('stroke', '#F4F2F1'); r.setAttribute('stroke-width', '.5'); r.setAttribute('opacity', '.7');
-      var c = document.createElementNS(NS, 'circle'); c.setAttribute('cx', p[0]); c.setAttribute('cy', p[1]); c.setAttribute('r', 1.5); c.setAttribute('fill', i % 3 === 0 ? '#C1774B' : '#F4F2F1');
-      g.appendChild(r); g.appendChild(c); dotsSvg.appendChild(g); brkDots.push(g);
-    });
-  }
-
   /* ---------- 6 · privacidad: la imagen se vuelve puntos ---------- */
   var pc = $('#priv-canvas'), pn = $('#priv-n'), privP = motion ? 0 : 1, pctx, pw = 0, ph = 0, cells = [], pimg = null, privDirty = true;
   var PEOPLE = [[45, 350, 60, 170], [160, 350, 55, 160], [385, 360, 60, 180], [585, 340, 50, 150], [750, 330, 55, 150], [808, 320, 55, 170], [870, 340, 60, 190], [270, 380, 0, 0]];
@@ -139,16 +128,6 @@
     }).observe(pc);
   }
 
-  /* ---------- 3 · anatomía: qué se ilumina en cada medición ---------- */
-  var anaItems = $$('#ana-list li'), anaGroups = $$('.ov g'), anaChips = $$('.chip'), anaIdx = -1;
-  function anaSet(i) {
-    if (i === anaIdx) return; anaIdx = i;
-    anaItems.forEach(function (li, k) { li.classList.toggle('on', k === i); });
-    anaGroups.forEach(function (g) { g.classList.toggle('on', +g.dataset.g === i); });
-    anaChips.forEach(function (c) { c.classList.toggle('on', +c.dataset.c === i); });
-  }
-  anaSet(0);
-
   /* ---------- 7 · tarjetas que se abren con resorte ---------- */
   var kiln = $$('.kiln__card');
   function kOpen(card) {
@@ -169,22 +148,19 @@
     if (card) kOpen(card);
   })();
 
-  /* ---------- 5 · panel: secciones que se recorren solas ---------- */
-  var tabs = $$('.tab'), pane = $('#pane'), autoTabs = true, tabTween = null, auto = false;
-  function stopAuto() { autoTabs = false; if (tabTween) tabTween.kill(); tabs.forEach(function (t) { var p = $('.prog', t); if (p) p.style.transform = 'scaleX(0)'; }); }
-  tabs.forEach(function (t) {
-    t.addEventListener('click', function () { if (!auto) stopAuto(); });
-    t.addEventListener('keydown', stopAuto);
-  });
+
+  /* ---------- panel: recorre sus secciones solo mientras está a la vista ---------- */
+  var P = window.VistormPanel, sw = $('#sw'), autoOn = !!P, cycleTween = null, ORDER = ['atencion', 'hoy', 'hacer', 'salon', 'resultados'], ci = 0;
+  function stopAuto() { autoOn = false; if (cycleTween) cycleTween.kill(); $$('.sw__prog').forEach(function (p) { p.style.transform = 'scaleX(0)'; }); }
+  if (sw) {
+    sw.addEventListener('sw:view', function (e) { if (e.detail.user) stopAuto(); });
+    sw.addEventListener('pointerdown', stopAuto);
+    sw.addEventListener('keydown', stopAuto);
+  }
 
   /* ---------- sin movimiento: estados finales y listo ---------- */
   if (!motion) {
-    anaItems.forEach(function (li, k) { li.addEventListener('click', function () { anaSet(k); }); });
-    $$('.brk__steps li').forEach(function (l) { l.classList.add('on'); });
-    var sc = $('#brk-scene'); if (sc) sc.style.transform = 'rotateX(50deg) rotateZ(-30deg) scale(.8)';
-    $$('.plane').forEach(function (p) { p.style.transform = 'translateZ(' + (+p.dataset.p * 70) + 'px)'; });
-    $$('.brk__labels li').forEach(function (t) { t.style.opacity = 1; });
-    var up = $('#brk-up'); if (up) up.style.opacity = 1;
+    privP = 1;
     return;
   }
 
@@ -212,15 +188,6 @@
   });
 
   later(function () {
-    /* ---------- cinta: se inclina con la velocidad del scroll ---------- */
-    var mq = $('.marquee__track');
-    if (mq && lenis) {
-      var skewTo = G.quickTo(mq, 'skewX', { duration: 0.6, ease: 'power3' });
-      lenis.on('scroll', function (e) { skewTo(clamp(-e.velocity * 0.35, -8, 8)); });
-    }
-  });
-
-  later(function () {
     /* ---------- 1 · la vidriera: de tarjeta a pantalla completa ---------- */
     var cmpMedia = $('#cmp-media');
     if (cmpMedia) {
@@ -240,167 +207,63 @@
           .to({}, { duration: 0.4 });
         return tl;
       };
-      mm.add('(min-width: 1001px)', function () {
-        ST.create({ trigger: '.cmp__pin', start: 'top top', end: '+=210%', pin: true, scrub: 0.8, animation: cmpTl() });
-      });
-      mm.add('(max-width: 1000px)', function () {
-        ST.create({ trigger: cmpMedia, start: 'top 85%', end: 'bottom 45%', scrub: 0.6, animation: cmpTl() });
-      });
+      ST.create({ trigger: cmpMedia, start: 'top 88%', end: 'bottom 55%', scrub: 0.7, animation: cmpTl() });
     }
   });
 
   later(function () {
-    /* ---------- 2 · el problema: tres preguntas sobre el local ---------- */
-    var hots = $$('[data-hot]'), probImg = $('#prob-media img');
-    if (hots.length) {
-      var probTl = function () {
-        var tl = G.timeline();
-        tl.fromTo(probImg, { scale: 1.1, rotate: -1.5 }, { scale: 1, rotate: 0, duration: 3, ease: 'none' }, 0);
-        hots.forEach(function (h, i) {
-          var at = 0.3 + i * 0.85;
-          tl.fromTo($('.hot__dot', h), { scale: 0 }, { scale: 1, duration: 0.3, ease: 'back.out(2)' }, at)
-            .fromTo($('.hot__card', h), { y: 26, opacity: 0, rotate: i % 2 ? 2.5 : -2.5 }, { y: 0, opacity: 1, rotate: 0, duration: 0.45, ease: 'back.out(1.4)' }, at + 0.3);
-        });
-        return tl;
-      };
-      mm.add('(min-width: 1001px)', function () {
-        ST.create({ trigger: '.prob__pin', start: 'top top', end: '+=170%', pin: true, scrub: 0.8, animation: probTl() });
-      });
-      mm.add('(max-width: 1000px)', function () {
-        ST.create({ trigger: '#prob-media', start: 'top 85%', end: 'bottom 40%', scrub: 0.6, animation: probTl() });
-      });
-    }
-  });
-
-  later(function () {
-    /* ---------- 3 · anatomía de un local ---------- */
-    var anaPin = $('#ana-pin');
-    if (anaPin) {
-      var anaImg = $('.ana__stage img');
-      mm.add('(min-width: 1001px)', function () {
-        var st = ST.create({ trigger: anaPin, start: 'top top', end: '+=420%', pin: true, scrub: 0.6,
-          animation: G.fromTo(anaImg, { scale: 1.12, xPercent: -2 }, { scale: 1, xPercent: 0, ease: 'none' }),
-          onUpdate: function (s) { anaSet(Math.min(7, Math.floor(s.progress * 8))); } });
-        var onClick = function (e) { var k = +e.currentTarget.dataset.i; scrollToY(st.start + (k + 0.5) / 8 * (st.end - st.start)); };
-        anaItems.forEach(function (li) { li.addEventListener('click', onClick); });
-        return function () { anaItems.forEach(function (li) { li.removeEventListener('click', onClick); }); };
-      });
-      mm.add('(max-width: 1000px)', function () {
-        var k = 0, timer = null, vis = false;
-        var next = function () { k = (k + 1) % 8; anaSet(k); };
-        var io = new IntersectionObserver(function (es) {
-          vis = es[0].isIntersecting; clearInterval(timer); if (vis) timer = setInterval(next, 2600);
-        }, { threshold: 0.4 });
-        io.observe($('.ana__stage'));
-        var onClick = function (e) { k = +e.currentTarget.dataset.i; anaSet(k); clearInterval(timer); };
-        anaItems.forEach(function (li) { li.addEventListener('click', onClick); });
-        return function () { io.disconnect(); clearInterval(timer); anaItems.forEach(function (li) { li.removeEventListener('click', onClick); }); };
-      });
-    }
-  });
-
-  later(function () {
-    /* ---------- 4 · cómo funciona: la escena se desarma en capas y vuelve ---------- */
-    var scene = $('#brk-scene');
-    if (scene) {
-      var planes = $$('.plane', scene), labels = $$('.brk__labels li'), bSteps = $$('#brk-steps li');
-      var bV = $('#brk-v'), bUp = $('#brk-up'), bZ = $('#brk-z');
-      var tilt = { k: 0 }, stepK = -1;
-      var paintTilt = function () {
-        var k = tilt.k;
-        scene.style.transform = 'rotateX(' + (54 * k).toFixed(2) + 'deg) rotateZ(' + (-32 * k).toFixed(2) + 'deg) scale(' + (1 - 0.16 * k).toFixed(3) + ')';
-      };
-      var setStep = function (k) {
-        if (k === stepK) return; stepK = k;
-        bSteps.forEach(function (s, i) { s.classList.toggle('on', i === k); });
-        if (bV) { bV.textContent = k === 3 ? '1.461' : '1.248'; bZ.textContent = k === 3 ? 'Vidriera nueva' : 'Escalera mecánica'; bUp.style.opacity = k === 3 ? 1 : 0; }
-      };
-      G.set(planes.slice(1), { opacity: 0 });
-      // los puntos solo se mueven mientras la sección está a la vista
-    var dotsTl = G.timeline({ paused: true });
-    brkDots.forEach(function (d, i) { dotsTl.to(d, { x: Math.sin(i * 1.3) * 3, y: Math.cos(i * 0.9) * 2, duration: 2.2 + (i % 4) * 0.4, repeat: -1, yoyo: true, ease: 'sine.inOut' }, 0); });
-    ST.create({ trigger: '.brk', start: 'top bottom', end: 'bottom top', onToggle: function (st) { if (st.isActive) dotsTl.play(); else dotsTl.pause(); } });
-      var brkTl = function (zk) {
-        zk = zk || 1;
-        var tl = G.timeline({ onUpdate: paintTilt });
-        tl.to(tilt, { k: 1, duration: 1, ease: 'power2.inOut' }, 0)
-          .fromTo(planes[1], { opacity: 0, z: 0 }, { opacity: 1, z: 90 * zk, duration: 0.7, ease: 'power2.out' }, 0.9)
-          .fromTo(brkDots, { scale: 0, transformOrigin: '50% 50%' }, { scale: 1, duration: 0.35, stagger: 0.02, ease: 'back.out(2)' }, 1.0)
-          .fromTo(planes[2], { opacity: 0, z: 0 }, { opacity: 1, z: 180 * zk, duration: 0.7, ease: 'power2.out' }, 1.6)
-          .fromTo(planes[3], { opacity: 0, z: 0 }, { opacity: 1, z: 290 * zk, duration: 0.7, ease: 'back.out(1.2)' }, 2.2)
-          .fromTo(labels[3], { opacity: 0, x: 24 }, { opacity: 1, x: 0, duration: 0.35, ease: 'power3.out' }, 0.55)
-          .fromTo(labels[2], { opacity: 0, x: 24 }, { opacity: 1, x: 0, duration: 0.35, ease: 'power3.out' }, 1.1)
-          .fromTo(labels[1], { opacity: 0, x: 24 }, { opacity: 1, x: 0, duration: 0.35, ease: 'power3.out' }, 1.7)
-          .fromTo(labels[0], { opacity: 0, x: 24 }, { opacity: 1, x: 0, duration: 0.35, ease: 'power3.out' }, 2.3)
-          .to({}, { duration: 0.5 })
-          // vuelve todo a su lugar: queda la escena y, encima, el resultado
-          .to(labels, { opacity: 0, x: 24, duration: 0.3, stagger: 0.04 }, 3.4)
-          .to(tilt, { k: 0, duration: 0.8, ease: 'power3.inOut' }, 3.4)
-          .to(planes[1], { z: 0, opacity: 0.85, duration: 0.8, ease: 'power3.inOut' }, 3.4)
-          .to(planes[2], { z: 0, opacity: 0.55, duration: 0.8, ease: 'power3.inOut' }, 3.4)
-          .to(planes[3], { z: 40 * zk, duration: 0.8, ease: 'back.out(1.3)' }, 3.4)
-          .to({}, { duration: 0.6 });
-        return tl;
-      };
-      mm.add('(min-width: 1001px)', function () {
-        ST.create({ trigger: '#brk-pin', start: 'top top', end: '+=320%', pin: true, scrub: 0.8, animation: brkTl(),
-          onUpdate: function (s) { var p = s.progress; setStep(p < 0.2 ? 0 : p < 0.45 ? 1 : p < 0.72 ? 2 : 3); } });
-      });
-      mm.add('(max-width: 1000px)', function () {
-        bSteps.forEach(function (s) { s.classList.add('on'); }); stepK = 9;
-        ST.create({ trigger: '.brk__stage', start: 'top 85%', end: 'bottom 15%', scrub: 0.6, animation: brkTl(window.innerWidth <= 640 ? 0.4 : 0.7),
-          onUpdate: function (s) { if (bUp) bUp.style.opacity = s.progress > 0.8 ? 1 : 0; } });
-      });
-    }
-  });
-
-  later(function () {
-    /* ---------- 5 · el panel gira y queda de frente ---------- */
+    /* ---------- 2 · el panel gira y queda de frente; cada sección entra en cascada ---------- */
     var dev = $('#device');
-    if (dev) {
-      G.fromTo(dev, { rotateX: 32, y: 90, scale: 0.88 }, { rotateX: 0, y: 0, scale: 1, ease: 'none', scrollTrigger: { trigger: '.device-wrap', start: 'top 98%', end: 'top 22%', scrub: 0.7 } });
-      $$('[data-float]').forEach(function (f) {
-        G.fromTo(f, { y: 140, opacity: 0, rotate: -3 }, { y: +f.dataset.float, opacity: 1, rotate: 0, ease: 'none', scrollTrigger: { trigger: '.device-wrap', start: 'top 85%', end: 'bottom 30%', scrub: 0.9 } });
-      });
-      // cada cambio de sección entra en cascada
-      var animPane = function () {
-        var kids = $$('#pane > div > *');
-        G.fromTo(kids, { y: 18, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: 'power3.out', stagger: 0.06, clearProps: 'transform,opacity' });
-        var bars = $$('#pane .chart rect');
-        if (bars.length) G.from(bars, { scaleY: 0, transformOrigin: '50% 100%', duration: 0.7, ease: 'power3.out', stagger: 0.015, delay: 0.1 });
-        var fb = $$('#pane .ft i, #pane .opp__p');
-        if (fb.length) G.from(fb, { scaleX: 0, transformOrigin: '0 50%', duration: 0.8, ease: 'power3.out', stagger: 0.08, delay: 0.1 });
-        var cells = $$('#pane .week td');
-        if (cells.length) G.from(cells, { scale: 0.2, opacity: 0, duration: 0.4, ease: 'back.out(1.6)', stagger: { each: 0.004, from: 'start' } });
-      };
-      if (pane && 'MutationObserver' in window) new MutationObserver(animPane).observe(pane, { childList: true });
-      // recorrido automático de las secciones mientras el panel está a la vista
-      var cur = 0;
-      var cycle = function () {
-        if (!autoTabs) return;
-        var bar = $('.prog', tabs[cur]);
-        tabTween = G.fromTo(bar, { scaleX: 0 }, { scaleX: 1, duration: 5, ease: 'none', onComplete: function () {
-          bar.style.transform = 'scaleX(0)'; if (!autoTabs) return;
-          cur = (cur + 1) % tabs.length; auto = true; tabs[cur].click(); auto = false; cycle();
-        } });
-      };
-      ST.create({ trigger: dev, start: 'top 60%', end: 'bottom top', onEnter: function () { if (autoTabs && !tabTween) cycle(); },
-        onLeave: function () { if (tabTween) tabTween.pause(); }, onEnterBack: function () { if (tabTween && autoTabs) tabTween.resume(); }, onLeaveBack: function () { if (tabTween) tabTween.pause(); } });
-      var nav = $('.panelx__nav'); if (nav) nav.addEventListener('pointerdown', stopAuto);
-    }
+    if (!dev || !P) return;
+    G.fromTo(dev, { rotateX: 26, y: 80, scale: 0.9 }, { rotateX: 0, y: 0, scale: 1, ease: 'none', scrollTrigger: { trigger: '.device-wrap', start: 'top 98%', end: 'top 28%', scrub: 0.7 } });
+    var animView = function () {
+      var v = $('#sw-view'); if (!v) return;
+      G.fromTo(v.children, { y: 16, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: 'power3.out', stagger: 0.06, clearProps: 'transform,opacity' });
+      var br = $$('.sw__chart rect, .sw__mini rect', v);
+      if (br.length) G.from(br, { scaleY: 0, transformOrigin: '50% 100%', duration: 0.7, ease: 'power3.out', stagger: 0.012, delay: 0.12 });
+      var hb = $$('.sw__split b, .sw__vs-row .bars i', v);
+      if (hb.length) G.from(hb, { scaleX: 0, transformOrigin: '0 50%', duration: 0.8, ease: 'power3.out', stagger: 0.06, delay: 0.12 });
+      var arc = $$('.sw__ring-arc', v);
+      arc.forEach(function (a) { var full = a.getAttribute('stroke-dasharray'); G.from(a, { attr: { 'stroke-dasharray': '0 ' + full.split(' ')[1] }, duration: 0.9, ease: 'power3.out', delay: 0.15 }); });
+      var cells = $$('.sw__week td', v);
+      if (cells.length) G.from(cells, { scale: 0.2, opacity: 0, duration: 0.35, ease: 'back.out(1.6)', stagger: 0.004 });
+    };
+    sw.addEventListener('sw:view', animView);
+    // recorrido automático: 5 s por sección, con una barrita de progreso en la que está activa
+    var next = function () {
+      if (!autoOn) return;
+      var cur = P.current(), btn = P.items.filter(function (b) { return b.dataset.view === cur; })[0], bar = btn && $('.sw__prog', btn);
+      if (!bar) return;
+      cycleTween = G.fromTo(bar, { scaleX: 0 }, { scaleX: 1, duration: 5, ease: 'none', onComplete: function () {
+        bar.style.transform = 'scaleX(0)'; if (!autoOn) return;
+        ci = (ORDER.indexOf(cur) + 1) % ORDER.length; P.show(ORDER[ci]); next();
+      } });
+    };
+    ST.create({ trigger: dev, start: 'top 65%', end: 'bottom top',
+      onEnter: function () { if (autoOn && !cycleTween) { animView(); next(); } },
+      onLeave: function () { if (cycleTween) cycleTween.pause(); }, onEnterBack: function () { if (cycleTween && autoOn) cycleTween.resume(); }, onLeaveBack: function () { if (cycleTween) cycleTween.pause(); } });
+    // qué medimos: los ocho ítems entran en cascada al abrirse
+    var md = $('.metrics-detail');
+    if (md) md.addEventListener('toggle', function () { if (md.open) G.from($$('dl > div', md), { y: 18, opacity: 0, duration: 0.5, ease: 'power3.out', stagger: 0.05 }); });
   });
 
   later(function () {
-    /* ---------- 6 · privacidad ---------- */
-    if (pc) {
-      mm.add('(min-width: 1001px)', function () {
-        ST.create({ trigger: '#priv-pin', start: 'top top', end: '+=150%', pin: true, scrub: 0.6, onUpdate: function (s) { privP = s.progress; } });
+    /* ---------- 4 · cómo funciona: la línea baja y cada paso se enciende ---------- */
+    var st = $('#steps4');
+    if (st) {
+      var rail = document.createElement('span'); rail.className = 'rail'; rail.setAttribute('aria-hidden', 'true'); st.appendChild(rail);
+      var lis = $$('li', st);
+      var tl = G.timeline({ scrollTrigger: { trigger: st, start: 'top 75%', end: 'bottom 55%', scrub: 0.6 } });
+      tl.fromTo(rail, { scaleY: 0 }, { scaleY: 1, ease: 'none', duration: 1 }, 0);
+      lis.forEach(function (li, i) {
+        tl.fromTo($('.n', li), { scale: 0.6, backgroundColor: '#FBFAF9', color: '#542433' }, { scale: 1, backgroundColor: '#542433', color: '#F4F2F1', duration: 0.12, ease: 'back.out(2)' }, i / lis.length)
+          .fromTo($('div', li), { x: 28 }, { x: 0, duration: 0.18, ease: 'power2.out' }, i / lis.length);
       });
-      mm.add('(max-width: 1000px)', function () {
-        ST.create({ trigger: '.priv__canvas', start: 'top 85%', end: 'bottom 25%', scrub: 0.6, onUpdate: function (s) { privP = s.progress; } });
-      });
-      G.from('.promises li', { y: 50, opacity: 0, duration: 0.9, ease: 'power3.out', stagger: 0.1, scrollTrigger: { trigger: '.promises', start: 'top 85%' } });
     }
+    /* privacidad: la línea cobre convierte la vidriera en puntos mientras la tarjeta pasa */
+    if (pc) ST.create({ trigger: '.privcard', start: 'top 85%', end: 'center 35%', scrub: 0.6, onUpdate: function (s) { privP = s.progress; } });
+    var pcard = $('.privcard');
+    if (pcard) G.from($$('.privcard li', pcard), { x: 24, opacity: 0, duration: 0.6, ease: 'power3.out', stagger: 0.1, scrollTrigger: { trigger: pcard, start: 'top 60%' } });
   });
 
   later(function () {
