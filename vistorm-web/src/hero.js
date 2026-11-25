@@ -652,6 +652,8 @@ class SceneVar extends Scene {
 /* ---------- A · Topografía de papel ---------- */
 const TOPO_COLS = ['#6A3243', '#8E5E69', '#C7BCAC', '#E6DFD7', '#C1774B'];
 const TOPO_STEPS = [0.04, 0.1, 0.19, 0.31, 0.47];
+// cada cuánto se rehace el relieve: más espaciado en pantallas chicas, donde el procesador suele ser más lento
+const TOPO_EVERY = (typeof matchMedia === 'function' && matchMedia('(max-width: 700px), (pointer: coarse)').matches) ? 500 : 250;
 class SceneTopo extends SceneVar {
   buildBase() {
     const [c, x] = this.layer();
@@ -668,32 +670,57 @@ class SceneTopo extends SceneVar {
   }
   floorLayer(x, state) {
     const now = performance.now();
-    if (this.heatVer !== state.ver && (now - this.heatAt > 250 || this.heatVer === null)) { this.buildTopo(state.heat); this.heatVer = state.ver; this.heatAt = now; }
+    if (!this.topoJob && this.heatVer !== state.ver && (now - this.heatAt > TOPO_EVERY || this.heatVer === null)) {
+      this.topoJob = this.topoSteps(state.heat); this.heatVer = state.ver; this.heatAt = now;
+    }
+    if (this.topoJob) {
+      // la primera vez se arma entero; después, una capa por cuadro para no trabar la página
+      if (!this.topoCv) { while (!this.topoJob.next().done); this.topoJob = null; }
+      else if (this.topoJob.next().done) this.topoJob = null;
+    }
     if (this.topoCv) { x.setTransform(1, 0, 0, 1, 0, 0); x.drawImage(this.topoCv, 0, 0); x.setTransform(this.px, 0, 0, this.px, 0, 0); }
   }
-  buildTopo(heat) {
+  buildTopo(heat) { const job = this.topoSteps(heat); while (!job.next().done); this.topoJob = null; }
+  *topoSteps(heat) {
     const res = this.res, w = 12 * res, h = 9 * res, g = blurGrid(heat, 48, 36, 2);
     const MAX = this.maxHeat || THRESH[3] / 0.66;
     if (!this.lvCv) { this.lvCv = TOPO_COLS.map(() => { const c = document.createElement('canvas'); c.width = w; c.height = h; return c; }); }
-    if (!this.topoCv) { this.topoCv = document.createElement('canvas'); }
-    this.topoCv.width = this.cv.width; this.topoCv.height = this.cv.height;
-    const vals = new Float32Array(w * h);
-    for (let py = 0; py < h; py++) for (let px = 0; px < w; px++) { const u = (px + 0.5) / res, v = (py + 0.5) / res; vals[py * w + px] = this.masked && this.masked(u, v) ? 0 : sampleGrid(g, u, v); }
-    const tx = this.topoCv.getContext('2d');
-    TOPO_COLS.forEach((col, l) => {
-      const T = TOPO_STEPS[l] * MAX, band = T * 0.1 + 1e-6, rgb = hexRgb(col);
-      const cx = this.lvCv[l].getContext('2d'), img = cx.createImageData(w, h), d = img.data;
-      for (let i = 0; i < vals.length; i++) {
-        const a = clamp01((vals[i] - T) / band + 0.5); const o = i * 4;
-        const u = (i % w) / res, v = Math.floor(i / w) / res;
-        const gr = 1 + 0.035 * Math.sin((u + v * 0.35) * 30 + Math.sin(v * 2.1) * 2);
-        d[o] = Math.min(255, rgb[0] * gr); d[o + 1] = Math.min(255, rgb[1] * gr); d[o + 2] = Math.min(255, rgb[2] * gr); d[o + 3] = a * 255;
+    // la máscara y la veta del papel no cambian: se calculan una sola vez por tamaño
+    if (!this.topoPre || this.topoPre.w !== w || this.topoPre.h !== h) {
+      const mask = new Uint8Array(w * h), grain = new Float32Array(w * h);
+      for (let i = 0; i < w * h; i++) {
+        const px = i % w, py = Math.floor(i / w), u = (px + 0.5) / res, v = (py + 0.5) / res;
+        mask[i] = this.masked && this.masked(u, v) ? 1 : 0;
+        const gu = px / res, gv = py / res; grain[i] = 1 + 0.035 * Math.sin((gu + gv * 0.35) * 30 + Math.sin(gv * 2.1) * 2);
       }
+      this.topoPre = { w, h, mask, grain, imgs: TOPO_COLS.map(() => null) };
+    }
+    const { mask, grain } = this.topoPre;
+    const vals = new Float32Array(w * h);
+    for (let py = 0; py < h; py++) for (let px = 0; px < w; px++) { const i = py * w + px; vals[i] = mask[i] ? 0 : sampleGrid(g, (px + 0.5) / res, (py + 0.5) / res); }
+    // se dibuja en un lienzo de reserva y se cambia al final, así nunca se ve a medio armar
+    const back = this.topoBack && this.topoBack !== this.topoCv ? this.topoBack : document.createElement('canvas');
+    back.width = this.cv.width; back.height = this.cv.height;
+    const tx = back.getContext('2d');
+    for (let l = 0; l < TOPO_COLS.length; l++) {
+      if (this.topoCv) yield;
+      const col = TOPO_COLS[l], T = TOPO_STEPS[l] * MAX, band = T * 0.1 + 1e-6, rgb = hexRgb(col);
+      const cx = this.lvCv[l].getContext('2d');
+      let img = this.topoPre.imgs[l];
+      if (!img) {
+        // el color de cada nivel tampoco cambia: se pinta una vez y después solo se actualiza la opacidad
+        img = this.topoPre.imgs[l] = cx.createImageData(w, h);
+        const d0 = img.data;
+        for (let i = 0; i < grain.length; i++) { const o = i * 4, gr = grain[i]; d0[o] = Math.min(255, rgb[0] * gr); d0[o + 1] = Math.min(255, rgb[1] * gr); d0[o + 2] = Math.min(255, rgb[2] * gr); }
+      }
+      const d = img.data, inv = 1 / band;
+      for (let i = 0; i < vals.length; i++) { const a = (vals[i] - T) * inv + 0.5; d[i * 4 + 3] = a <= 0 ? 0 : a >= 1 ? 255 : a * 255; }
       cx.putImageData(img, 0, 0);
       tx.save(); tx.setTransform(this.px, 0, 0, this.px, 0, 0); this.isoT(tx); tx.scale(1 / res, 1 / res);
       tx.shadowColor = 'rgba(30,10,16,0.45)'; tx.shadowBlur = 5 * this.px; tx.shadowOffsetX = 1.5 * this.px; tx.shadowOffsetY = 2.5 * this.px;
       tx.drawImage(this.lvCv[l], 0, 0); tx.restore();
-    });
+    }
+    this.topoBack = this.topoCv; this.topoCv = back;
   }
 }
 
@@ -1089,8 +1116,8 @@ class SceneRubro extends SceneTopo {
     this.items = makeChunks(this.art.fixtures.concat(FRONT_FIX));
     const mk = this.art.masked; if (mk) this.masked = (u, v) => mk.some(([a, b, c, d]) => u >= a && u <= b && v >= c && v <= d);
   }
-  release() { this.base = this.shadows = this.topoCv = this.lvCv = null; this.heatVer = null; }
-  resize(scale) { super.resize(scale); this.topoCv = null; this.lvCv = null; }
+  release() { this.base = this.shadows = this.topoCv = this.topoBack = this.lvCv = this.topoJob = null; this.heatVer = null; }
+  resize(scale) { super.resize(scale); this.topoCv = this.topoBack = this.lvCv = this.topoJob = null; this.heatVer = null; }
   wp(plane, u, z, off) { return plane === 'y0' ? [u, off || 0.02, z] : [off || 0.02, u, z]; }
   buildBase() {
     const [c, x] = this.layer();
@@ -1332,7 +1359,7 @@ function ready(v) { if (!v.ready) { v.sim.run(140); v.base = v.visits0 - v.sim.v
 /* precalentamiento en pedazos de 5 s de simulación, para no trabar el navegador */
 function warm(v, done) {
   if (v.ready) { if (done) done(); return; }
-  idle(() => { if (v.ready) { if (done) done(); return; } v.sim.run(Math.min(140, v.sim.t + 5)); if (v.sim.t >= 140) { v.base = v.visits0 - v.sim.visits; v.ready = true; if (done) done(); } else warm(v, done); });
+  idle(() => { if (v.ready) { if (done) done(); return; } v.sim.run(Math.min(140, v.sim.t + 5)); if (v.sim.t >= 140 - 1e-6) { v.base = v.visits0 - v.sim.visits; v.ready = true; if (done) done(); } else warm(v, done); });
 }
 const idle = window.requestIdleCallback ? (f => requestIdleCallback(f, { timeout: 2500 })) : (f => setTimeout(f, 200));
 function values(v, st, base) {
@@ -1349,7 +1376,6 @@ class Hero {
       <canvas class="hero__scene" aria-hidden="true"></canvas>
       <div class="hero__nav">
         <img class="hero__logo" src="${LOGO}" alt="Vistorm Labs" width="${mode === 'desk' ? 156 : 128}" height="${mode === 'desk' ? 53 : 43}">
-        ${mode === 'desk' ? '<nav class="hero__links" aria-label="Secciones"><a href="#medimos">Qué medimos</a><a href="#funciona">Cómo funciona</a><a href="#panel">El panel</a><a href="#privacidad">Privacidad</a></nav>' : ''}
       </div>
       <div class="hero__copy">
         <h1 class="hero__title">Que el mundo físico se mida como el digital.</h1>
@@ -1417,7 +1443,10 @@ class Hero {
 
 /* ---- control de la landing ---- */
 const mqReduce = window.matchMedia('(prefers-reduced-motion: reduce)');
-let reduced = mqReduce.matches, paused = false, acc = 0, last = 0, T = FADE_SECS, staticIdx = 0, curIdx = 0, transFrom = N - 1, running = false;
+// rubro de arranque según el enlace de la campaña: ?rubro=tienda | bar | shopping | aeropuerto
+const RUBRO_ALIAS = { tienda: 'tienda', ropa: 'tienda', moda: 'tienda', retail: 'tienda', bar: 'bar', gastronomia: 'bar', restaurante: 'bar', restaurantes: 'bar', hotel: 'bar', hoteles: 'bar', shopping: 'shopping', shoppings: 'shopping', aeropuerto: 'aeropuerto', aeropuertos: 'aeropuerto', transporte: 'aeropuerto' };
+const START = (() => { try { const q = (new URLSearchParams(location.search).get('rubro') || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''); const i = VENUES.findIndex(v => v.id === RUBRO_ALIAS[q]); return i < 0 ? 0 : i; } catch (e) { return 0; } })();
+let reduced = mqReduce.matches, paused = false, acc = 0, last = 0, T = START * RUBRO_SECS + FADE_SECS, staticIdx = START, curIdx = START, transFrom = START, running = false;
 let heroes = [], heroMode = null;
 const frame = document.getElementById('hero-frame');
 function liveSpec() {
@@ -1456,10 +1485,10 @@ function start() {
   mqReduce.addEventListener?.('change', e => setReduced(e.matches));
   // el texto del hero aparece enseguida; la escena arranca cuando el navegador está libre
   // el hero arranca enseguida: el primer rubro se prepara en el momento y el resto en pedazos chicos
-  const v0 = VENUES[0];
+  const v0 = VENUES[START];
   (function prep() {
-    if (!v0.ready) v0.sim.run(Math.min(140, v0.sim.t + 35));
-    if (v0.ready || v0.sim.t >= 140) { if (!v0.ready) { v0.base = v0.visits0 - v0.sim.visits; v0.ready = true; } boot(); }
+    if (!v0.ready) v0.sim.run(Math.min(140, v0.sim.t + 15));
+    if (v0.ready || v0.sim.t >= 140 - 1e-6) { if (!v0.ready) { v0.base = v0.visits0 - v0.sim.visits; v0.ready = true; } boot(); }
     else setTimeout(prep, 0);
   })();
 }

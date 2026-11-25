@@ -160,6 +160,14 @@
     c.addEventListener('focus', function () { kOpen(c); });
     if (hover) c.addEventListener('pointerenter', function () { kOpen(c); });
   });
+  // con ?rubro= en el enlace, la tarjeta de ese rubro aparece abierta
+  (function () {
+    var al = { ropa: 'tienda', moda: 'tienda', retail: 'tienda', gastronomia: 'bar', restaurante: 'bar', restaurantes: 'bar', hotel: 'aeropuerto', hoteles: 'aeropuerto', shoppings: 'shopping', aeropuertos: 'aeropuerto', transporte: 'aeropuerto', universidad: 'aeropuerto', universidades: 'aeropuerto' };
+    var q = ''; try { q = (new URLSearchParams(location.search).get('rubro') || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, ''); } catch (e) {}
+    q = al[q] || q;
+    var card = kiln.filter(function (c) { return c.dataset.rubro === q; })[0];
+    if (card) kOpen(card);
+  })();
 
   /* ---------- 5 · panel: secciones que se recorren solas ---------- */
   var tabs = $$('.tab'), pane = $('#pane'), autoTabs = true, tabTween = null, auto = false;
@@ -308,7 +316,10 @@
         if (bV) { bV.textContent = k === 3 ? '1.461' : '1.248'; bZ.textContent = k === 3 ? 'Vidriera nueva' : 'Escalera mecánica'; bUp.style.opacity = k === 3 ? 1 : 0; }
       };
       G.set(planes.slice(1), { opacity: 0 });
-      brkDots.forEach(function (d, i) { G.to(d, { x: Math.sin(i * 1.3) * 3, y: Math.cos(i * 0.9) * 2, duration: 2.2 + (i % 4) * 0.4, repeat: -1, yoyo: true, ease: 'sine.inOut' }); });
+      // los puntos solo se mueven mientras la sección está a la vista
+    var dotsTl = G.timeline({ paused: true });
+    brkDots.forEach(function (d, i) { dotsTl.to(d, { x: Math.sin(i * 1.3) * 3, y: Math.cos(i * 0.9) * 2, duration: 2.2 + (i % 4) * 0.4, repeat: -1, yoyo: true, ease: 'sine.inOut' }, 0); });
+    ST.create({ trigger: '.brk', start: 'top bottom', end: 'bottom top', onToggle: function (st) { if (st.isActive) dotsTl.play(); else dotsTl.pause(); } });
       var brkTl = function (zk) {
         zk = zk || 1;
         var tl = G.timeline({ onUpdate: paintTilt });

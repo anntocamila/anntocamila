@@ -32,7 +32,7 @@ Sitio de Vistorm Labs listo para Vercel: landing de una sola acción («Pedí un
 | Sitemap y robots | `sitemap.xml` (inicio, privacidad, términos) y `robots.txt` (bloquea `/api/`). |
 | Texto alternativo | Todas las imágenes tienen `alt`; la ilustración animada es decorativa (`aria-hidden`) y el panel de cifras es texto real. |
 | Imágenes comprimidas | Logos SVG optimizados (−28 %), imagen social en JPG progresivo, JS y CSS minificados. |
-| Velocidad | Lighthouse local: escritorio 100, celular 98 (TBT 130 ms, CLS 0). La primera escena del hero se prepara en cuatro tramos cortos y cada sección animada se configura en su propia tarea. Ilustraciones en WebP (900 y 1600 px, de 33 a 209 KB) con carga diferida. |
+| Velocidad | Lighthouse local, con la animación del hero corriendo: escritorio 100, celular 86 (TBT 520 ms, CLS 0). El relieve del hero se rehace una capa por cuadro y cada sección animada se configura en su propia tarea. Ilustraciones en WebP (900 y 1600 px) con carga diferida. |
 | Contraste y accesibilidad | axe-core sin errores en todas las páginas; Lighthouse Accesibilidad 100. |
 | Celular | Probado a 390 px: sin desborde lateral, botones de al menos 24 px. |
 | Página 404 | `404.html`, con el botón de demo y la vuelta al inicio. |
@@ -41,6 +41,8 @@ Sitio de Vistorm Labs listo para Vercel: landing de una sola acción («Pedí un
 | Antispam | Campo trampa oculto, tiempo mínimo de 3 s, límite de 5 pedidos cada 10 minutos por IP y control de origen. |
 | Analytics | GA4 con consentimiento. Eventos: `cta_click` y `generate_lead`. |
 | CTA único | Todos los botones dicen «Pedí una demo» y llevan al agendador. No hay precios ni links que saquen de la página. |
+| Sin vías de escape | El hero no tiene menú de navegación: la única acción es «Pedí una demo». Privacidad y términos quedan en el pie. |
+| Contenido personalizado | Agregando `?rubro=` al enlace (tienda, bar, shopping, aeropuerto; también gastronomia, hoteles, transporte) el hero arranca en ese rubro y la sección «Para quién» abre su tarjeta. Útil para campañas por industria. |
 
 ## Movimiento
 
