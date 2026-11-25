@@ -499,13 +499,13 @@ html.modal-open { overflow: hidden }
 .tcard { --rot: 0deg; --lift: 0px; --dx: 0px; --dy: 0px; --fan: 1; --rx: 0deg; --ry: 0deg; --mx: 50%; --my: 30%;
   position: relative; flex: 0 0 228px; min-height: 340px; margin-left: 12px; border-radius: 18px; padding: 10px 10px 12px; display: flex; flex-direction: column; gap: 8px; color: var(--ink);
   transform: translate(var(--dx), calc(var(--lift) + var(--dy))) rotate(calc(var(--rot) * var(--fan))) rotateX(var(--rx)) rotateY(var(--ry));
-  transition: transform .55s var(--ease-paper), box-shadow .45s var(--ease); box-shadow: 0 1px 0 rgba(39,33,36,.08), 0 20px 34px -20px rgba(39,33,36,.5); outline-offset: 4px; will-change: transform }
+  transition: transform .55s var(--ease-paper), box-shadow .45s var(--ease); box-shadow: 0 1px 0 rgba(39,33,36,.08), 5px 6px 0 -1px var(--sheet, #E0D6C8), 5px 6px 2px -1px rgba(39,33,36,.18), 0 20px 34px -20px rgba(39,33,36,.5); outline-offset: 4px; will-change: transform }
 .tcard:first-child { margin-left: 0 }
 .deck .tcard:nth-child(1) { --rot: -6deg; --lift: 28px }
 .deck .tcard:nth-child(2) { --rot: -3deg; --lift: 8px }
 .deck .tcard:nth-child(4) { --rot: 3deg; --lift: 8px }
 .deck .tcard:nth-child(5) { --rot: 6deg; --lift: 28px }
-.tcard:hover, .tcard:focus-visible { --lift: -18px; --rot: 0deg; z-index: 3; box-shadow: 0 1px 0 rgba(39,33,36,.08), 0 34px 50px -24px rgba(39,33,36,.6) }
+.tcard:hover, .tcard:focus-visible { --lift: -18px; --rot: 0deg; z-index: 3; box-shadow: 0 1px 0 rgba(39,33,36,.08), 7px 9px 0 -1px var(--sheet, #E0D6C8), 7px 9px 3px -1px rgba(39,33,36,.2), 0 34px 50px -24px rgba(39,33,36,.6) }
 .tcard.is-dealing { transition: none }
 .tcard::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; background: radial-gradient(circle at var(--mx) var(--my), rgba(255,255,255,.28), rgba(255,255,255,0) 45%); opacity: 0; transition: opacity .35s var(--ease) }
 .tcard:hover::after { opacity: 1 }
@@ -532,7 +532,7 @@ html.modal-open { overflow: hidden }
 .tcard--cobre .tcard__tag { background: rgba(84,36,51,.12) }
 
 /* pequeñas animaciones dentro de cada ilustración (solo cuando la sección está a la vista) */
-.deck.is-live .art-hand { transform-box: view-box; transform-origin: 144px 26px; animation: art-spin 6s linear infinite }
+.deck.is-live .art-hand { transform-box: view-box; transform-origin: 144px 24px; animation: art-spin 6s linear infinite }
 .deck.is-live .art-walk { animation: art-walk 2.4s var(--ease) infinite alternate }
 .deck.is-live .art-sand { transform-box: fill-box; transform-origin: 50% 100%; animation: art-sand 3s ease-in-out infinite }
 .deck.is-live .art-queue { animation: art-walk 3s var(--ease) infinite alternate }
@@ -565,6 +565,17 @@ html.modal-open { overflow: hidden }
   .tcard { transition: none }
   .deck .art-hand, .deck .art-walk, .deck .art-sand, .deck .art-queue, .deck .art-timer, .deck .art-heat, .deck .art-path, .deck .art-walker { animation: none !important }
 }
+
+/* textura de papel: grano sobre la tarjeta y sombras de recorte en cada capa de la ilustración */
+.pc-defs { position: absolute; width: 0; height: 0; overflow: hidden }
+.tcard::before { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; opacity: .38; mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .16 0 0 0 0 .07 0 0 0 0 .1 0 0 0 .5 -.12'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E") }
+.tcard--caliza { --sheet: #DCCFBF }
+.tcard--rosa { --sheet: #E8D0C7 }
+.tcard--granate { --sheet: #3A1823 }
+.tcard--holo { --sheet: #2E121B }
+.tcard--cobre { --sheet: #C9764A }
+.tcard__art { box-shadow: inset 0 0 0 1px rgba(39,33,36,.08), inset 0 2px 6px rgba(39,33,36,.18) }
 
 /* ===== el hero (paleta fija de marca: no cambia con el tema) ===== */
 .hero { position: absolute; left: 0; top: 0; transform-origin: 0 0; color: #272124; font-family: var(--text); overflow: hidden; background: #F4F2F1 }

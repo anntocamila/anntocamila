@@ -41,7 +41,7 @@
 </header>
 
 <main id="main">
-  <!-- 1. Qué medimos: tarjetas de colección -->
+  <!-- 1. Qué medimos: tarjetas de colección en papel cortado -->
   <section class="measure" id="medimos" aria-labelledby="t-medimos">
     <div class="wrap">
       <div class="measure__head">
@@ -50,6 +50,12 @@
         <p class="lead" data-reveal>Todo en personas y en tiempo. Ninguna cifra viene en pesos.</p>
       </div>
       <div class="deck-wrap">
+        <!-- sombras de papel y grano, compartidos por todas las ilustraciones -->
+        <svg class="pc-defs" width="0" height="0" aria-hidden="true" focusable="false"><defs>
+          <filter id="pc-sh" x="-25%" y="-25%" width="150%" height="170%"><feDropShadow dx="0" dy="2.6" stdDeviation="2.2" flood-color="#2A0F17" flood-opacity=".34"/></filter>
+          <filter id="pc-sh2" x="-25%" y="-25%" width="150%" height="170%"><feDropShadow dx="0" dy="1.2" stdDeviation="1" flood-color="#2A0F17" flood-opacity=".4"/></filter>
+          <filter id="pc-grain" x="0" y="0" width="100%" height="100%"><feTurbulence type="fractalNoise" baseFrequency=".9" numOctaves="2" seed="7" result="n"/><feColorMatrix in="n" type="matrix" values="0 0 0 0 .16  0 0 0 0 .07  0 0 0 0 .1  0 0 0 .3 -.1" result="g"/><feComposite in="g" in2="SourceGraphic" operator="in" result="gi"/><feMerge><feMergeNode in="SourceGraphic"/><feMergeNode in="gi"/></feMerge></filter>
+        </defs></svg>
         <div class="confetti" aria-hidden="true">
           <i style="left:6%;top:18%;--r:24deg;background:#C1774B"></i><i style="left:12%;top:78%;--r:-30deg;background:#542433"></i><i style="left:19%;top:8%;--r:62deg;background:#C7BCAC"></i>
           <i style="left:27%;top:90%;--r:12deg;background:#C1774B"></i><i style="left:35%;top:4%;--r:-48deg;background:#8E5E69"></i><i style="left:44%;top:94%;--r:80deg;background:#C7BCAC"></i>
@@ -58,92 +64,110 @@
           <i style="left:3%;top:52%;--r:55deg;background:#E6DFD7"></i><i style="left:97%;top:38%;--r:-35deg;background:#C1774B"></i><i style="left:48%;top:-2%;--r:5deg;background:#E6DFD7"></i>
         </div>
         <ul class="deck" id="deck">
+
           <li class="tcard tcard--caliza" tabindex="0">
-            <div class="tcard__art" aria-hidden="true"><svg viewBox="0 0 200 150">
-              <defs><pattern id="pt-ging" width="20" height="20" patternUnits="userSpaceOnUse"><rect width="20" height="20" fill="#EAE2D7"/><rect width="10" height="20" fill="#DED2C3" opacity=".6"/><rect width="20" height="10" fill="#DED2C3" opacity=".6"/></pattern></defs>
-              <rect width="200" height="150" fill="url(#pt-ging)"/>
-              <rect x="0" y="118" width="200" height="32" fill="#D8CBBB"/>
-              <path d="M120 120V58a24 24 0 0 1 48 0v62Z" fill="#542433"/><path d="M127 120V60a17 17 0 0 1 34 0v60Z" fill="#F4F2F1"/>
-              <g class="art-clock"><circle cx="144" cy="26" r="15" fill="#FBFAF9" stroke="#542433" stroke-width="3"/><path class="art-hand" d="M144 26V16" stroke="#542433" stroke-width="2.6" stroke-linecap="round"/><path d="M144 26l7 4" stroke="#C1774B" stroke-width="2.6" stroke-linecap="round"/></g>
+            <div class="tcard__art" aria-hidden="true"><svg viewBox="0 0 200 150"><g filter="url(#pc-grain)">
+              <rect width="200" height="150" fill="#EEE7DD"/>
+              <path filter="url(#pc-sh)" d="M0 30C40 18 70 40 110 28S170 10 200 22V150H0Z" fill="#E4D8C9"/>
+              <path filter="url(#pc-sh)" d="M0 62C36 52 64 70 104 60S168 44 200 56V150H0Z" fill="#D8C8B4"/>
+              <g filter="url(#pc-sh)"><path d="M118 124V60a26 26 0 0 1 52 0v64Z" fill="#542433"/></g>
+              <g filter="url(#pc-sh2)"><path d="M125 124V62a19 19 0 0 1 38 0v62Z" fill="#F4F2F1"/></g>
+              <path filter="url(#pc-sh)" d="M0 112C34 104 70 118 108 110S170 100 200 108V150H0Z" fill="#C9B49B"/>
+              <path filter="url(#pc-sh)" d="M0 128C40 122 74 134 116 126S176 120 200 126V150H0Z" fill="#B9A184"/>
+              <g class="art-clock" filter="url(#pc-sh)"><circle cx="144" cy="24" r="16" fill="#542433"/><circle cx="144" cy="24" r="12.5" fill="#FBFAF9"/><path class="art-hand" d="M144 24V15" stroke="#542433" stroke-width="2.6" stroke-linecap="round"/><path d="M144 24l7 4" stroke="#C1774B" stroke-width="2.6" stroke-linecap="round"/></g>
               <g class="art-walk">
-                <g transform="translate(30 0)"><rect x="-6" y="92" width="12" height="27" rx="6" fill="#8E5E69"/><circle cy="84" r="6.5" fill="#542433"/></g>
-                <g transform="translate(56 0)"><rect x="-6" y="90" width="12" height="29" rx="6" fill="#C1774B"/><circle cy="82" r="6.5" fill="#6A3243"/></g>
-                <g transform="translate(82 0)"><rect x="-6" y="93" width="12" height="26" rx="6" fill="#C7BCAC"/><circle cy="85" r="6.5" fill="#542433"/></g>
-                <g transform="translate(106 0)"><rect x="-6" y="91" width="12" height="28" rx="6" fill="#542433"/><circle cy="83" r="6.5" fill="#8E5E69"/></g>
+                <g filter="url(#pc-sh2)" transform="translate(30 0)"><rect x="-6.5" y="93" width="13" height="28" rx="6.5" fill="#8E5E69"/><circle cy="84" r="7" fill="#542433"/></g>
+                <g filter="url(#pc-sh2)" transform="translate(56 0)"><rect x="-6.5" y="91" width="13" height="30" rx="6.5" fill="#C1774B"/><circle cy="82" r="7" fill="#6A3243"/></g>
+                <g filter="url(#pc-sh2)" transform="translate(82 0)"><rect x="-6.5" y="94" width="13" height="27" rx="6.5" fill="#FBFAF9"/><circle cy="85" r="7" fill="#542433"/></g>
+                <g filter="url(#pc-sh2)" transform="translate(106 0)"><rect x="-6.5" y="92" width="13" height="29" rx="6.5" fill="#542433"/><circle cy="83" r="7" fill="#8E5E69"/></g>
               </g>
-            </svg></div>
+            </g></svg></div>
             <div class="tcard__body"><h3>Visitas y horario pico</h3><span class="tcard__tag">Pico</span></div>
             <p class="tcard__desc">Cuánta gente entra y a qué hora se llena el local.</p>
             <div class="tcard__foot"><span>N.º 01 / 05</span><span><i></i>Personas</span></div>
           </li>
+
           <li class="tcard tcard--rosa" tabindex="0">
-            <div class="tcard__art" aria-hidden="true"><svg viewBox="0 0 200 150">
-              <defs><pattern id="pt-dots" width="14" height="14" patternUnits="userSpaceOnUse"><rect width="14" height="14" fill="#F1E2DC"/><circle cx="7" cy="7" r="1.8" fill="#E3C9C0"/></pattern></defs>
-              <rect width="200" height="150" fill="url(#pt-dots)"/>
-              <rect x="0" y="122" width="200" height="28" fill="#E5D2CA"/>
-              <ellipse cx="100" cy="94" rx="34" ry="7" fill="#C1774B"/><rect x="97" y="96" width="6" height="26" fill="#87695C"/><rect x="84" y="120" width="32" height="4" rx="2" fill="#87695C"/>
-              <rect x="88" y="82" width="8" height="11" rx="2" fill="#FBFAF9"/><rect x="104" y="84" width="8" height="9" rx="2" fill="#FBFAF9"/>
-              <g><rect x="44" y="78" width="14" height="30" rx="7" fill="#542433"/><circle cx="51" cy="69" r="7" fill="#8E5E69"/><rect x="40" y="104" width="22" height="5" rx="2.5" fill="#6A3243"/><rect x="40" y="108" width="4" height="14" fill="#6A3243"/></g>
-              <g><rect x="142" y="78" width="14" height="30" rx="7" fill="#C1774B"/><circle cx="149" cy="69" r="7" fill="#542433"/><rect x="138" y="104" width="22" height="5" rx="2.5" fill="#6A3243"/><rect x="156" y="108" width="4" height="14" fill="#6A3243"/></g>
-              <g class="art-glass" transform="translate(100 34)"><path d="M-11 -18H11L2 0 11 18H-11L-2 0Z" fill="#FBFAF9" stroke="#542433" stroke-width="2.6" stroke-linejoin="round"/><path class="art-sand" d="M-6 14H6L0 6Z" fill="#C1774B"/><path d="M-1 1h2v5h-2z" fill="#C1774B"/></g>
-            </svg></div>
+            <div class="tcard__art" aria-hidden="true"><svg viewBox="0 0 200 150"><g filter="url(#pc-grain)">
+              <rect width="200" height="150" fill="#F4E8E3"/>
+              <path filter="url(#pc-sh)" d="M-10 0H60C40 40 70 70 40 150H-10Z" fill="#EAD3CA"/>
+              <path filter="url(#pc-sh)" d="M210 0H150C168 46 138 80 166 150H210Z" fill="#EAD3CA"/>
+              <path filter="url(#pc-sh)" d="M0 106C40 98 70 112 108 104S170 94 200 102V150H0Z" fill="#DDB9AC"/>
+              <path filter="url(#pc-sh)" d="M0 124C40 118 76 130 116 122S176 116 200 122V150H0Z" fill="#CFA595"/>
+              <g filter="url(#pc-sh)"><ellipse cx="100" cy="92" rx="35" ry="8" fill="#C1774B"/><rect x="97" y="96" width="6" height="26" fill="#87695C"/><rect x="84" y="120" width="32" height="4" rx="2" fill="#87695C"/></g>
+              <g filter="url(#pc-sh2)"><rect x="88" y="79" width="8" height="12" rx="2" fill="#FBFAF9"/><rect x="104" y="81" width="8" height="10" rx="2" fill="#FBFAF9"/></g>
+              <g filter="url(#pc-sh2)"><rect x="44" y="76" width="14" height="32" rx="7" fill="#542433"/><circle cx="51" cy="67" r="7.5" fill="#8E5E69"/><rect x="40" y="104" width="22" height="5" rx="2.5" fill="#6A3243"/><rect x="40" y="108" width="4" height="14" fill="#6A3243"/></g>
+              <g filter="url(#pc-sh2)"><rect x="142" y="76" width="14" height="32" rx="7" fill="#C1774B"/><circle cx="149" cy="67" r="7.5" fill="#542433"/><rect x="138" y="104" width="22" height="5" rx="2.5" fill="#6A3243"/><rect x="156" y="108" width="4" height="14" fill="#6A3243"/></g>
+              <g filter="url(#pc-sh)" transform="translate(100 34)"><path d="M-13 -20H13L3 0 13 20H-13L-3 0Z" fill="#542433"/><path d="M-9 -16H9L1 0 9 16H-9L-1 0Z" fill="#FBFAF9"/><path class="art-sand" d="M-6 13H6L0 5Z" fill="#C1774B"/><path d="M-1 1h2v4h-2z" fill="#C1774B"/></g>
+            </g></svg></div>
             <div class="tcard__body"><h3>Permanencia</h3><span class="tcard__tag">Minutos</span></div>
             <p class="tcard__desc">Cuánto tiempo se queda la gente, en total y en cada zona.</p>
             <div class="tcard__foot"><span>N.º 02 / 05</span><span><i></i>Tiempo</span></div>
           </li>
+
           <li class="tcard tcard--granate" tabindex="0">
-            <div class="tcard__art" aria-hidden="true"><svg viewBox="0 0 200 150">
-              <defs><pattern id="pt-stripe" width="16" height="16" patternUnits="userSpaceOnUse" patternTransform="rotate(35)"><rect width="16" height="16" fill="#5E2A3A"/><rect width="8" height="16" fill="#6A3243"/></pattern></defs>
-              <rect width="200" height="150" fill="url(#pt-stripe)"/>
-              <rect x="0" y="120" width="200" height="30" fill="#4A1F2D"/>
-              <rect x="150" y="74" width="40" height="48" rx="4" fill="#F4F2F1"/><rect x="146" y="68" width="48" height="9" rx="3" fill="#C1774B"/><rect x="160" y="56" width="20" height="12" rx="2" fill="#C7BCAC"/>
-              <path d="M18 124H142" stroke="#C7BCAC" stroke-width="1.5" stroke-dasharray="4 5"/>
+            <div class="tcard__art" aria-hidden="true"><svg viewBox="0 0 200 150"><g filter="url(#pc-grain)">
+              <rect width="200" height="150" fill="#5E2A3A"/>
+              <path filter="url(#pc-sh)" d="M0 24C44 10 78 34 120 22S178 6 200 14V150H0Z" fill="#6A3243"/>
+              <path filter="url(#pc-sh)" d="M0 58C40 46 76 66 118 54S180 40 200 48V150H0Z" fill="#7A3F50"/>
+              <path filter="url(#pc-sh)" d="M0 116C44 108 80 122 120 114S180 106 200 112V150H0Z" fill="#4A1F2D"/>
+              <g filter="url(#pc-sh)"><rect x="148" y="72" width="44" height="50" rx="4" fill="#F4F2F1"/><rect x="144" y="66" width="52" height="10" rx="3" fill="#C1774B"/></g>
+              <g filter="url(#pc-sh2)"><rect x="160" y="54" width="20" height="13" rx="2" fill="#C7BCAC"/></g>
+              <path d="M16 126H142" stroke="#C7BCAC" stroke-width="1.5" stroke-dasharray="4 5"/>
               <g class="art-queue">
-                <g transform="translate(130 0)"><rect x="-7" y="88" width="14" height="32" rx="7" fill="#F4F2F1"/><circle cy="79" r="7.5" fill="#C7BCAC"/></g>
-                <g transform="translate(104 0)"><rect x="-7" y="89" width="14" height="31" rx="7" fill="#C1774B"/><circle cy="80" r="7.5" fill="#F4F2F1"/></g>
-                <g transform="translate(78 0)"><rect x="-7" y="90" width="14" height="30" rx="7" fill="#C7BCAC"/><circle cy="81" r="7.5" fill="#E6DFD7"/></g>
-                <g transform="translate(52 0)"><rect x="-7" y="88" width="14" height="32" rx="7" fill="#8E5E69"/><circle cy="79" r="7.5" fill="#C7BCAC"/></g>
-                <g transform="translate(26 0)"><rect x="-7" y="90" width="14" height="30" rx="7" fill="#E6DFD7"/><circle cy="81" r="7.5" fill="#8E5E69"/></g>
+                <g filter="url(#pc-sh2)" transform="translate(130 0)"><rect x="-7" y="88" width="14" height="32" rx="7" fill="#F4F2F1"/><circle cy="79" r="7.5" fill="#C7BCAC"/></g>
+                <g filter="url(#pc-sh2)" transform="translate(104 0)"><rect x="-7" y="89" width="14" height="31" rx="7" fill="#C1774B"/><circle cy="80" r="7.5" fill="#F4F2F1"/></g>
+                <g filter="url(#pc-sh2)" transform="translate(78 0)"><rect x="-7" y="90" width="14" height="30" rx="7" fill="#C7BCAC"/><circle cy="81" r="7.5" fill="#E6DFD7"/></g>
+                <g filter="url(#pc-sh2)" transform="translate(52 0)"><rect x="-7" y="88" width="14" height="32" rx="7" fill="#8E5E69"/><circle cy="79" r="7.5" fill="#C7BCAC"/></g>
+                <g filter="url(#pc-sh2)" transform="translate(26 0)"><rect x="-7" y="90" width="14" height="30" rx="7" fill="#E6DFD7"/><circle cy="81" r="7.5" fill="#8E5E69"/></g>
               </g>
-              <g transform="translate(70 36)"><circle r="17" fill="#FBFAF9"/><circle r="12" fill="none" stroke="#E6DFD7" stroke-width="4"/><circle class="art-timer" r="12" fill="none" stroke="#C1774B" stroke-width="4" stroke-linecap="round" stroke-dasharray="52 76" transform="rotate(-90)"/><path d="M-10 17l-4 9 12-7" fill="#FBFAF9"/></g>
-            </svg></div>
+              <g filter="url(#pc-sh)" transform="translate(70 34)"><circle r="18" fill="#FBFAF9"/><path d="M-10 15l-5 11 13-8" fill="#FBFAF9"/><circle r="12" fill="none" stroke="#E6DFD7" stroke-width="4"/><circle class="art-timer" r="12" fill="none" stroke="#C1774B" stroke-width="4" stroke-linecap="round" stroke-dasharray="52 76" transform="rotate(-90)"/></g>
+            </g></svg></div>
             <div class="tcard__body"><h3>Filas y espera</h3><span class="tcard__tag">Espera</span></div>
             <p class="tcard__desc">Cuánta gente espera, cuánto tarda la atención y cuándo se arma cola.</p>
             <div class="tcard__foot"><span>N.º 03 / 05</span><span><i></i>Personas y tiempo</span></div>
           </li>
+
           <li class="tcard tcard--holo" tabindex="0">
-            <div class="tcard__art" aria-hidden="true"><svg viewBox="20 6 160 120">
-              <defs><linearGradient id="g-holo" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#3A1823"/><stop offset=".55" stop-color="#6A3243"/><stop offset="1" stop-color="#8E5E69"/></linearGradient></defs>
-              <rect width="200" height="150" fill="url(#g-holo)"/>
-              <path d="M100 34 178 76 100 118 22 76Z" fill="#4A1F2D"/>
-              <path d="M22 76V50L100 8V34Z" fill="#6A3243"/><path d="M100 34V8L178 50V76Z" fill="#542433"/>
-              <path d="M30 51 34 49V71L30 73Z" fill="#E6DFD7" opacity=".7"/><path d="M118 24l22 12v14l-22-12Z" fill="#C7BCAC" opacity=".5"/>
+            <div class="tcard__art" aria-hidden="true"><svg viewBox="18 4 164 123"><g filter="url(#pc-grain)">
+              <rect width="200" height="150" fill="#3A1823"/>
+              <path filter="url(#pc-sh)" d="M0 30C40 20 70 40 110 30S172 14 200 24V150H0Z" fill="#4A1F2D"/>
+              <g filter="url(#pc-sh)"><path d="M22 76V50L100 8V34Z" fill="#7A3F50"/><path d="M100 34V8L178 50V76Z" fill="#6A3243"/></g>
+              <g filter="url(#pc-sh)"><path d="M100 34 178 76 100 118 22 76Z" fill="#542433"/></g>
               <g class="art-heat">
-                <ellipse cx="104" cy="80" rx="46" ry="22" fill="#6A3243"/><ellipse cx="104" cy="81" rx="33" ry="16" fill="#8E5E69"/><ellipse cx="104" cy="82" rx="22" ry="10.5" fill="#C7BCAC"/><ellipse cx="104" cy="82.5" rx="12" ry="6" fill="#E6DFD7"/><ellipse cx="104" cy="83" rx="5" ry="2.6" fill="#C1774B"/>
-                <ellipse cx="56" cy="88" rx="16" ry="7" fill="#6A3243"/><ellipse cx="56" cy="88" rx="8" ry="3.5" fill="#8E5E69"/>
+                <ellipse filter="url(#pc-sh2)" cx="104" cy="80" rx="48" ry="23" fill="#6A3243"/>
+                <ellipse filter="url(#pc-sh2)" cx="104" cy="81" rx="35" ry="17" fill="#8E5E69"/>
+                <ellipse filter="url(#pc-sh2)" cx="104" cy="82" rx="23" ry="11" fill="#C7BCAC"/>
+                <ellipse filter="url(#pc-sh2)" cx="104" cy="82.5" rx="13" ry="6.4" fill="#E6DFD7"/>
+                <ellipse filter="url(#pc-sh2)" cx="104" cy="83" rx="5.5" ry="2.8" fill="#C1774B"/>
+                <ellipse filter="url(#pc-sh2)" cx="54" cy="88" rx="17" ry="7.5" fill="#6A3243"/><ellipse filter="url(#pc-sh2)" cx="54" cy="88" rx="8.5" ry="3.8" fill="#8E5E69"/>
               </g>
-              <path d="M88 70 104 62 120 70 104 78Z" fill="#F4F2F1"/><path d="M88 70V76L104 84V78Z" fill="#C7BCAC"/><path d="M120 70V76L104 84V78Z" fill="#DDD5CA"/>
-              <g><rect x="78" y="72" width="7" height="15" rx="3.5" fill="#F4F2F1"/><circle cx="81.5" cy="69" r="3.6" fill="#F4F2F1"/></g>
-              <g><rect x="124" y="74" width="7" height="15" rx="3.5" fill="#C1774B"/><circle cx="127.5" cy="71" r="3.6" fill="#F4F2F1"/></g>
-              <g><rect x="100" y="86" width="7" height="15" rx="3.5" fill="#E6DFD7"/><circle cx="103.5" cy="83" r="3.6" fill="#F4F2F1"/></g>
-              <g><rect x="52" y="82" width="7" height="15" rx="3.5" fill="#C7BCAC"/><circle cx="55.5" cy="79" r="3.6" fill="#F4F2F1"/></g>
-            </svg></div>
+              <g filter="url(#pc-sh)"><path d="M88 69 104 61 120 69 104 77Z" fill="#F4F2F1"/><path d="M88 69V75L104 83V77Z" fill="#C7BCAC"/><path d="M120 69V75L104 83V77Z" fill="#DDD5CA"/></g>
+              <g filter="url(#pc-sh2)"><rect x="77" y="71" width="7" height="16" rx="3.5" fill="#F4F2F1"/><circle cx="80.5" cy="68" r="3.8" fill="#E6DFD7"/></g>
+              <g filter="url(#pc-sh2)"><rect x="124" y="73" width="7" height="16" rx="3.5" fill="#C1774B"/><circle cx="127.5" cy="70" r="3.8" fill="#F4F2F1"/></g>
+              <g filter="url(#pc-sh2)"><rect x="100" y="86" width="7" height="16" rx="3.5" fill="#E6DFD7"/><circle cx="103.5" cy="83" r="3.8" fill="#F4F2F1"/></g>
+              <g filter="url(#pc-sh2)"><rect x="51" y="81" width="7" height="16" rx="3.5" fill="#C7BCAC"/><circle cx="54.5" cy="78" r="3.8" fill="#F4F2F1"/></g>
+            </g></svg></div>
             <div class="tcard__body"><h3>Zonas y mapa de calor</h3><span class="tcard__tag">Calor</span></div>
             <p class="tcard__desc">Dónde se junta la gente en tu local y qué sectores quedan vacíos.</p>
             <div class="tcard__foot"><span>N.º 04 / 05</span><span><i></i>Personas</span></div>
           </li>
+
           <li class="tcard tcard--cobre" tabindex="0">
-            <div class="tcard__art" aria-hidden="true"><svg viewBox="0 0 200 150">
-              <g transform="translate(100 75)"><circle r="160" fill="#E9B48F"/><g fill="#F1CDB2">
-                <path d="M0 0L-16 -160H16Z"/><path d="M0 0L-16 -160H16Z" transform="rotate(30)"/><path d="M0 0L-16 -160H16Z" transform="rotate(60)"/><path d="M0 0L-16 -160H16Z" transform="rotate(90)"/><path d="M0 0L-16 -160H16Z" transform="rotate(120)"/><path d="M0 0L-16 -160H16Z" transform="rotate(150)"/><path d="M0 0L-16 -160H16Z" transform="rotate(180)"/><path d="M0 0L-16 -160H16Z" transform="rotate(210)"/><path d="M0 0L-16 -160H16Z" transform="rotate(240)"/><path d="M0 0L-16 -160H16Z" transform="rotate(270)"/><path d="M0 0L-16 -160H16Z" transform="rotate(300)"/><path d="M0 0L-16 -160H16Z" transform="rotate(330)"/></g></g>
-              <rect x="30" y="16" width="140" height="118" rx="6" fill="#FBFAF9" stroke="#542433" stroke-width="5"/>
-              <rect x="40" y="26" width="46" height="12" rx="2" fill="#C7BCAC"/><rect x="114" y="26" width="46" height="12" rx="2" fill="#C7BCAC"/>
-              <rect x="86" y="62" width="32" height="24" rx="4" fill="#E6DFD7" stroke="#87695C" stroke-width="1.4"/><rect x="138" y="86" width="20" height="34" rx="3" fill="#C1774B"/>
-              <path d="M88 136h26" stroke="#FBFAF9" stroke-width="7"/>
-              <path class="art-path" d="M101 132 C 100 112 70 112 66 96 C 62 78 78 60 100 54 C 124 48 132 66 128 80 C 124 94 132 104 140 104" fill="none" stroke="#C1774B" stroke-width="3.2" stroke-linecap="round" stroke-dasharray="2 7"/>
+            <div class="tcard__art" aria-hidden="true"><svg viewBox="0 0 200 150"><g filter="url(#pc-grain)">
+              <rect width="200" height="150" fill="#E9B48F"/>
+              <g filter="url(#pc-sh)" transform="translate(100 75)" fill="#F1CDB2">
+                <path d="M0 0L-18 -170H18Z"/><path d="M0 0L-18 -170H18Z" transform="rotate(30)"/><path d="M0 0L-18 -170H18Z" transform="rotate(60)"/><path d="M0 0L-18 -170H18Z" transform="rotate(90)"/><path d="M0 0L-18 -170H18Z" transform="rotate(120)"/><path d="M0 0L-18 -170H18Z" transform="rotate(150)"/><path d="M0 0L-18 -170H18Z" transform="rotate(180)"/><path d="M0 0L-18 -170H18Z" transform="rotate(210)"/><path d="M0 0L-18 -170H18Z" transform="rotate(240)"/><path d="M0 0L-18 -170H18Z" transform="rotate(270)"/><path d="M0 0L-18 -170H18Z" transform="rotate(300)"/><path d="M0 0L-18 -170H18Z" transform="rotate(330)"/>
+              </g>
+              <g filter="url(#pc-sh)"><rect x="28" y="14" width="144" height="122" rx="6" fill="#542433"/></g>
+              <g filter="url(#pc-sh2)"><rect x="34" y="20" width="132" height="110" rx="3" fill="#FBFAF9"/></g>
+              <path filter="url(#pc-sh2)" d="M34 104C60 98 86 110 112 102S150 96 166 100V130H34Z" fill="#F1E8DD"/>
+              <g filter="url(#pc-sh2)"><rect x="42" y="28" width="44" height="12" rx="2" fill="#C7BCAC"/><rect x="114" y="28" width="44" height="12" rx="2" fill="#C7BCAC"/><rect x="86" y="62" width="32" height="24" rx="4" fill="#E6DFD7"/><rect x="138" y="86" width="20" height="34" rx="3" fill="#C1774B"/></g>
+              <path d="M88 136h26" stroke="#FBFAF9" stroke-width="8"/>
+              <path class="art-path" d="M101 132 C 100 112 70 112 66 96 C 62 78 78 60 100 54 C 124 48 132 66 128 80 C 124 94 132 104 140 104" fill="none" stroke="#C1774B" stroke-width="3.4" stroke-linecap="round" stroke-dasharray="2 7"/>
               <circle cx="101" cy="132" r="4" fill="#542433"/>
-              <g class="art-walker"><circle cx="140" cy="104" r="7.5" fill="#542433"/><circle cx="140" cy="104" r="3.2" fill="#C1774B"/></g>
-            </svg></div>
+              <g class="art-walker" filter="url(#pc-sh2)"><circle cx="140" cy="104" r="7.5" fill="#542433"/><circle cx="140" cy="104" r="3.2" fill="#C1774B"/></g>
+            </g></svg></div>
             <div class="tcard__body"><h3>Recorrido</h3><span class="tcard__tag">Camino</span></div>
             <p class="tcard__desc">Por dónde camina la gente desde que entra hasta que se va.</p>
             <div class="tcard__foot"><span>N.º 05 / 05</span><span><i></i>Personas</span></div>
