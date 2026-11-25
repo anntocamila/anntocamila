@@ -499,16 +499,16 @@ html.modal-open { overflow: hidden }
 .tcard { --rot: 0deg; --lift: 0px; --dx: 0px; --dy: 0px; --fan: 1; --rx: 0deg; --ry: 0deg; --mx: 50%; --my: 30%;
   position: relative; flex: 0 0 228px; min-height: 340px; margin-left: 12px; border-radius: 18px; padding: 10px 10px 12px; display: flex; flex-direction: column; gap: 8px; color: var(--ink);
   transform: translate(var(--dx), calc(var(--lift) + var(--dy))) rotate(calc(var(--rot) * var(--fan))) rotateX(var(--rx)) rotateY(var(--ry));
-  transition: transform .55s var(--ease-paper), box-shadow .45s var(--ease); box-shadow: 0 1px 0 rgba(39,33,36,.08), 5px 6px 0 -1px var(--sheet, #E0D6C8), 5px 6px 2px -1px rgba(39,33,36,.18), 0 20px 34px -20px rgba(39,33,36,.5); outline-offset: 4px; will-change: transform }
+  transition: transform .55s var(--ease-paper), box-shadow .45s var(--ease); box-shadow: inset 0 1px 0 rgba(255,255,255,.22), 0 1px 1px rgba(39,33,36,.18), 5px 6px 0 -1px var(--sheet), 5px 6px 2px -1px rgba(39,33,36,.2), 10px 12px 0 -2px var(--sheet2), 10px 12px 3px -2px rgba(39,33,36,.18), 0 22px 36px -20px rgba(39,33,36,.5); outline-offset: 4px; will-change: transform }
 .tcard:first-child { margin-left: 0 }
 .deck .tcard:nth-child(1) { --rot: -6deg; --lift: 28px }
 .deck .tcard:nth-child(2) { --rot: -3deg; --lift: 8px }
 .deck .tcard:nth-child(4) { --rot: 3deg; --lift: 8px }
 .deck .tcard:nth-child(5) { --rot: 6deg; --lift: 28px }
-.tcard:hover, .tcard:focus-visible { --lift: -18px; --rot: 0deg; z-index: 3; box-shadow: 0 1px 0 rgba(39,33,36,.08), 7px 9px 0 -1px var(--sheet, #E0D6C8), 7px 9px 3px -1px rgba(39,33,36,.2), 0 34px 50px -24px rgba(39,33,36,.6) }
+.tcard:hover, .tcard:focus-visible { --lift: -18px; --rot: 0deg; z-index: 3; box-shadow: inset 0 1px 0 rgba(255,255,255,.22), 0 1px 1px rgba(39,33,36,.18), 7px 9px 0 -1px var(--sheet), 7px 9px 3px -1px rgba(39,33,36,.22), 14px 17px 0 -2px var(--sheet2), 14px 17px 4px -2px rgba(39,33,36,.2), 0 34px 50px -24px rgba(39,33,36,.6) }
 .tcard.is-dealing { transition: none }
 .tcard::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; background: radial-gradient(circle at var(--mx) var(--my), rgba(255,255,255,.28), rgba(255,255,255,0) 45%); opacity: 0; transition: opacity .35s var(--ease) }
-.tcard:hover::after { opacity: 1 }
+.tcard::after { display: none }
 .tcard__art { border-radius: 12px; overflow: hidden; aspect-ratio: 4 / 3; box-shadow: inset 0 0 0 1px rgba(39,33,36,.06) }
 .tcard__art svg { display: block; width: 100%; height: 100% }
 .tcard__body { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 6px 6px 0 }
@@ -518,18 +518,6 @@ html.modal-open { overflow: hidden }
 .tcard__foot { margin-top: auto; display: flex; justify-content: space-between; align-items: center; gap: 8px; border-top: 1px solid rgba(39,33,36,.14); padding: 9px 6px 0; font-size: 11px; color: #5E5458; font-variant-numeric: tabular-nums }
 .tcard__foot span:last-child { display: inline-flex; align-items: center; gap: 6px; font-weight: 600 }
 .tcard__foot i { width: 6px; height: 6px; border-radius: 50%; background: var(--cobre) }
-.tcard--caliza { background: #F1ECE4 }
-.tcard--rosa { background: #F6EAE5 }
-.tcard--granate { background: var(--brand); color: var(--on-brand) }
-.tcard--holo { background: linear-gradient(155deg, #3A1823 0%, #6A3243 45%, #8E5E69 75%, #B97A5A 100%); color: var(--on-brand) }
-.tcard--granate .tcard__desc, .tcard--holo .tcard__desc { color: #EDE2DF }
-.tcard--granate .tcard__tag, .tcard--holo .tcard__tag { background: rgba(244,242,241,.16) }
-.tcard--granate .tcard__foot, .tcard--holo .tcard__foot { color: #E3D8D5; border-top-color: rgba(244,242,241,.22) }
-.tcard--cobre { background: linear-gradient(160deg, #F4D2B8 0%, #EAAF87 55%, #DE9468 100%) }
-.tcard--cobre .tcard__desc { color: #3D3034 }
-.tcard--cobre .tcard__foot { color: #3D3034; border-top-color: rgba(39,33,36,.18) }
-.tcard--cobre .tcard__foot i { background: var(--brand) }
-.tcard--cobre .tcard__tag { background: rgba(84,36,51,.12) }
 
 /* pequeñas animaciones dentro de cada ilustración (solo cuando la sección está a la vista) */
 .deck.is-live .art-hand { transform-box: view-box; transform-origin: 144px 24px; animation: art-spin 6s linear infinite }
@@ -568,14 +556,28 @@ html.modal-open { overflow: hidden }
 
 /* textura de papel: grano sobre la tarjeta y sombras de recorte en cada capa de la ilustración */
 .pc-defs { position: absolute; width: 0; height: 0; overflow: hidden }
-.tcard::before { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; opacity: .38; mix-blend-mode: multiply;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .16 0 0 0 0 .07 0 0 0 0 .1 0 0 0 .5 -.12'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E") }
-.tcard--caliza { --sheet: #DCCFBF }
-.tcard--rosa { --sheet: #E8D0C7 }
-.tcard--granate { --sheet: #3A1823 }
-.tcard--holo { --sheet: #2E121B }
-.tcard--cobre { --sheet: #C9764A }
 .tcard__art { box-shadow: inset 0 0 0 1px rgba(39,33,36,.08), inset 0 2px 6px rgba(39,33,36,.18) }
+
+/* superficie de cada tarjeta: color plano de la paleta, grano de papel y veta de marquetería */
+.tcard { --wood: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='28'%3E%3Cg fill='none' stroke='%232A0F17' stroke-opacity='.09' stroke-width='.8'%3E%3Cpath d='M0 5c22-3 44 3 66 0s44-3 66 0 32 2 48 0'/%3E%3Cpath d='M0 13c26 3 50-3 76 0s50 3 70 0 24-2 34 0'/%3E%3Cpath d='M0 21c30-2 58 2 90 0s58-2 90 0'/%3E%3C/g%3E%3C/svg%3E"); --grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .16 0 0 0 0 .07 0 0 0 0 .1 0 0 0 .5 -.12'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E") }
+.tcard::before { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; background-image: var(--wood), var(--grain); opacity: .65; mix-blend-mode: multiply }
+.tcard--t4, .tcard--t5 { --wood: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='28'%3E%3Cg fill='none' stroke='%23FFFFFF' stroke-opacity='.08' stroke-width='.8'%3E%3Cpath d='M0 5c22-3 44 3 66 0s44-3 66 0 32 2 48 0'/%3E%3Cpath d='M0 13c26 3 50-3 76 0s50 3 70 0 24-2 34 0'/%3E%3Cpath d='M0 21c30-2 58 2 90 0s58-2 90 0'/%3E%3C/g%3E%3C/svg%3E") }
+.tcard--t4::before, .tcard--t5::before { mix-blend-mode: normal; opacity: .55 }
+/* de claro a oscuro: rosado, arena, cobre, malva y granate */
+.tcard--t1 { background: #F6EAE5; --sheet: #EAD3CA; --sheet2: #DDB9AC }
+.tcard--t2 { background: #EDD3C6; --sheet: #DFB9A6; --sheet2: #CFA08A }
+.tcard--t3 { background: #C1774B; --sheet: #A8623A; --sheet2: #8E5030 }
+.tcard--t4 { background: #8E5E69; --sheet: #744955; --sheet2: #5E3845; color: var(--on-brand) }
+.tcard--t5 { background: #542433; --sheet: #3A1823; --sheet2: #2A0F17; color: var(--on-brand) }
+.tcard--t2 .tcard__desc { color: #46383C }
+.tcard--t3 .tcard__desc, .tcard--t3 .tcard__foot { color: #2E2326 }
+.tcard--t3 .tcard__foot { border-top-color: rgba(39,33,36,.22) }
+.tcard--t3 .tcard__tag { background: rgba(39,33,36,.14) }
+.tcard--t3 .tcard__foot i { background: var(--brand) }
+.tcard--t4 .tcard__desc, .tcard--t5 .tcard__desc { color: #F1E8E5 }
+.tcard--t4 .tcard__tag, .tcard--t5 .tcard__tag { background: rgba(244,242,241,.18) }
+.tcard--t4 .tcard__foot, .tcard--t5 .tcard__foot { color: #EDE2DF; border-top-color: rgba(244,242,241,.26) }
+.tcard--t4 .tcard__foot i { background: #E6DFD7 }
 
 /* ===== el hero (paleta fija de marca: no cambia con el tema) ===== */
 .hero { position: absolute; left: 0; top: 0; transform-origin: 0 0; color: #272124; font-family: var(--text); overflow: hidden; background: #F4F2F1 }
