@@ -3,7 +3,7 @@ import { readFile, writeFile } from 'node:fs/promises';
 import { minify } from 'terser';
 import { minify as minifyCss } from 'csso';
 
-for (const f of ['hero', 'site', 'consent']) {
+for (const f of ['hero', 'site', 'consent', 'motion']) {
   const src = await readFile(`src/${f}.js`, 'utf8');
   const out = await minify(src, { compress: true, mangle: true });
   await writeFile(`assets/js/${f}.js`, out.code);

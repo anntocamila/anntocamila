@@ -1328,7 +1328,12 @@ const VENUES = VENUE_DEFS.map(def => {
 });
 const N = VENUES.length, CYCLE = N * RUBRO_SECS;
 /* el piso de cada rubro se precalienta recién cuando hace falta (o en un momento libre) */
-function ready(v) { if (!v.ready) { v.sim.run(100); v.base = v.visits0 - v.sim.visits; v.ready = true; } return v; }
+function ready(v) { if (!v.ready) { v.sim.run(140); v.base = v.visits0 - v.sim.visits; v.ready = true; } return v; }
+/* precalentamiento en pedazos de 5 s de simulación, para no trabar el navegador */
+function warm(v, done) {
+  if (v.ready) { if (done) done(); return; }
+  idle(() => { if (v.ready) { if (done) done(); return; } v.sim.run(Math.min(140, v.sim.t + 5)); if (v.sim.t >= 140) { v.base = v.visits0 - v.sim.visits; v.ready = true; if (done) done(); } else warm(v, done); });
+}
 const idle = window.requestIdleCallback ? (f => requestIdleCallback(f, { timeout: 2500 })) : (f => setTimeout(f, 200));
 function values(v, st, base) {
   return { group: v.group, visitsLabel: (v.labels && v.labels.visits) || 'Visitas', rubro: v.name, visits: fmtInt.format(base + st.visits), dwell: fmtDur(st.dwell), zone: v.zones[st.leader].name, share: Math.round(st.share * 100) + ' % del tiempo en el salón', bar: Math.round(st.share * 100) };
@@ -1440,8 +1445,8 @@ function boot() {
   booted = true;
   heroes.forEach(h => h.paint(reduced ? staticSpec(staticIdx) : liveSpec(), true));
   setReduced(reduced);
-  // precalentar el resto de los rubros de a uno, en momentos libres
-  VENUES.forEach(v => idle(() => ready(v)));
+  // precalentar el resto de los rubros de a uno, en pedazos chicos
+  let i = 1; const next = () => { if (i < N) warm(VENUES[i++], next); }; next();
 }
 function start() {
   mount();
@@ -1450,7 +1455,7 @@ function start() {
   if (tg) tg.addEventListener('change', e => setReduced(e.target.checked || mqReduce.matches));
   mqReduce.addEventListener?.('change', e => setReduced(e.matches));
   // el texto del hero aparece enseguida; la escena arranca cuando el navegador está libre
-  idle(boot);
+  warm(VENUES[0], boot);
 }
 function jump(i) {
   if (reduced) { staticIdx = i; heroes.forEach(h => h.paint(staticSpec(i), false)); return; }
@@ -1486,6 +1491,18 @@ function goTo(e) {
   if (id === 'agendar') setTimeout(() => document.querySelector('.cal__day:not([disabled])')?.focus({ preventScroll: true }), reduced ? 0 : 600);
 }
 window.VistormGoTo = goTo;
+/* escenas estáticas de cada rubro, para otras secciones de la página */
+window.VistormScene = function (canvas, id, cssW, cssH) {
+  const i = VENUES.findIndex(v => v.id === id); if (i < 0) return false;
+  const sn = STATIC_SNAPS[i] || (STATIC_SNAPS[i] = SB_SIMS[i].at(4.2));
+  const k = Math.min(cssW / 23, cssH / 18.2);
+  const L = { w: cssW, h: cssH, k, ox: cssW / 2 - 2.44 * k, oy: cssH / 2 - 4.4 * k };
+  canvas.style.width = cssW + 'px'; canvas.style.height = cssH + 'px';
+  const sc = new SceneRubro(canvas, L, VENUES[i]);
+  sc.resize(1); sc.draw(sn, sn.t); sc.release();
+  return true;
+};
+window.dispatchEvent(new Event('vistorm:scene-ready'));
 if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', start); else start();
 
 })();
