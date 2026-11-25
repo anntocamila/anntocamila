@@ -1,0 +1,21 @@
+{
+  "name": "Vistorm Labs",
+  "short_name": "Vistorm",
+  "lang": "es-AR",
+  "start_url": "/",
+  "display": "browser",
+  "background_color": "#F4F2F1",
+  "theme_color": "#542433",
+  "icons": [
+    {
+      "src": "/icono-web-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/assets/img/icono-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}

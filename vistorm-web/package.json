@@ -1,0 +1,12 @@
+{
+  "name": "vistorm-web",
+  "private": true,
+  "description": "Sitio de Vistorm Labs (estático, para Vercel).",
+  "scripts": {
+    "minify": "node scripts/minify.mjs"
+  },
+  "devDependencies": {
+    "csso": "5.0.5",
+    "terser": "5.36.0"
+  }
+}

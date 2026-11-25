@@ -1,0 +1,59 @@
+/*
+ * Vistorm Labs · tema para el panel (inbyra-panel)
+ * Pisa las variables de color y tipografía que ya usa el panel, así se viste con la identidad nueva
+ * sin tocar los componentes. Cargarlo DESPUÉS del CSS del panel (por ejemplo, importarlo al final de main.tsx).
+ * Paleta: granate = marca y período actual · cobre = actividad · verde agua / petróleo = comparación · perla = fondo · carbón = texto.
+ */
+@import url("https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Inter:wght@400;500;600&display=swap");
+
+:root {
+  --bg: #F4F2F1; --side: #ECE7E2; --surface: #FBFAF9; --sunken: #F0ECE8; --hover: #E9E3DD; --track: #E6DFD7;
+  --fg: #272124; --head: #542433; --fg2: #5E5458; --fg3: #75696D;
+  --line: #E6DFD7; --line2: #DDD5CA; --grid: #ECE7E2;
+  --accent: #542433; --accent-h: #431C29; --accent-soft: #F1E6EA; --accent-fg: #542433;
+  /* series de gráficos: actual, actividad, comparación (oscura y clara), apoyo */
+  --c1: #542433; --c2: #C1774B; --c3: #2F5D5A; --c4: #8FB5AE; --c5: #A99D8C; --c6: #8E5E69;
+  --fc: #E4C3CB;
+  --t-gray-bg: #ECE7E2; --t-gray: #5E5458;
+  --t-orange-bg: #F6EADF; --t-orange: #8A4F2B;
+  --t-yellow-bg: #F5EDD8; --t-yellow: #735512;
+  --t-green-bg: #E3EEEC; --t-green: #2F5D5A;
+  --t-blue-bg: #E4EEF3; --t-blue: #2F5A73;
+  --t-purple-bg: #F1E6EA; --t-purple: #542433;
+  --t-pink-bg: #F5EBEE; --t-pink: #7E4E59;
+  --t-red-bg: #F6E7E3; --t-red: #9B3B2E;
+  --f-ui: "Inter", "Inter Variable", "Helvetica Neue", Arial, sans-serif;
+  --f-display: "Fraunces", "Iowan Old Style", Georgia, serif;
+  --r: 14px;
+  --shadow-pop: 0 0 0 1px #2721240f, 7px 7px 0 0 #DDD5CA, 0 18px 36px -24px #27212473;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme=light]) {
+    --bg: #1E191B; --side: #231D20; --surface: #272124; --sunken: #2C2528; --hover: #322A2D; --track: #3B3235;
+    --fg: #E9E3DE; --head: #F4F2F1; --fg2: #C7BCAC; --fg3: #A89C97;
+    --line: #3B3235; --line2: #4A3F43; --grid: #2F282B;
+    --accent: #C98A9A; --accent-h: #D9A3B1; --accent-soft: #3A2229; --accent-fg: #E4C3CB;
+    --c1: #C98A9A; --c2: #D18A5E; --c3: #6FA39D; --c4: #8FB5AE; --c5: #C7BCAC; --c6: #A97884;
+    --fc: #6A3243;
+    --t-gray-bg: #3B3235; --t-gray: #C7BCAC; --t-orange-bg: #3F2A1E; --t-orange: #E3A57B; --t-yellow-bg: #3B3219; --t-yellow: #E0C27A;
+    --t-green-bg: #1E3331; --t-green: #8FB5AE; --t-blue-bg: #1B2D37; --t-blue: #8DB7CF; --t-purple-bg: #3A2229; --t-purple: #E4C3CB;
+    --t-pink-bg: #3A2530; --t-pink: #D9A3B1; --t-red-bg: #3E2220; --t-red: #EE9A8C;
+    --shadow-pop: 0 0 0 1px #ffffff14, 7px 7px 0 0 #3B3235, 0 18px 36px -20px #000000b3;
+  }
+}
+:root[data-theme=dark] {
+  --bg: #1E191B; --side: #231D20; --surface: #272124; --sunken: #2C2528; --hover: #322A2D; --track: #3B3235;
+  --fg: #E9E3DE; --head: #F4F2F1; --fg2: #C7BCAC; --fg3: #A89C97;
+  --line: #3B3235; --line2: #4A3F43; --grid: #2F282B;
+  --accent: #C98A9A; --accent-h: #D9A3B1; --accent-soft: #3A2229; --accent-fg: #E4C3CB;
+  --c1: #C98A9A; --c2: #D18A5E; --c3: #6FA39D; --c4: #8FB5AE; --c5: #C7BCAC; --c6: #A97884;
+  --fc: #6A3243;
+  --t-gray-bg: #3B3235; --t-gray: #C7BCAC; --t-orange-bg: #3F2A1E; --t-orange: #E3A57B; --t-yellow-bg: #3B3219; --t-yellow: #E0C27A;
+  --t-green-bg: #1E3331; --t-green: #8FB5AE; --t-blue-bg: #1B2D37; --t-blue: #8DB7CF; --t-purple-bg: #3A2229; --t-purple: #E4C3CB;
+  --t-pink-bg: #3A2530; --t-pink: #D9A3B1; --t-red-bg: #3E2220; --t-red: #EE9A8C;
+  --shadow-pop: 0 0 0 1px #ffffff14, 7px 7px 0 0 #3B3235, 0 18px 36px -20px #000000b3;
+}
+/* títulos de página y de sección en Fraunces, como en la marca */
+h1, h2 { font-family: var(--f-display); font-weight: 600; letter-spacing: -0.01em; font-variation-settings: "opsz" 72; }
+/* cifras siempre tabulares */
+table, [class*="kpi"], [class*="metric"], [class*="stat"] { font-variant-numeric: tabular-nums; }
