@@ -1338,7 +1338,7 @@ THRESH = [1.204, 3.4401, 6.8802, 11.3524]; // calibrate() precalculado: la simul
 const MAX_HEAT = { tienda: 17.2006, bar: 19.0287, shopping: 15.6714, aeropuerto: 18.5363 };
 const STEP = 1 / 30;
 const LAYOUTS = {
-  desk: { w: 1440, h: 810, k: 34, ox: 900, oy: 190 },
+  desk: { w: 1440, h: 810, k: 29, ox: 968, oy: 232 },
   mob: { w: 390, h: 693, k: 16.5, ox: 158, oy: 360 },
 };
 const fmtInt = new Intl.NumberFormat('es-AR');
@@ -1378,9 +1378,9 @@ class Hero {
         <img class="hero__logo" src="${LOGO}" alt="Vistorm Labs" width="${mode === 'desk' ? 156 : 128}" height="${mode === 'desk' ? 53 : 43}">
       </div>
       <div class="hero__copy">
-        <h1 class="hero__title">Que el mundo físico se mida como el digital.</h1>
-        <p class="hero__sub">Mirá cuánta gente entra a tu local, qué hace adentro y qué cambiar. Medimos el comportamiento de tus consumidores.</p>
-        <a class="hero__cta" href="#agendar">Pedí una demo</a>
+        <h1 class="hero__title">Entendé qué pasa dentro de tu local.</h1>
+        <p class="hero__sub">Mirá cuántas personas entran, qué zonas recorren y cuánto esperan.</p>
+        <a class="hero__cta" href="#agendar">Agendá una demo</a>
       </div>
       <div class="panel" aria-label="Panel de un local de ejemplo">
         <div class="panel__head"><p class="panel__group" data-k="group"></p><p class="panel__rubro" data-k="rubro"></p></div>
@@ -1391,7 +1391,6 @@ class Hero {
       <div class="rubros">
         ${live ? '<button class="rubros__pause" type="button" aria-label="Pausar animación"><span></span></button>' : ''}
         <div class="rubros__dots">${VENUES.map((v, i) => `<button type="button" class="rubros__dot" data-i="${i}" aria-label="Ver ${v.name.toLowerCase()}"><i></i></button>`).join('')}</div>
-        <span class="rubros__legend"><span class="panel__dot"></span>Local de ejemplo · datos simulados</span>
       </div>`;
     frame.appendChild(el); this.el = el;
     this.cv = el.querySelector('canvas'); const L = LAYOUTS[mode];

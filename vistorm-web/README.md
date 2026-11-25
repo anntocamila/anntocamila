@@ -40,13 +40,13 @@ Sitio de Vistorm Labs listo para Vercel: landing de una sola acción («Pedí un
 | Validación de formularios | En el navegador (mensajes por campo) y de nuevo en el servidor (`api/demo.js`). |
 | Antispam | Campo trampa oculto, tiempo mínimo de 3 s, límite de 5 pedidos cada 10 minutos por IP y control de origen. |
 | Analytics | GA4 con consentimiento. Eventos: `cta_click` y `generate_lead`. |
-| CTA único | Todos los botones dicen «Pedí una demo» y llevan al agendador. No hay precios ni links que saquen de la página. |
+| CTA único | Todos los botones dicen «Agendá una demo» y llevan al agendador. No hay precios ni links que saquen de la página. |
 | Sin vías de escape | El hero no tiene menú de navegación: la única acción es «Pedí una demo». Privacidad y términos quedan en el pie. |
 | Contenido personalizado | Agregando `?rubro=` al enlace (tienda, bar, shopping, aeropuerto; también gastronomia, hoteles, transporte) el hero arranca en ese rubro y la sección «Para quién» abre su tarjeta. Útil para campañas por industria. |
 
 ## Estructura
 
-Hero → qué medimos (cinco cuadros de papel cortado superpuestos; el del medio se abre con su texto) → para quién → el panel (réplica del software en papel cortado: detrás, hojas onduladas superpuestas de rosado a arena con un relieve topográfico; barra lateral en capas bordó; indicadores y gráficos como hojas de papel con sombra de corte; arranca en Mesas) → cómo funciona → demo (título y botón) → preguntas frecuentes. Todos los botones «Pedí una demo» abren el agendador en un pop-up.
+Hero («Entendé qué pasa dentro de tu local.») → qué medimos (cinco cuadros de papel cortado; el activo se abre con su texto) → para quién (Retail y comercio; Centros comerciales; Gastronomía y hotelería; Servicios, salud y educación) → Vistorm en acción (un local de ejemplo con pestañas Visitas, Zonas, Espera y Antes y después: arriba el hallazgo, debajo el gráfico; papel en capas afuera y superficie lisa para leer) → cómo funciona → demo («Conocé Vistorm.») → preguntas frecuentes. Todos los botones dicen «Agendá una demo» y abren el agendador en un pop-up.
 
 Redes sociales: completar los enlaces de Instagram y LinkedIn en `SOCIAL` (en el generador) para que aparezcan en el pie.
 
