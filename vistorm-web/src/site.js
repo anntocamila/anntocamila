@@ -328,151 +328,220 @@
   set(cur);
 })();
 
-/* ===== Vistorm Labs · panel de ejemplo: la semana como un acordeón horizontal =====
-   Cada día es una columna. Al abrir uno, la curva de gente de toda la semana se estira
-   para hacerle lugar y el tramo de ese día se dibuja en cobre. Datos simulados. */
+/* ===== Vistorm Labs · panel de ejemplo en marquetería (réplica del software, con datos simulados) =====
+   Las barras son listones con veta (patrones #mq-*); la pieza destacada va en cobre. */
 (function () {
   'use strict';
-  var root = document.getElementById('ridge'); if (!root) return;
-  var daysEl = document.getElementById('ridge-days'), svg = document.getElementById('ridge-svg');
-  var tipEl = document.getElementById('ridge-tip'), countEl = document.getElementById('ridge-count');
-  var fmt = new Intl.NumberFormat('es-AR', { maximumFractionDigits: 1 });
-  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  var NS = 'http://www.w3.org/2000/svg';
-  var HOURS = [12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23];
-  var D = [
-    { k: 'Lun', name: 'Lunes', n: 9, v: 350, dw: 38, wait: 2.5, left: 3, peak: 24, ph: 21, lunch: .5, title: 'Un lunes tranquilo', tip: 'Con una persona en la barra alcanza hasta las 20 h.' },
-    { k: 'Mar', name: 'Martes', n: 10, v: 372, dw: 40, wait: 3, left: 4, peak: 26, ph: 21, lunch: .5, title: 'Martes parejo', tip: 'Las mesas de la ventana se llenan primero: abrí la terraza desde las 20 h.' },
-    { k: 'Mié', name: 'Miércoles', n: 11, v: 401, dw: 41, wait: 3.5, left: 5, peak: 29, ph: 21, lunch: .45, title: 'Miércoles en subida', tip: 'A las 21 h la espera en la barra pasó los 3 minutos.' },
-    { k: 'Jue', name: 'Jueves', n: 12, v: 341, dw: 37, wait: 2.5, left: 3, peak: 25, ph: 20, lunch: .5, title: 'Jueves en baja', chip: 'Único día en baja', tip: 'Fue el único día con menos visitas que la semana anterior.' },
-    { k: 'Vie', name: 'Viernes', n: 13, v: 525, dw: 46, wait: 5, left: 23, peak: 41, ph: 22, lunch: .35, title: 'Viernes de barra llena', chip: 'Más espera', tip: '23 personas se fueron sin atención de 21 a 23 h: sumá una persona en la barra.' },
-    { k: 'Sáb', name: 'Sábado', n: 14, v: 571, dw: 48, wait: 5.5, left: 17, peak: 52, ph: 22, lunch: .4, title: 'Sábado récord', chip: 'El más concurrido', tip: 'Abrí el sector del fondo antes de las 20 h: hoy queda vacío mientras la gente espera mesa.' },
-    { k: 'Dom', name: 'Domingo', n: 15, v: 290, dw: 35, wait: 2, left: 2, peak: 22, ph: 14, lunch: 1, title: 'Domingo de almuerzo', tip: 'El pico fue al mediodía: reforzá el salón de 13 a 15 h.' }
-  ];
-  // gente adentro, hora por hora: un pico al mediodía y otro a la noche
-  var g = function (x, m, s) { return Math.exp(-((x - m) * (x - m)) / (2 * s * s)); };
-  D.forEach(function (d) {
-    var raw = HOURS.map(function (h) { return d.ph < 16 ? (g(h, d.ph, 1.4) + .35 * g(h, 21, 1.8) + .08) : (d.lunch * g(h, 13.5, 1.1) + g(h, d.ph, 1.6) + .1); });
-    var mx = Math.max.apply(null, raw);
-    d.curve = raw.map(function (r) { return r / mx * d.peak; });
-  });
-  var MAXP = 60;
+  var root = document.getElementById('sw'); if (!root) return;
+  var view = document.getElementById('sw-view'), crumbs = document.getElementById('sw-crumbs');
+  var items = Array.prototype.slice.call(root.querySelectorAll('.sw__item'));
+  var NS = 'http://www.w3.org/2000/svg', fmt = new Intl.NumberFormat('es-AR');
+  var C = { brand: '#542433', soft: '#8E5E69', caliza: '#C7BCAC', sunken: '#ECE7E2', line: '#DDD5CA', verde: '#8FB5AE', cobre: '#C1774B', deep: '#4A1F2D', heat4: '#E6DFD7', heat1: '#6A3243' };
 
-  /* ---------- columnas ---------- */
-  var cols = D.map(function (d, i) {
-    var b = document.createElement('button');
-    b.type = 'button'; b.className = 'rd'; b.setAttribute('role', 'tab'); b.id = 'rd-' + i;
-    b.setAttribute('aria-label', d.name + ' ' + d.n + ': ' + d.v + ' visitas, pico de ' + d.peak + ' personas a las ' + d.ph + ' h');
-    b.innerHTML =
-      '<span class="rd__mini"><span class="rd__k">D' + (i + 1) + (i === 5 ? ' <i class="rd__dot"></i>' : '') + '</span><span class="rd__n">' + d.n + '<small>' + d.k + '</small></span>' +
-        '<span class="rd__s">' + fmt.format(d.v) + ' visitas</span><span class="rd__s2">pico a las ' + d.ph + ' h</span></span>' +
-      '<span class="rd__full">' +
-        '<span class="rd__row"><span class="rd__day">Día ' + (i + 1) + '</span><span class="rd__date">' + d.name + ' ' + d.n + ' nov</span>' + (d.chip ? '<span class="rd__chip">' + d.chip + '</span>' : '') +
-          '<span class="rd__wx">Espera máx. ' + fmt.format(d.wait) + ' min</span></span>' +
-        '<span class="rd__title">' + d.title + '<small>pico de ' + d.peak + ' personas a las ' + d.ph + ' h</small></span>' +
-        '<span class="rd__stats">' +
-          '<span><em>Visitas</em><b>' + fmt.format(d.v) + '</b></span>' +
-          '<span><em>Permanencia</em><b>' + d.dw + '<small>min</small></b></span>' +
-          '<span><em>Espera máx.</em><b>' + fmt.format(d.wait) + '<small>min</small></b></span>' +
-          '<span><em>Sin atención</em><b>' + d.left + '<small>pers.</small></b></span>' +
-        '</span>' +
-      '</span>';
-    daysEl.appendChild(b);
-    return b;
-  });
-
-  /* ---------- curva ---------- */
-  var openW = function () { return window.innerWidth < 760 ? 2.4 : 4.4; };
-  var detail = document.getElementById('ridge-detail');
-  var weights = D.map(function () { return 1; }), cur = 5, drawn = 0;
+  function h(html) { var d = document.createElement('div'); d.innerHTML = html.trim(); return d.firstChild; }
+  function svg(w, hh, cls, label) { var s = document.createElementNS(NS, 'svg'); s.setAttribute('viewBox', '0 0 ' + w + ' ' + hh); s.setAttribute('class', cls); if (label) { s.setAttribute('role', 'img'); s.setAttribute('aria-label', label); } else s.setAttribute('aria-hidden', 'true'); return s; }
   function el(tag, a, p) { var n = document.createElementNS(NS, tag); for (var k in a) n.setAttribute(k, a[k]); if (p) p.appendChild(n); return n; }
-  function draw() {
-    var W = Math.max(300, svg.parentNode.clientWidth), H = window.innerWidth < 760 ? 170 : 230, T = 34, B = 26, ph = H - T - B;
-    svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H); svg.setAttribute('height', H);
-    while (svg.firstChild) svg.removeChild(svg.firstChild);
-    var tot = weights.reduce(function (a, b) { return a + b; }, 0), xs = [0];
-    weights.forEach(function (w, i) { xs.push(xs[i] + w / tot * W); });
-    var y = function (v) { return T + ph - v / MAXP * ph; };
-    // puntos de toda la semana, cada día ocupa el ancho de su columna
-    var pts = [], segs = [];
-    D.forEach(function (d, i) {
-      var x0 = xs[i], x1 = xs[i + 1], seg = [];
-      d.curve.forEach(function (v, k) { var p = [x0 + (k + .5) / d.curve.length * (x1 - x0), y(v)]; pts.push(p); seg.push(p); });
-      segs.push(seg);
-    });
-    var line = function (P) { return P.map(function (p, i) { return (i ? 'L' : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1); }).join(''); };
-    var smooth = function (P) {
-      if (P.length < 3) return line(P);
-      var s = 'M' + P[0][0].toFixed(1) + ' ' + P[0][1].toFixed(1);
-      for (var i = 1; i < P.length - 1; i++) { var mx = (P[i][0] + P[i + 1][0]) / 2, my = (P[i][1] + P[i + 1][1]) / 2; s += 'Q' + P[i][0].toFixed(1) + ' ' + P[i][1].toFixed(1) + ' ' + mx.toFixed(1) + ' ' + my.toFixed(1); }
-      return s + 'L' + P[P.length - 1][0].toFixed(1) + ' ' + P[P.length - 1][1].toFixed(1);
-    };
-    // la columna abierta sigue hacia abajo, sobre la curva
-    el('rect', { x: xs[cur], y: 0, width: xs[cur + 1] - xs[cur], height: H, fill: '#6A3243' }, svg);
-    for (var i = 1; i < D.length; i++) el('path', { d: 'M' + xs[i] + ' 0V' + (H - B), stroke: 'rgba(244,242,241,.14)', 'stroke-dasharray': '2 4' }, svg);
-    var all = [[0, H - B]].concat(pts, [[W, H - B]]);
-    el('path', { d: smooth(all) + 'Z', fill: 'rgba(244,242,241,.07)' }, svg);
-    el('path', { d: smooth(pts), fill: 'none', stroke: 'rgba(244,242,241,.42)', 'stroke-width': 1.6 }, svg);
-    // el tramo del día abierto, en cobre
-    var seg = segs[cur], d = D[cur];
-    var segPath = smooth(seg);
-    el('path', { d: segPath + 'L' + seg[seg.length - 1][0] + ' ' + (H - B) + 'L' + seg[0][0] + ' ' + (H - B) + 'Z', fill: 'rgba(193,119,75,.16)' }, svg);
-    var hl = el('path', { class: 'ridge__line', d: segPath, fill: 'none', stroke: '#C1774B', 'stroke-width': 3, 'stroke-linecap': 'round' }, svg);
-    var L = hl.getTotalLength(); hl.style.strokeDasharray = L; hl.style.strokeDashoffset = (1 - drawn) * L;
-    // pico del día
-    var pk = d.curve.indexOf(Math.max.apply(null, d.curve)), P = seg[pk];
-    el('circle', { cx: P[0], cy: P[1], r: 5.5, fill: '#F4F2F1', stroke: '#C1774B', 'stroke-width': 2.5, opacity: drawn > .9 ? 1 : 0 }, svg);
-    var lab = el('text', { x: Math.min(W - 64, Math.max(64, P[0])), y: P[1] - 14, 'text-anchor': 'middle', fill: '#F4F2F1', 'font-size': 12, 'font-weight': 600, opacity: drawn > .9 ? 1 : 0 }, svg); lab.textContent = d.peak + ' personas · ' + d.ph + ' h';
-    // horas del día abierto
-    [0, 6, 11].forEach(function (k) { var t = el('text', { x: seg[k][0], y: H - 8, 'text-anchor': 'middle', fill: 'rgba(244,242,241,.72)', 'font-size': 11 }, svg); t.textContent = HOURS[k] + ' h'; });
-    el('path', { d: 'M0 ' + (H - B) + 'H' + W, stroke: 'rgba(244,242,241,.22)' }, svg);
-  }
+  function tx(p, x, y, s, a) { var t = el('text', Object.assign({ x: x, y: y }, a || {}), p); t.textContent = s; return t; }
 
-  /* ---------- abrir un día ---------- */
-  var ease = function (t) { return 1 - Math.pow(1 - t, 3); }, raf = null;
-  function setFlex() { cols.forEach(function (c, i) { c.style.flexGrow = weights[i]; }); }
-  function open(i, opts) {
-    opts = opts || {};
-    i = (i + D.length) % D.length;
-    var from = weights.slice(), to = D.map(function (_, k) { return k === i ? openW() : 1; });
-    cur = i; drawn = 0;
-    cols.forEach(function (c, k) { var on = k === i; c.classList.toggle('is-open', on); c.setAttribute('aria-selected', on); c.tabIndex = on ? 0 : -1; });
-    countEl.textContent = D[i].name + ' · ' + (i + 1) + ' de ' + D.length;
-    tipEl.innerHTML = '<i aria-hidden="true"></i>' + D[i].tip;
-    // en celular el detalle del día va debajo de la fila de días, a todo el ancho
-    if (detail) detail.innerHTML = '<div class="rd__full">' + cols[i].querySelector('.rd__full').innerHTML + '</div>';
-    if (opts.focus) cols[i].focus();
-    if (raf) cancelAnimationFrame(raf);
-    if (reduce || opts.instant) { weights = to; drawn = 1; setFlex(); draw(); return; }
-    var t0 = performance.now(), dur = 700, dl = 650;
-    var step = function (now) {
-      var t = Math.min(1, (now - t0) / dur), e = ease(t);
-      weights = from.map(function (f, k) { return f + (to[k] - f) * e; });
-      drawn = ease(Math.max(0, Math.min(1, (now - t0 - dur * .55) / dl)));
-      setFlex(); draw();
-      if (t < 1 || drawn < 1) raf = requestAnimationFrame(step); else raf = null;
-    };
-    raf = requestAnimationFrame(step);
+  /* ---------- piezas ---------- */
+  function head(kick, title, sub, meta, seg) {
+    return '<div class="sw__head"><div><p class="sw__kick">' + kick + '</p><h3 class="sw__h1">' + title + '</h3><p class="sw__sub">' + sub + '</p>' +
+      (meta ? '<p class="sw__meta">' + meta + '</p>' : '') + '</div>' +
+      (seg ? '<div class="sw__seg" aria-hidden="true">' + ['Hoy', '7 días', '28 días'].map(function (s) { return '<span' + (s === seg ? ' class="on"' : '') + '>' + s + '</span>'; }).join('') + '</div>' : '') + '</div>';
   }
-  var auto = true, timer = null, visible = false;
-  function stop() { auto = false; clearInterval(timer); }
-  function play() { clearInterval(timer); if (auto && visible && !reduce) timer = setInterval(function () { open(cur + 1); }, 4800); }
-  cols.forEach(function (c, i) { c.addEventListener('click', function () { stop(); if (i !== cur) open(i); }); });
-  daysEl.addEventListener('keydown', function (e) {
-    var dlt = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
-    if (dlt) { e.preventDefault(); stop(); open(cur + dlt, { focus: true }); }
+  function kpi(label, value, unit, delta, extra) {
+    return '<div class="sw__kpi"><span class="sw__kl">' + label + '</span><span class="sw__kv">' + value + (unit ? '<small>' + unit + '</small>' : '') + '</span>' +
+      (delta ? '<span class="sw__kd">' + delta + '</span>' : '') + (extra || '') + '</div>';
+  }
+  // barritas chicas: la última (o la marcada) en granate
+  function miniBars(vals, labels, hi) {
+    var w = 200, hh = 58, n = vals.length, gap = 4, bw = (w - gap * (n - 1)) / n, max = Math.max.apply(null, vals), base = labels ? 44 : 56;
+    var s = svg(w, hh, 'sw__mini');
+    vals.forEach(function (v, i) {
+      var bh = Math.max(3, v / max * (base - 4)), x = i * (bw + gap);
+      el('rect', { x: x, y: base - bh, width: bw, height: bh, rx: 2, fill: i === hi ? C.brand : C.heat4 }, s);
+      if (labels && labels[i]) tx(s, x + bw / 2, 57, labels[i], { 'text-anchor': 'middle' });
+    });
+    return s.outerHTML;
+  }
+  function ring(p, label) {
+    var r = 19, c = 2 * Math.PI * r;
+    return '<div class="sw__ring"><svg viewBox="0 0 46 46" aria-hidden="true"><circle cx="23" cy="23" r="' + r + '" fill="none" stroke="' + C.sunken + '" stroke-width="5"/>' +
+      '<circle class="sw__ring-arc" cx="23" cy="23" r="' + r + '" fill="none" stroke="' + C.brand + '" stroke-width="5" stroke-linecap="round" stroke-dasharray="' + (c * p).toFixed(1) + ' ' + c.toFixed(1) + '" transform="rotate(-90 23 23)"/></svg><span>' + label + '</span></div>';
+  }
+  function split(p, left, right) { return '<div class="sw__split"><i><b style="width:' + (p * 100) + '%"></b></i><span><span>' + left + '</span><span>' + right + '</span></span></div>'; }
+  function gauge(p, target, left, right, chip) {
+    return (chip ? '<span class="sw__chip">' + chip + '</span>' : '') + '<div class="sw__gauge"><i><b style="width:' + (p * 100) + '%"></b><u style="left:' + (target * 100) + '%"></u></i><span><span>' + left + '</span><span>' + right + '</span></span></div>';
+  }
+  // gráfico de barras con grilla, eje y etiqueta de pico
+  function bars(o) {
+    var W = narrow() ? 380 : (o.wide ? 1080 : 560), H = o.h || (narrow() ? 230 : o.wide ? 200 : 220), L = 40, R = 8, T = 22, B = 26, pw = W - L - R, ph = H - T - B;
+    var s = svg(W, H, 'sw__chart', o.label);
+    var y = function (v) { return T + ph - v / o.max * ph; };
+    o.ticks.forEach(function (v) { el('line', { class: 'grid', x1: L, x2: W - R, y1: y(v), y2: y(v) }, s); tx(s, L - 8, y(v) + 4, v + (o.unit || ''), { 'text-anchor': 'end' }); });
+    var n = o.labels.length, step = pw / n, pair = !!o.prev, bw = step * (pair ? 0.32 : 0.56);
+    o.labels.forEach(function (lb, i) {
+      var cx = L + i * step + step / 2;
+      if (pair) {
+        el('rect', { x: cx - bw - 1, y: y(o.prev[i]), width: bw, height: y(0) - y(o.prev[i]), rx: 2, fill: o.prevColor || C.verde }, s);
+        if (o.vals[i] != null) el('rect', { x: cx + 1, y: y(o.vals[i]), width: bw, height: y(0) - y(o.vals[i]), rx: 2, fill: C.brand }, s);
+      } else {
+        var v = o.vals[i];
+        el('rect', { x: cx - bw / 2, y: y(v), width: bw, height: Math.max(1, y(0) - y(v)), rx: 2, fill: o.first && i === 0 ? C.soft : (o.hi === i ? C.cobre : C.brand) }, s);
+        if (o.hi === i) tx(s, cx, y(v) - 7, 'PICO', { class: 'peak', 'text-anchor': 'middle' });
+      }
+      tx(s, cx, H - 8, lb, { 'text-anchor': 'middle' });
+    });
+    if (o.total) { el('line', { x1: L, x2: W - R, y1: y(o.total), y2: y(o.total), stroke: C.brand, 'stroke-dasharray': '5 5', 'stroke-opacity': .5 }, s); tx(s, W - R, y(o.total) - 6, 'Total', { 'text-anchor': 'end' }); }
+    if (o.axis) tx(s, L - 2, 10, o.axis, {});
+    return s.outerHTML;
+  }
+  function card(title, sub, body, foot, wide) {
+    return '<div class="sw__card' + (wide ? ' sw__card--wide' : '') + '"><p class="sw__ct">' + title + '</p><p class="sw__cs">' + sub + '</p>' + body + (foot ? '<div class="sw__cf">' + foot + '</div>' : '') + '</div>';
+  }
+  // en pantallas angostas los gráficos se dibujan a su ancho real, para que el texto se lea
+  function narrow() { return (view.clientWidth || root.clientWidth) < 600; }
+  var HRS = ['12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23'];
+
+  /* ---------- secciones ---------- */
+  var VIEWS = {
+    hoy: { crumb: 'Hoy', render: function () {
+      return head('Hoy', 'Hoy', 'Lo que pasa en el local ahora.', 'Martes 24 de noviembre · actualizado 21:42 · sin contar al personal') +
+        '<div class="sw__strip">' +
+        kpi('Visitas hasta ahora', '386', '', '<b>+8 %</b> vs el martes pasado a esta hora', miniBars([22, 31, 28, 19, 14, 17, 26, 38, 51, 58], null, 9)) +
+        kpi('Gente adentro ahora', '41', '', 'Pico del día: 58 a las 21 h') +
+        kpi('Espera por una mesa', '6', 'min', '<b>−2 min</b> vs el martes pasado') +
+        kpi('Permanencia media', '42', 'min', '<b>+3 min</b> vs el martes pasado') + '</div>' +
+        '<div class="sw__cards">' + card('Visitas por hora', 'Hoy y el martes pasado',
+          bars({ wide: true, labels: HRS, vals: [22, 31, 28, 19, 14, 17, 26, 38, 51, 58, null, null], prev: [20, 27, 25, 18, 15, 16, 22, 33, 45, 52, 41, 23], max: 60, ticks: [0, 20, 40, 60], label: 'Visitas por hora: hoy va por encima del martes pasado en casi todas las horas.' }),
+          '<span class="sw__leg"><span><i style="background:' + C.brand + '"></i>Hoy</span><span><i style="background:' + C.verde + '"></i>Martes pasado</span></span><span>Pico esperado: <b>21 a 22 h</b></span>', true) + '</div>';
+    } },
+    hacer: { crumb: 'Qué hacer', render: function () {
+      var O = [
+        { n: 23, t: 'Sumá una persona en la barra de 21 a 23 h', d: 'El viernes, 23 personas se fueron sin que nadie las atendiera en ese horario.' },
+        { n: 37, t: 'Abrí el sector del fondo antes de las 20 h', d: 'Queda vacío hasta las 21 h mientras 37 personas por noche esperan mesa en la entrada.' }
+      ];
+      return head('Qué hacer', 'Qué hacer', 'Sugerencias ordenadas por personas en juego.', 'Basadas en los últimos 7 días') +
+        '<ul class="sw__opps">' + O.map(function (o) { return '<li class="sw__opp"><span class="sw__opp-n">' + o.n + '<small>personas</small></span><div><h4>' + o.t + '</h4><p>' + o.d + '</p></div><button class="sw__btn" type="button" aria-pressed="false">Probar y medir</button></li>'; }).join('') + '</ul>' +
+        '<p class="sw__note">Cuando probás una sugerencia, Vistorm compara las dos semanas siguientes con las dos anteriores y te avisa en <b>Resultados</b>.</p>';
+    } },
+    mesas: { crumb: 'Mesas', render: function () {
+      var M = ['M1', 'M2', 'M3', 'M4', 'M5', 'M6', 'M7', 'M8'];
+      return head('Mesas', 'Mesas', 'Cuánto se usa cada mesa, cuánto dura cada grupo y cuánto tardan en atenderlo.', 'Últimos 7 días · comparado con los 7 días anteriores · 8 mesas', '7 días') +
+        '<div class="sw__strip">' +
+        kpi('Ocupación de mesas', '62', '%', '<b>+6 %</b> vs período anterior', miniBars([48, 71, 66, 59, 80, 54, 62, 57], M, 4)) +
+        kpi('Rotación de mesas', '3,4', 'grupos por día', '<b>+0,3</b> vs período anterior', miniBars([3.1, 3.8, 3.5, 2.9, 4.2, 3.0, 3.6, 3.1], M, 4)) +
+        kpi('Tiempo por mesa', '52', 'min', 'Promedio por grupo', split(52 / 90, 'Promedio por grupo', '90 min')) +
+        kpi('Tiempo hasta atención', '2:40', 'min', '', gauge(160 / 300, 180 / 300, '0', 'Objetivo 3 min', 'En objetivo')) + '</div>' +
+        '<div class="sw__cards">' +
+        card('Mesas en uso por hora', 'Promedio · 8 mesas', bars({ labels: HRS, vals: [2.1, 4.6, 5.8, 3.2, 1.4, 1.2, 2.0, 3.9, 6.4, 7.6, 6.8, 3.5], max: 8, ticks: [0, 4, 8], hi: 9, total: 8, label: 'Mesas en uso por hora: el pico es a las 21 h, con 7,6 de 8 mesas ocupadas.' }),
+          '<span>21:00–22:00 · Mesas ocupadas <b>7,6</b> · Libres <b>0,4</b></span>') +
+        card('Personas por mesa', 'Promedio por grupo vs. lugares', bars({ labels: M, vals: [2.4, 3.1, 2.2, 3.6, 4.1, 2.0, 2.8, 3.3], prev: [4, 4, 2, 4, 6, 2, 4, 4], prevColor: C.heat4, max: 6, ticks: [0, 2, 4, 6], label: 'Personas por mesa contra lugares: la mesa 5 tiene 6 lugares y la usan grupos de 4,1 personas.' }),
+          '<span class="sw__leg"><span><i class="lg lg--dark"></i>Personas</span><span><i class="lg lg--light"></i>Lugares</span></span><span>Mesa 5 · Personas <b>4,1</b> · Lugares <b>6</b></span>') +
+        '</div>';
+    } },
+    atencion: { crumb: 'Atención', tabs: true, render: function (tab) {
+      tab = tab || 'permanencia';
+      var t = '<div class="sw__tabs" role="tablist" aria-label="Atención">' + [['resumen', 'Resumen'], ['fila', 'Fila y espera'], ['permanencia', 'Permanencia']].map(function (x) {
+        return '<button class="sw__tab" role="tab" type="button" data-tab="' + x[0] + '" aria-selected="' + (x[0] === tab) + '">' + x[1] + '</button>'; }).join('') + '</div>';
+      if (tab === 'permanencia') return t + head('Atención', 'Permanencia', 'Cuánto se queda cada visita y cuántas llegan a atención.', 'Últimos 7 días · comparado con los 7 días anteriores · sin contar al personal', '7 días') +
+        '<div class="sw__strip">' +
+        kpi('Permanencia media', '42', 'min', '<b>+3 min</b> vs período anterior', miniBars([38, 47, 55, 41, 33, 36, 42], ['J', 'V', 'S', 'D', 'L', 'M', 'M'], 6)) +
+        kpi('Llegan a atención', '86', '%', '<b>+4 %</b> vs período anterior', ring(0.86, 'Llegaron a un punto de atención')) +
+        kpi('Visitas cortas', '9', '%', '<b>−3 %</b> vs período anterior', split(0.09, 'Menos de 5 min', '9 de cada 100')) +
+        kpi('Permanencia en hora pico', '51', 'min · 21 h', '', miniBars([28, 35, 39, 31, 22, 19, 24, 33, 44, 51, 47, 36], null, 9) ) + '</div>' +
+        '<div class="sw__cards">' +
+        card('Distribución de permanencia', '% de visitas por duración', bars({ labels: ['< 5 min', '5–15', '15–30', '30–60', '60–90', '> 90'], vals: [9, 4, 14, 41, 22, 10], max: 50, ticks: [0, 25, 50], unit: ' %', first: true, label: 'Distribución de permanencia: la mayoría se queda entre 30 y 60 minutos (41 %).' }),
+          '<span>30–60 min · <b>41 % de las visitas</b></span>') +
+        card('Permanencia por hora de llegada', 'Minutos promedio', bars({ labels: HRS, vals: [28, 35, 39, 31, 22, 19, 24, 33, 44, 51, 47, 36], max: 60, ticks: [0, 30, 60], hi: 9, label: 'Permanencia por hora de llegada: quienes llegan a las 21 h se quedan más, 51 minutos.' }),
+          '<span>Llegada 21:00–22:00 · permanencia media <b>51 min</b></span>') + '</div>';
+      if (tab === 'fila') return t + head('Atención', 'Fila y espera', 'Cuánto se espera para pedir y cuánta gente se va antes.', 'Últimos 7 días · comparado con los 7 días anteriores', '7 días') +
+        '<div class="sw__strip sw__strip--3">' +
+        kpi('Espera para ser atendido', '3 min 40 s', '', '<b>−50 s</b> vs período anterior') +
+        kpi('Se fueron sin atención', '23', 'personas', '<b>−6</b> vs período anterior') +
+        kpi('Hora con más espera', '21', 'h', 'Viernes y sábado') + '</div>' +
+        '<div class="sw__cards">' + card('Espera en la barra', 'Minutos promedio por hora',
+          bars({ wide: true, labels: HRS, vals: [1, 1.5, 2, 1, 0.5, 0.5, 1, 2, 3.5, 5.5, 4.5, 2], max: 6, ticks: [0, 2, 4, 6], hi: 9, label: 'Espera en la barra por hora: el pico es a las 21 h, con 5 minutos y medio.' }),
+          '<span>21:00–22:00 · <b>5 min 30 s</b> de espera</span>', true) + '</div>';
+      return t + head('Atención', 'Resumen', '¿Quién se va sin atención? Lo importante de la semana.', 'Últimos 7 días · comparado con los 7 días anteriores', '7 días') +
+        '<div class="sw__strip sw__strip--3">' +
+        kpi('Llegan a atención', '86', '%', '<b>+4 %</b> vs período anterior', ring(0.86, '86 de cada 100 visitas')) +
+        kpi('Se fueron sin atención', '23', 'personas', '<b>−6</b> vs período anterior') +
+        kpi('Permanencia media', '42', 'min', '<b>+3 min</b> vs período anterior') + '</div>' +
+        '<p class="sw__note">La mayoría de quienes se van sin atención llega <b>entre las 21 y las 22 h</b>, cuando hay una sola persona en la barra.</p>';
+    } },
+    personal: { crumb: 'Personal', render: function () {
+      var DAYS = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'], base = [0.25, 0.35, 0.3, 0.2, 0.15, 0.2, 0.35, 0.55, 0.8, 1, 0.85, 0.5], dayF = [0.5, 0.55, 0.6, 0.7, 0.95, 1, 0.65];
+      var cols = [C.heat4, C.caliza, C.soft, C.heat1, C.cobre];
+      var t = '<div class="sw__week"><table><thead><tr><th></th>' + HRS.map(function (x) { return '<th scope="col">' + x + '</th>'; }).join('') + '</tr></thead><tbody>';
+      DAYS.forEach(function (d, di) { t += '<tr><th scope="row">' + d + '</th>' + base.map(function (b, hi) { var v = b * dayF[di]; return '<td style="background:' + cols[Math.min(4, Math.floor(v * 5))] + '" title="' + d + ' ' + HRS[hi] + ' h · ' + Math.round(v * 60) + ' personas"></td>'; }).join('') + '</tr>'; });
+      t += '</tbody></table></div>';
+      return head('Tus preguntas', 'Personal', '¿Cuándo reforzar? La semana típica, hora por hora.', 'Promedio de las últimas 4 semanas', '28 días') +
+        '<div class="sw__card sw__card--wide"><p class="sw__ct">Gente en el local</p><p class="sw__cs">Cada cuadro es una hora; más oscuro, más gente. Cobre: horas pico.</p>' + t + '</div>' +
+        '<p class="sw__note">Sugerido: <b>2 personas más en la barra los viernes y sábados de 20 a 23 h</b>. El resto de la semana alcanza con el equipo actual.</p>';
+    } },
+    salon: { crumb: 'Salón', render: function () {
+      var s = svg(400, 260, '', 'Plano del salón: la barra y las mesas de la ventana concentran el tiempo; el fondo queda frío.');
+      el('rect', { x: 0, y: 0, width: 400, height: 260, fill: C.deep }, s);
+      [{ x: 14, y: 14, w: 230, h: 60, c: C.cobre, n: 'Barra', t: '#272124' }, { x: 258, y: 14, w: 128, h: 104, c: C.heat4, n: 'Ventana', t: '#272124' },
+        { x: 14, y: 88, w: 230, h: 90, c: C.soft, n: 'Mesas del centro', t: '#F4F2F1' }, { x: 258, y: 132, w: 128, h: 114, c: C.heat1, n: 'Terraza', t: '#F4F2F1' },
+        { x: 14, y: 192, w: 230, h: 54, c: C.deep, n: 'Fondo', t: C.caliza, dash: true }].forEach(function (z) {
+        el('rect', { x: z.x, y: z.y, width: z.w, height: z.h, rx: 6, fill: z.c, stroke: z.dash ? C.soft : 'none', 'stroke-dasharray': z.dash ? '4 4' : '' }, s);
+        tx(s, z.x + 10, z.y + 20, z.n, { fill: z.t });
+      });
+      return head('Tus preguntas', 'Salón', '¿Qué parte no se usa? Tiempo acumulado por zona.', 'Últimos 7 días · sin contar al personal', '7 días') +
+        '<div class="sw__card sw__card--wide"><div class="sw__plan">' + s.outerHTML + '<ul class="sw__zones">' +
+        '<li><i style="background:' + C.cobre + '"></i><span>Barra</span><b>31 %</b></li>' +
+        '<li><i style="background:' + C.heat4 + ';box-shadow:inset 0 0 0 1px ' + C.caliza + '"></i><span>Ventana</span><b>24 %</b></li>' +
+        '<li><i style="background:' + C.soft + '"></i><span>Mesas del centro</span><b>22 %</b></li>' +
+        '<li><i style="background:' + C.heat1 + '"></i><span>Terraza</span><b>19 %</b></li>' +
+        '<li><i style="background:' + C.deep + ';box-shadow:inset 0 0 0 1px ' + C.soft + '"></i><span>Fondo · <b>zona fría</b></span><b>4 %</b></li>' +
+        '</ul></div></div>';
+    } },
+    resultados: { crumb: 'Resultados', render: function () {
+      var R = [['Visitas por semana', 2540, 2810, '+11 %', 'visitas'], ['Permanencia media', 37, 42, '+5 min', 'minutos'], ['Visitas cortas', 13, 9, '−4 %', 'de las visitas']];
+      return head('Tus preguntas', 'Resultados', '¿Funcionó el cambio? Moviste la barra de café a la entrada el 12 de noviembre.', 'Dos semanas antes contra dos semanas después') +
+        '<div class="sw__card sw__card--wide"><p class="sw__ct">Antes y después del cambio</p><p class="sw__cs">Verde agua: antes · Granate: después</p><div class="sw__vs" style="margin-top:14px">' +
+        R.map(function (r) { var m = Math.max(r[1], r[2]); return '<div class="sw__vs-row"><span>' + r[0] + '</span><span class="bars"><i style="width:' + (r[1] / m * 100) + '%"></i><i style="width:' + (r[2] / m * 100) + '%"></i></span><span class="d">' + r[3] + '<small>' + fmt.format(r[1]) + ' → ' + fmt.format(r[2]) + ' ' + r[4] + '</small></span></div>'; }).join('') +
+        '</div></div><p class="sw__note"><b>Funcionó.</b> Entró más gente y se quedó más tiempo. Las visitas de menos de 5 minutos bajaron.</p>';
+    } }
+  };
+
+  /* ---------- navegación ---------- */
+  var current = null, curTab = 'permanencia';
+  function show(name, opts) {
+    opts = opts || {};
+    var v = VIEWS[name]; if (!v) return;
+    current = name;
+    items.forEach(function (b) { if (b.dataset.view === name) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current'); });
+    // en celular la barra de secciones se desliza para mostrar la activa, sin mover la página
+    var act = items.filter(function (b) { return b.dataset.view === name; })[0], nav = act && act.parentNode;
+    if (nav && nav.scrollWidth > nav.clientWidth + 4) nav.scrollLeft = Math.max(0, act.offsetLeft - nav.offsetLeft - 12);
+    view.innerHTML = v.render(curTab);
+    var WOOD = { '#542433': 'url(#mq-dark)', '#E6DFD7': 'url(#mq-light)', '#8E5E69': 'url(#mq-mid)', '#C1774B': 'url(#mq-cop)', '#8FB5AE': 'url(#mq-verde)' };
+    Array.prototype.forEach.call(view.querySelectorAll('.sw__chart rect, .sw__mini rect'), function (rc) { var f = (rc.getAttribute('fill') || '').toUpperCase(); if (WOOD[f]) rc.setAttribute('fill', WOOD[f]); rc.classList.add('bar'); });
+    view.classList.remove('is-anim'); void view.offsetWidth; view.classList.add('is-anim');
+    crumbs.innerHTML = 'Local de ejemplo / ' + (name === 'atencion' ? 'Atención / <b>' + { resumen: 'Resumen', fila: 'Fila y espera', permanencia: 'Permanencia' }[curTab] + '</b>' : '<b>' + v.crumb + '</b>');
+    if (opts.focus) { var f = view.querySelector('.sw__h1'); if (f) { f.setAttribute('tabindex', '-1'); f.focus({ preventScroll: true }); } }
+    root.dispatchEvent(new CustomEvent('sw:view', { detail: { name: name, user: !!opts.user } }));
+  }
+  items.forEach(function (b) { b.addEventListener('click', function () { show(b.dataset.view, { user: !b._auto }); }); });
+  view.addEventListener('click', function (e) {
+    var t = e.target.closest('.sw__tab');
+    if (t) { curTab = t.dataset.tab; show('atencion', { user: true }); var nt = view.querySelector('.sw__tab[data-tab="' + curTab + '"]'); if (nt) nt.focus(); return; }
+    var b = e.target.closest('.sw__btn');
+    if (b) { var on = b.getAttribute('aria-pressed') !== 'true'; b.setAttribute('aria-pressed', on); b.textContent = on ? 'Midiendo · día 1 de 14' : 'Probar y medir'; }
   });
-  document.getElementById('ridge-prev').addEventListener('click', function () { stop(); open(cur - 1); });
-  document.getElementById('ridge-next').addEventListener('click', function () { stop(); open(cur + 1); });
-  root.addEventListener('pointerdown', stop);
-  if ('IntersectionObserver' in window) new IntersectionObserver(function (es) {
-    var was = visible; visible = es[0].isIntersecting;
-    if (visible && !was) { root.classList.add('is-in'); if (!root.dataset.played) { root.dataset.played = 1; open(cur); } play(); }
-    if (!visible) clearInterval(timer);
-  }, { threshold: .35 }).observe(root);
-  if ('IntersectionObserver' in window) root.classList.add('pre');
-  open(5, { instant: true });
-  var rz; window.addEventListener('resize', function () { clearTimeout(rz); rz = setTimeout(function () { weights = D.map(function (_, k) { return k === cur ? openW() : 1; }); setFlex(); draw(); }, 120); });
+  view.addEventListener('keydown', function (e) {
+    var t = e.target.closest('.sw__tab'); if (!t) return;
+    var tabs = Array.prototype.slice.call(view.querySelectorAll('.sw__tab')), i = tabs.indexOf(t);
+    var d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
+    if (d) { e.preventDefault(); curTab = tabs[(i + d + tabs.length) % tabs.length].dataset.tab; show('atencion', { user: true }); view.querySelector('.sw__tab[data-tab="' + curTab + '"]').focus(); }
+  });
+  show('mesas');
+  var wasNarrow = narrow(), rzT;
+  window.addEventListener('resize', function () { clearTimeout(rzT); rzT = setTimeout(function () { var n = narrow(); if (n !== wasNarrow) { wasNarrow = n; show(current); } }, 200); });
+  window.VistormPanel = { show: show, items: items, current: function () { return current; } };
 })();
 
 /* ===== Consentimiento de cookies y Google Analytics 4 (solo si la persona acepta) ===== */

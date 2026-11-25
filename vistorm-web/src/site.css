@@ -681,6 +681,85 @@ html.modal-open { overflow: hidden }
 .measure .spot__frame { box-shadow: inset 0 1px 0 rgba(255,255,255,.22), 0 1px 1px rgba(0,0,0,.3), 5px 6px 0 -1px var(--sheet), 5px 6px 2px -1px rgba(0,0,0,.3), 0 30px 46px -24px rgba(0,0,0,.7) }
 .spot--t5 { --sheet: #1F0A11 }
 
+/* ---------- 2 · el panel en marquetería: piezas de madera encastradas ---------- */
+.device-wrap { max-width: 1240px }
+.device { --veta-l: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='30'%3E%3Cg fill='none' stroke='%23542433' stroke-opacity='.07' stroke-width='.8'%3E%3Cpath d='M0 6c26-3 52 3 80 0s54-3 80 0 40 2 60 0'/%3E%3Cpath d='M0 16c30 3 60-3 92 0s60 3 86 0 30-2 42 0'/%3E%3Cpath d='M0 25c36-2 70 2 110 0s70-2 110 0'/%3E%3C/g%3E%3C/svg%3E");
+  --veta-d: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='30' height='220'%3E%3Cg fill='none' stroke='%23FFFFFF' stroke-opacity='.06' stroke-width='.8'%3E%3Cpath d='M6 0c-3 26 3 52 0 80s-3 54 0 80 2 40 0 60'/%3E%3Cpath d='M16 0c3 30-3 60 0 92s3 60 0 86-2 30 0 42'/%3E%3Cpath d='M25 0c-2 36 2 70 0 110s-2 70 0 110'/%3E%3C/g%3E%3C/svg%3E");
+  background: #3A1823 var(--veta-d); padding: 10px; border-radius: 20px;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.08), 0 1px 1px rgba(39,33,36,.3), 8px 10px 0 -2px #2A0F17, 0 50px 90px -40px rgba(39,33,36,.65) }
+.device__bar { background: transparent; border-bottom: 0; padding: 4px 8px 12px }
+.device__bar i { background: #C1774B; box-shadow: inset 0 -1px 0 rgba(0,0,0,.25) }
+.device__bar span { background: rgba(244,242,241,.1); color: #E3D8D5 }
+.sw { background: #F3E7DF var(--veta-l); border-radius: 12px; height: 780px; min-height: 0; overflow: hidden;
+  box-shadow: inset 0 0 0 1px #C1774B, inset 0 0 0 4px #F3E7DF, inset 0 0 0 5px rgba(84,36,51,.4) }
+.sw__main { overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: #C9A796 transparent; padding: 22px 30px 28px }
+/* barra lateral: chapa bordó con veta vertical */
+.sw__side { background: #542433 var(--veta-d); border-right: 0; color: var(--on-brand); margin: 5px 0 5px 5px; border-radius: 9px 0 0 9px; box-shadow: inset -1px 0 0 #C1774B, inset -3px 0 0 #542433, inset -4px 0 0 rgba(0,0,0,.25) }
+.sw__local { background: #F3E7DF var(--veta-l); box-shadow: inset 0 0 0 1px #C1774B, 2px 3px 0 #2A0F17 }
+.sw__group { color: #D9CDC9 }
+.sw__item { color: var(--on-brand) }
+.sw__item small { color: #D9CDC9 }
+.sw__item:hover { background: rgba(255,255,255,.07) }
+.sw__item[aria-current="page"] { background: #C1774B var(--veta-l); color: #272124; box-shadow: inset 0 0 0 1px rgba(58,24,35,.35), 2px 3px 0 #2A0F17 }
+.sw__item[aria-current="page"] small { color: #3A1823 }
+.sw__item[aria-current="page"]::before { display: none }
+.sw__badge { background: #F4F2F1; color: #542433 }
+.sw__prog { background: #F4F2F1 }
+.sw__more { border-top-color: rgba(244,242,241,.18) }
+.sw__more li { color: #D9CDC9 }
+/* encabezado */
+.sw__crumbs { color: #6B5A5E }
+.sw__live { background: #542433; color: #F4F2F1 }
+.sw__live::before { background: #C1774B }
+.sw__avatar { box-shadow: 0 0 0 2px #C1774B }
+.sw__kick { color: #6B5A5E }
+.sw__h1 { font-size: 40px }
+.sw__seg { background: #E6D3C7; box-shadow: inset 0 1px 2px rgba(58,24,35,.2) }
+.sw__seg span { color: #4E4347 }
+.sw__seg span.on { background: #542433; color: #F4F2F1; box-shadow: 1px 2px 0 #2A0F17 }
+.sw__tabs { border-bottom: 1px solid rgba(84,36,51,.2) }
+.sw__tab[aria-selected="true"] { border-bottom-color: #C1774B; color: #542433 }
+/* indicadores y tarjetas: placas encastradas con filete de cobre */
+.sw__strip { background: transparent; box-shadow: none; gap: 12px }
+.sw__kpi, .sw__card, .sw__opp { background: #FBF5F0 var(--veta-l); border-radius: 10px; box-shadow: inset 0 0 0 1px rgba(193,119,75,.55), inset 0 0 0 3px #FBF5F0, inset 0 0 0 4px rgba(84,36,51,.14), 3px 4px 0 #DCC3B4, 3px 4px 2px rgba(58,24,35,.15) }
+.sw__kpi + .sw__kpi { border-left: 0 }
+.sw__kpi { padding: 18px 18px }
+.sw__kl { color: #4E4347; font-weight: 500 }
+.sw__kv { font-family: var(--display); font-weight: 600; font-size: 36px; color: #542433 }
+.sw__kv small { font-family: var(--text); font-weight: 400; color: #6B5A5E }
+.sw__kd b { color: #2F5D5A }
+.sw__chip { display: inline-block; width: max-content; margin-top: 6px; font-size: 12px; padding: 3px 9px; border-radius: 6px; background: #542433; color: #F4F2F1 }
+.sw__split i, .sw__gauge i { position: relative; display: block; height: 10px; border-radius: 3px; background: #E4D2C6; box-shadow: inset 0 1px 2px rgba(58,24,35,.25); overflow: visible }
+.sw__split i b, .sw__gauge i b { display: block; height: 100%; border-radius: 3px; background: #542433 var(--veta-d) }
+.sw__gauge { margin-top: 14px; display: grid; gap: 8px }
+.sw__gauge u { position: absolute; top: -5px; width: 2px; height: 20px; background: #C1774B; border-radius: 1px }
+.sw__gauge span { display: flex; justify-content: space-between; font-size: 12px; color: #6B5A5E }
+.sw__cards { gap: 16px }
+.sw__card { padding: 18px 20px 14px }
+.sw__ct { font-size: 20px }
+.sw__chart .grid { stroke: rgba(84,36,51,.12) }
+.sw__chart .peak { fill: #C1774B }
+.sw__cf { border-top-color: rgba(84,36,51,.14) }
+.sw__leg i.lg { width: 10px; height: 10px; border-radius: 2px }
+.lg--dark { background: #542433 } .lg--light { background: #E4D2C6; box-shadow: inset 0 0 0 1px rgba(84,36,51,.2) }
+.sw__note { background: #542433 var(--veta-d); color: #F4F2F1; border-radius: 10px; box-shadow: 2px 3px 0 #2A0F17 }
+.sw__btn { box-shadow: inset 0 0 0 1.5px #542433 }
+/* los listones crecen cuando cambia la sección */
+.sw__view.is-anim .bar { transform-box: fill-box; transform-origin: 50% 100%; animation: mq-grow .7s var(--ease-paper) both }
+@keyframes mq-grow { from { transform: scaleY(0) } }
+@media (max-width: 1100px) {
+  .sw { height: auto }
+  .sw__main { overflow: visible }
+  .sw__side { margin: 5px 5px 0; border-radius: 9px 9px 0 0; box-shadow: inset 0 -1px 0 #C1774B }
+}
+@media (max-width: 700px) {
+  .sw__strip { grid-template-columns: repeat(2, minmax(0, 1fr)) }
+  .sw__kv { font-size: 28px }
+  .sw__h1 { font-size: 30px }
+  .sw__main { padding: 16px 14px 18px }
+}
+@media (prefers-reduced-motion: reduce) { .sw__view.is-anim .bar { animation: none } }
+
 /* ===== el hero (paleta fija de marca: no cambia con el tema) ===== */
 .hero { position: absolute; left: 0; top: 0; transform-origin: 0 0; color: #272124; font-family: var(--text); overflow: hidden; background: #F4F2F1 }
 .hero--desk { width: 1440px; height: 810px }
