@@ -518,7 +518,7 @@
     var act = items.filter(function (b) { return b.dataset.view === name; })[0], nav = act && act.parentNode;
     if (nav && nav.scrollWidth > nav.clientWidth + 4) nav.scrollLeft = Math.max(0, act.offsetLeft - nav.offsetLeft - 12);
     view.innerHTML = v.render(curTab);
-    var WOOD = { '#542433': 'url(#mq-dark)', '#E6DFD7': 'url(#mq-light)', '#8E5E69': 'url(#mq-mid)', '#C1774B': 'url(#mq-cop)', '#8FB5AE': 'url(#mq-verde)' };
+    var WOOD = { '#E6DFD7': '#E3CFC4' };
     Array.prototype.forEach.call(view.querySelectorAll('.sw__chart rect, .sw__mini rect'), function (rc) { var f = (rc.getAttribute('fill') || '').toUpperCase(); if (WOOD[f]) rc.setAttribute('fill', WOOD[f]); rc.classList.add('bar'); });
     view.classList.remove('is-anim'); void view.offsetWidth; view.classList.add('is-anim');
     crumbs.innerHTML = 'Local de ejemplo / ' + (name === 'atencion' ? 'Atención / <b>' + { resumen: 'Resumen', fila: 'Fila y espera', permanencia: 'Permanencia' }[curTab] + '</b>' : '<b>' + v.crumb + '</b>');

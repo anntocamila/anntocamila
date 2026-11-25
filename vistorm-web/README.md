@@ -46,7 +46,7 @@ Sitio de Vistorm Labs listo para Vercel: landing de una sola acción («Pedí un
 
 ## Estructura
 
-Hero → qué medimos (cinco cuadros de papel cortado superpuestos; el del medio se abre con su texto) → para quién → el panel (réplica del software en marquetería: barra lateral en chapa bordó, indicadores y gráficos como placas encastradas con filete de cobre y barras como listones con veta; arranca en Mesas) → cómo funciona → demo (título y botón) → preguntas frecuentes. Todos los botones «Pedí una demo» abren el agendador en un pop-up.
+Hero → qué medimos (cinco cuadros de papel cortado superpuestos; el del medio se abre con su texto) → para quién → el panel (réplica del software en papel cortado: detrás, hojas onduladas superpuestas de rosado a arena con un relieve topográfico; barra lateral en capas bordó; indicadores y gráficos como hojas de papel con sombra de corte; arranca en Mesas) → cómo funciona → demo (título y botón) → preguntas frecuentes. Todos los botones «Pedí una demo» abren el agendador en un pop-up.
 
 Redes sociales: completar los enlaces de Instagram y LinkedIn en `SOCIAL` (en el generador) para que aparezcan en el pie.
 
