@@ -452,6 +452,53 @@ html.modal-open { overflow: hidden }
   .mcard { transition: none }
 }
 
+/* ---------- panel: tarjetas "respuesta primero" (estilo de la revisión de tarjetas) ---------- */
+.sw { height: 780px; min-height: 0 }
+.sw__main { overflow-y: auto; overscroll-behavior: contain; scrollbar-width: thin; scrollbar-color: var(--caliza) transparent }
+.ic { background: #FCFBF8; border: 1.1px solid #D8D1C9; border-radius: 12px; padding: 22px 24px 16px; display: grid; gap: 4px; min-width: 0 }
+.ic__kick { font-size: 13.5px; color: #655B5D }
+.ic__title { font-family: var(--display); font-weight: 600; font-size: clamp(21px, 2.1vw, 27px); line-height: 1.18; letter-spacing: -.01em; color: var(--brand); margin: 2px 0 4px; text-wrap: balance }
+.ic__sub { font-size: 15px; color: var(--ink); font-variant-numeric: tabular-nums }
+.ic__legend { display: flex; flex-wrap: wrap; gap: 6px 22px; margin: 12px 0 2px; font-size: 12.5px; color: var(--ink) }
+.ic__legend span { display: inline-flex; align-items: center; gap: 7px }
+.ic__legend i { width: 10px; height: 10px; display: inline-block }
+.ic__legend i.tick { width: 15px; height: 2.2px }
+.ic__legend i.ring { width: 10px; height: 10px; border-radius: 50%; border: 2px solid; background: transparent !important }
+.ic__legend i.dia { width: 9px; height: 9px; transform: rotate(45deg) }
+.ic__chart { margin-top: 10px; min-width: 0 }
+.ic__chart > svg { display: block; width: 100%; height: auto; overflow: visible }
+.ic__chart svg text { font-family: var(--text); font-variant-numeric: tabular-nums }
+.ic .act { cursor: pointer; outline: none }
+.ic .act .ring { display: none }
+.ic .act:focus-visible .ring { display: block }
+.ic .act:hover .bar { filter: brightness(.96) }
+.ic__read { min-height: 22px; font-size: 14.5px; color: #655B5D; margin-top: 4px; font-variant-numeric: tabular-nums }
+.ic__note { font-size: 14.5px; font-weight: 600; color: var(--ink); margin-top: 8px }
+.ic__caveat { font-size: 13.5px; color: #655B5D; margin-top: 2px }
+.ic__sim { font-size: 12.5px; color: #655B5D; border-top: 1px solid #E3DBD2; padding-top: 10px; margin-top: 10px }
+.ic__table summary { cursor: pointer; font-size: 13.5px; font-weight: 600; color: var(--brand); padding: 8px 0 2px; width: max-content }
+.ic__table table { width: 100%; border-collapse: collapse; margin: 6px 0 4px; font-size: 13px; font-variant-numeric: tabular-nums }
+.ic__table caption { text-align: left; padding: 6px 0; color: #655B5D; font-size: 12px }
+.ic__table th, .ic__table td { padding: 7px 6px; border-bottom: 1px solid #D8D1C9; text-align: right }
+.ic__table th:first-child { text-align: left }
+.ic__split { display: grid; grid-template-columns: 320px minmax(0, 1fr); gap: 20px; align-items: start }
+.ic__split.is-stack { grid-template-columns: minmax(0, 1fr) }
+.ic__plan svg { width: 100%; max-width: 320px; height: auto; display: block; overflow: visible }
+.ic__axis { font-size: 13px; font-weight: 600; color: #655B5D; margin: 4px 0 8px }
+.ic .sw__btn { justify-self: start; margin-top: 12px }
+.hm { overflow-x: auto; margin-top: 10px }
+.hm table { border-collapse: separate; border-spacing: 3px; font-size: 11.5px; color: #655B5D; font-variant-numeric: tabular-nums }
+.hm th { font-weight: 500; padding: 0 3px; text-align: center }
+.hm th[scope="row"] { text-align: left; padding-right: 8px; color: var(--ink) }
+.hm td { width: 34px; height: 24px; border-radius: 3px }
+@media (max-width: 1100px) {
+  .sw { height: auto }
+  .sw__main { overflow: visible }
+}
+@media (max-width: 700px) {
+  .ic { padding: 18px 16px 12px }
+}
+
 /* ===== el hero (paleta fija de marca: no cambia con el tema) ===== */
 .hero { position: absolute; left: 0; top: 0; transform-origin: 0 0; color: #272124; font-family: var(--text); overflow: hidden; background: #F4F2F1 }
 .hero--desk { width: 1440px; height: 810px }

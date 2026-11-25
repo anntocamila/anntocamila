@@ -127,13 +127,17 @@
     var animView = function () {
       var v = $('#sw-view'); if (!v) return;
       G.fromTo(v.children, { y: 16, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: 'power3.out', stagger: 0.06, clearProps: 'transform,opacity' });
-      var br = $$('.sw__chart rect, .sw__mini rect', v);
-      if (br.length) G.from(br, { scaleY: 0, transformOrigin: '50% 100%', duration: 0.7, ease: 'power3.out', stagger: 0.012, delay: 0.12 });
-      var hb = $$('.sw__split b, .sw__vs-row .bars i', v);
+      var br = $$('.ic__chart .bar', v);
+      if (br.length) G.from(br, { scaleY: 0, transformOrigin: '50% 100%', duration: 0.7, ease: 'power3.out', stagger: 0.025, delay: 0.12 });
+      var tk = $$('.ic__chart .tickp', v);
+      if (tk.length) G.from(tk, { opacity: 0, y: 8, duration: 0.4, ease: 'power2.out', stagger: 0.025, delay: 0.45 });
+      var hb = $$('.ic__chart .hbar', v);
       if (hb.length) G.from(hb, { scaleX: 0, transformOrigin: '0 50%', duration: 0.8, ease: 'power3.out', stagger: 0.06, delay: 0.12 });
-      var arc = $$('.sw__ring-arc', v);
-      arc.forEach(function (a) { var full = a.getAttribute('stroke-dasharray'); G.from(a, { attr: { 'stroke-dasharray': '0 ' + full.split(' ')[1] }, duration: 0.9, ease: 'power3.out', delay: 0.15 }); });
-      var cells = $$('.sw__week td', v);
+      var db = $$('.ic__chart .db', v);
+      if (db.length) G.from(db, { opacity: 0, x: -14, duration: 0.5, ease: 'power3.out', stagger: 0.06, delay: 0.12 });
+      var zn = $$('.ic__chart .zone', v);
+      if (zn.length) G.from(zn, { opacity: 0, duration: 0.5, ease: 'power2.out', stagger: 0.06, delay: 0.1 });
+      var cells = $$('.hm td', v);
       if (cells.length) G.from(cells, { scale: 0.2, opacity: 0, duration: 0.35, ease: 'back.out(1.6)', stagger: 0.004 });
     };
     sw.addEventListener('sw:view', animView);
@@ -148,7 +152,7 @@
       } });
     };
     ST.create({ trigger: dev, start: 'top 65%', end: 'bottom top',
-      onEnter: function () { if (autoOn && !cycleTween) { animView(); next(); } },
+      onEnter: function () { if (window.innerWidth < 1101) { autoOn = false; animView(); return; } if (autoOn && !cycleTween) { animView(); next(); } },
       onLeave: function () { if (cycleTween) cycleTween.pause(); }, onEnterBack: function () { if (cycleTween && autoOn) cycleTween.resume(); }, onLeaveBack: function () { if (cycleTween) cycleTween.pause(); } });
     // qué medimos: los ocho ítems entran en cascada al abrirse
     var md = $('.metrics-detail');
