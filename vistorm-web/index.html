@@ -41,27 +41,27 @@
 </header>
 
 <main id="main">
-  <!-- Captura de antes y después -->
-  <section class="proof" aria-labelledby="proof-q">
-    <div class="wrap proof__grid">
-      <div>
-        <span class="kick">Un cambio, medido</span>
-        <h2 class="proof__q" id="proof-q">¿Entró más gente después de cambiar la vidriera?</h2>
-        <p class="proof__big num" aria-hidden="true"><span data-count="17" data-prefix="+">+17</span><small>%</small></p>
-        <p class="proof__sub">Con la vidriera nueva entraron <b>175 personas más</b> en la misma cantidad de días: <b>17 % más</b>.</p>
+  <!-- 1. El cambio de vidriera -->
+  <section class="cmp" aria-labelledby="cmp-q">
+    <div class="cmp__pin">
+      <div class="wrap cmp__head">
+        <div><span class="kick">Un cambio, medido</span><h2 class="big cmp__q split" id="cmp-q">¿Entró más gente después de cambiar la vidriera?</h2></div>
+        <span class="datanote"><span class="dot" aria-hidden="true"></span>Local de ejemplo · datos simulados</span>
       </div>
-      <div class="proof__card">
-        <div class="proof__pair">
-          <div class="pn"><span class="pn__label">Antes · 5 al 11 de noviembre</span><span class="pn__val num" data-count="1022">1.022</span><span class="pn__sub">visitas · 146 por día</span></div>
-          <div class="pn pn--after"><span class="pn__label">Después · 12 al 18 de noviembre</span><span class="pn__val num" data-count="1197">1.197</span><span class="pn__sub">visitas · 171 por día</span></div>
-        </div>
-        <svg class="chart" id="proof-chart" viewBox="0 0 720 300" role="img" aria-label="Visitas por día: siete días antes del cambio, entre 129 y 171; siete días después, entre 152 y 198."></svg>
-        <div class="proof__legend"><span class="proof__meta">Tienda de ropa · visitas por día</span><span class="datanote"><span class="dot" aria-hidden="true"></span>Local de ejemplo · datos simulados</span></div>
+      <div class="wrap" style="min-height:0;display:grid;grid-template-rows:minmax(0,1fr)">
+        <figure class="cmp__media" id="cmp-media">
+          <div class="cmp__frame" id="cmp-frame"><img src="/assets/img/landing/vidrieras-1600.webp" srcset="/assets/img/landing/vidrieras-900.webp 900w, /assets/img/landing/vidrieras-1600.webp 1600w" sizes="(max-width: 1280px) 100vw, 1232px" alt="Dos vidrieras de papel. Frente a la primera pasa gente sin detenerse; frente a la segunda, con la vidriera nueva, varias personas se frenan y entran, y sus recorridos se marcan en cobre sobre la vereda." width="1600" height="900">
+          <svg class="cmp__walk" id="cmp-walk" viewBox="0 0 900 507" preserveAspectRatio="none" aria-hidden="true"></svg></div>
+          <div class="cmp__shade" aria-hidden="true"></div>
+          <div class="cmp__tag cmp__tag--a"><span>Antes · 5 al 11 de noviembre</span><b data-count="1022">1.022</b><small>visitas · 146 por día</small><i style="width:62%"></i></div>
+          <div class="cmp__tag cmp__tag--b"><span>Después · 12 al 18 de noviembre</span><b data-count="1197">1.197</b><small>visitas · 171 por día</small><i style="width:74%"></i></div>
+          <div class="cmp__stamp" aria-hidden="true"><b>+17 %</b><span>más visitas</span></div>
+        </figure>
       </div>
-    </div>
-    <div class="wrap proof__foot">
-      <span></span>
-      <a class="btn" href="#agendar" data-go>Pedí una demo <span class="arr" aria-hidden="true"></span></a>
+      <div class="wrap cmp__foot">
+        <p>Con la vidriera nueva entraron <b>175 personas más</b> en la misma cantidad de días: <b>17 % más</b>.</p>
+        <a class="btn" href="#agendar" data-go>Pedí una demo <span class="arr" aria-hidden="true"></span></a>
+      </div>
     </div>
   </section>
 
@@ -71,146 +71,108 @@
   </div></div>
 
   <!-- 2. Problema -->
-  <section class="problem neg" aria-labelledby="t-problema">
-    <div class="wrap">
-      <span class="kick">El problema</span>
-      <h2 class="big problem__title split" id="t-problema">Tu tienda online sabe todo. Tu local, casi nada.</h2>
-      <div class="problem__row">
+  <section class="prob neg" aria-labelledby="t-problema">
+    <div class="wrap prob__pin">
+      <div>
+        <span class="kick">El problema</span>
+        <h2 class="big prob__title split" id="t-problema">Tu tienda online sabe todo. Tu local, casi nada.</h2>
         <p class="lead" data-reveal>En una tienda online sabés cuánta gente entró, qué miró y dónde se fue. En un local contás las ventas y adivinás el resto.</p>
-        <div data-reveal>
-          <p class="kick" style="margin-bottom:8px">Tres preguntas que hoy quedan sin respuesta</p>
-          <ul class="qs">
-            <li><span class="qn">01</span><span class="qt">¿Cuánta gente pasa por la vidriera y no entra?</span></li>
-            <li><span class="qn">02</span><span class="qt">¿Por dónde camina y dónde se queda quien entra?</span></li>
-            <li><span class="qn">03</span><span class="qt">¿Cuánto espera en la fila antes de que lo atiendan?</span></li>
-          </ul>
+        <ul class="prob__qs-mobile">
+          <li>¿Cuánta gente pasa por la vidriera y no entra?</li>
+          <li>¿Por dónde camina y dónde se queda quien entra?</li>
+          <li>¿Cuánto espera en la fila antes de que lo atiendan?</li>
+        </ul>
+        <div class="prob__close" data-reveal>
+          <p>Con Vistorm Labs dejás de adivinar.</p>
+          <a class="btn btn--light" href="#agendar" data-go>Pedí una demo <span class="arr" aria-hidden="true"></span></a>
         </div>
       </div>
-      <div class="problem__close" data-reveal>
-        <p>Con Vistorm Labs dejás de adivinar.</p>
-        <a class="btn btn--light" href="#agendar" data-go>Pedí una demo <span class="arr" aria-hidden="true"></span></a>
+      <div class="prob__media" id="prob-media">
+        <img src="/assets/img/landing/boutique-top-1600.webp" srcset="/assets/img/landing/boutique-top-900.webp 900w, /assets/img/landing/boutique-top-1600.webp 1600w" sizes="(max-width: 1000px) 100vw, 60vw" alt="Una tienda de ropa de papel vista desde arriba: gente que entra, recorre los percheros y se junta alrededor de la mesa central, donde el piso se tiñe en capas." width="1600" height="900" loading="lazy" decoding="async">
+        <p class="sr">Tres preguntas que hoy quedan sin respuesta:</p>
+        <div class="hot" style="left:9%;top:24%" data-hot><span class="hot__dot"></span><p class="hot__card" style="left:22px;top:18px"><b>01</b>¿Cuánta gente pasa por la vidriera y no entra?</p></div>
+        <div class="hot" style="left:60%;top:62%" data-hot><span class="hot__dot"></span><p class="hot__card" style="left:-272px;top:20px"><b>02</b>¿Por dónde camina y dónde se queda quien entra?</p></div>
+        <div class="hot" style="left:87%;top:30%" data-hot><span class="hot__dot"></span><p class="hot__card" style="left:-272px;top:-104px"><b>03</b>¿Cuánto espera en la fila antes de que lo atiendan?</p></div>
       </div>
     </div>
   </section>
 
-  <!-- 3. Qué medimos -->
-  <section class="measure" id="medimos" aria-labelledby="t-medimos">
-    <div class="wrap">
-      <div class="sechead">
-        <div><span class="kick">Qué medimos</span><h2 class="big split" id="t-medimos">Ocho respuestas para decidir qué cambiar.</h2></div>
-        <p class="lead" data-reveal>Todo se mide en personas y en tiempo. Ninguna cifra viene en pesos.</p>
-      </div>
-      <ol class="bento">
-        <li class="tile tile--a" data-tilt>
-          <div class="tile__top"><h3>Visitas y horario pico</h3><span class="tile__n">01</span></div>
-          <div class="viz"><div><div class="v-bars" aria-hidden="true">
-            <i style="--h:22%"></i><i style="--h:34%"></i><i style="--h:48%"></i><i style="--h:58%"></i><i style="--h:52%"></i><i style="--h:46%"></i><i style="--h:55%"></i><i style="--h:72%"></i><i class="pk" style="--h:96%"></i><i class="pk" style="--h:100%"></i><i style="--h:68%"></i>
-          </div><div class="v-axis" aria-hidden="true"><span>10 h</span><span>15 h</span><span>20 h</span></div></div></div>
-          <p>Cuánta gente entra y a qué hora se llena el local.</p>
-        </li>
-        <li class="tile tile--b" data-tilt>
-          <div class="tile__top"><h3>Vidriera</h3><span class="tile__n">02</span></div>
-          <div class="viz"><div class="v-fun" aria-hidden="true">
-            <div><span>Pasan</span><b style="--w:1"></b><span>3.412</span></div>
-            <div><span>Frenan</span><b style="--w:.42"></b><span>1.430</span></div>
-            <div><span>Entran</span><b style="--w:.37"></b><span>1.248</span></div>
-          </div></div>
-          <p>Cuánta gente pasa, cuánta frena a mirar y cuánta entra.</p>
-        </li>
-        <li class="tile tile--c" data-tilt>
-          <div class="tile__top"><h3>Recorrido</h3><span class="tile__n">03</span></div>
-          <div class="viz v-route"><svg viewBox="0 0 240 140" aria-hidden="true">
-            <rect x="6" y="6" width="228" height="128" rx="2" fill="none" stroke="#C7BCAC" stroke-width="10"/>
-            <rect x="150" y="128" width="40" height="14" fill="#FBFAF9"/>
-            <rect x="80" y="52" width="70" height="36" rx="3" fill="#ECE7E2"/>
-            <rect x="24" y="22" width="90" height="12" rx="2" fill="#ECE7E2"/><rect x="190" y="22" width="30" height="40" rx="2" fill="#ECE7E2"/>
-            <path class="path" d="M170 136 C170 110 172 100 160 96 C130 90 70 104 56 86 C44 70 60 44 92 42 C130 40 170 44 196 70"/>
-          </svg></div>
-          <p>Por dónde camina la gente adentro.</p>
-        </li>
-        <li class="tile tile--d" data-tilt>
-          <div class="tile__top"><h3>Zonas y mapa de calor</h3><span class="tile__n">04</span></div>
-          <div class="viz v-zones"><svg viewBox="0 0 240 140" aria-hidden="true">
-            <rect width="240" height="140" rx="6" fill="#4A1F2D"/>
-            <ellipse cx="96" cy="74" rx="92" ry="58" fill="#6A3243" style="transition-delay:.0s"/>
-            <ellipse cx="102" cy="76" rx="68" ry="42" fill="#8E5E69" style="transition-delay:.12s"/>
-            <ellipse cx="108" cy="78" rx="46" ry="28" fill="#C7BCAC" style="transition-delay:.24s"/>
-            <ellipse cx="112" cy="80" rx="27" ry="16" fill="#E6DFD7" style="transition-delay:.36s"/>
-            <ellipse cx="114" cy="80" rx="12" ry="7" fill="#C1774B" style="transition-delay:.48s"/>
-            <ellipse cx="196" cy="38" rx="30" ry="20" fill="#6A3243" style="transition-delay:.2s"/>
-          </svg></div>
-          <p>Qué sectores atraen y cuáles quedan vacíos.</p>
-        </li>
-        <li class="tile tile--e" data-tilt>
-          <div class="tile__top"><h3>Permanencia</h3><span class="tile__n">05</span></div>
-          <div class="viz v-ring" style="justify-items:center"><svg viewBox="0 0 120 120" style="width:140px;height:140px" aria-hidden="true">
-            <circle class="track" cx="60" cy="60" r="48"/><circle class="val" cx="60" cy="60" r="48"/>
-            <text class="vbig" x="60" y="58" text-anchor="middle" font-size="19">4 min</text><text x="60" y="76" text-anchor="middle">13 s</text>
-          </svg></div>
-          <p>Cuánto tiempo se queda la gente, en total y en cada zona.</p>
-        </li>
-        <li class="tile tile--f" data-tilt>
-          <div class="tile__top"><h3>Filas y espera</h3><span class="tile__n">06</span></div>
-          <div class="viz"><div class="v-queue" aria-hidden="true"><i></i><i style="animation-delay:.1s"></i><i style="animation-delay:.2s"></i><i style="animation-delay:.3s"></i><i style="animation-delay:.4s"></i><i style="animation-delay:.5s"></i><span class="desk"></span></div></div>
-          <p>Cuánto tarda la atención y cuándo se arma cola.</p>
-        </li>
-        <li class="tile tile--g" data-tilt>
-          <div class="tile__top"><h3>Pronóstico</h3><span class="tile__n">07</span></div>
-          <div class="viz v-fc"><svg viewBox="0 0 420 150" aria-hidden="true">
-            <path class="band" d="M250 70 C290 60 330 40 410 30 L410 80 C330 92 290 104 250 96 Z"/>
-            <path class="act" d="M10 120 C40 110 60 116 90 98 C120 80 140 96 170 84 C200 72 220 90 250 82"/>
-            <path class="fc" d="M250 82 C290 76 330 62 410 54"/>
-            <line x1="250" y1="14" x2="250" y2="140" stroke="#DDD5CA"/>
-            <text x="244" y="12" text-anchor="end">Hoy</text><text x="404" y="12" text-anchor="end">Semana que viene</text>
-          </svg></div>
-          <p>Cuánta gente esperar mañana y la semana que viene.</p>
-        </li>
-        <li class="tile tile--h" data-tilt>
-          <div style="display:grid;gap:18px">
-            <div class="tile__top"><h3>Cambios y campañas</h3><span class="tile__n">08</span></div>
-            <p>Qué le pasó a la gente después de mover algo o lanzar una promo.</p>
-          </div>
-          <div class="viz"><div class="v-ab" aria-hidden="true">
-            <div><b style="--h:62%"></b><span><span>Antes</span><strong>146 por día</strong></span></div>
-            <div><b style="--h:74%"></b><span><span>Después</span><strong>171 por día</strong></span></div>
-          </div></div>
-        </li>
+  <!-- 3. Qué medimos: anatomía de un local -->
+  <section class="ana" id="medimos" aria-labelledby="t-medimos">
+    <div class="wrap ana__head">
+      <div><span class="kick">Qué medimos</span><h2 class="big split" id="t-medimos">Ocho respuestas para decidir qué cambiar.</h2></div>
+      <p class="lead" data-reveal>Todo se mide en personas y en tiempo. Ninguna cifra viene en pesos.</p>
+    </div>
+    <div class="wrap ana__pin" id="ana-pin">
+      <ol class="ana__list" id="ana-list">
+        <li class="on" data-i="0"><span class="n">01</span><div><h3>Visitas y horario pico</h3><p><span>Cuánta gente entra y a qué hora se llena el local.</span></p></div></li>
+        <li data-i="1"><span class="n">02</span><div><h3>Vidriera</h3><p><span>Cuánta gente pasa, cuánta frena a mirar y cuánta entra.</span></p></div></li>
+        <li data-i="2"><span class="n">03</span><div><h3>Recorrido</h3><p><span>Por dónde camina la gente adentro.</span></p></div></li>
+        <li data-i="3"><span class="n">04</span><div><h3>Zonas y mapa de calor</h3><p><span>Qué sectores atraen y cuáles quedan vacíos.</span></p></div></li>
+        <li data-i="4"><span class="n">05</span><div><h3>Permanencia</h3><p><span>Cuánto tiempo se queda la gente, en total y en cada zona.</span></p></div></li>
+        <li data-i="5"><span class="n">06</span><div><h3>Filas y espera</h3><p><span>Cuánto tarda la atención y cuándo se arma cola.</span></p></div></li>
+        <li data-i="6"><span class="n">07</span><div><h3>Pronóstico</h3><p><span>Cuánta gente esperar mañana y la semana que viene.</span></p></div></li>
+        <li data-i="7"><span class="n">08</span><div><h3>Cambios y campañas</h3><p><span>Qué le pasó a la gente después de mover algo o lanzar una promo.</span></p></div></li>
       </ol>
-      <div class="measure__cta"><span class="datanote"><span class="dot" aria-hidden="true"></span>Local de ejemplo · datos simulados</span><a class="btn" href="#agendar" data-go>Pedí una demo <span class="arr" aria-hidden="true"></span></a></div>
+      <div class="ana__stage" aria-hidden="true">
+        <img src="/assets/img/landing/boutique-1600.webp" srcset="/assets/img/landing/boutique-900.webp 900w, /assets/img/landing/boutique-1600.webp 1600w" sizes="(max-width: 1000px) 100vw, 66vw" alt="" width="1600" height="900" loading="lazy" decoding="async">
+        <svg class="ov" viewBox="0 0 1672 941" preserveAspectRatio="xMidYMid slice">
+          <g data-g="0"><ellipse class="halo" cx="120" cy="720" rx="150" ry="70"/></g>
+          <g data-g="1"><rect class="halo" x="20" y="300" width="200" height="560" rx="30"/></g>
+          <g data-g="2"><path class="route" d="M140 870 C380 860 520 820 640 760 C820 680 900 720 1060 690 C1240 650 1380 560 1520 470"/></g>
+          <g data-g="3">
+            <ellipse cx="1030" cy="560" rx="360" ry="170" fill="#6A3243" opacity=".55"/><ellipse cx="1030" cy="565" rx="270" ry="125" fill="#8E5E69" opacity=".6"/><ellipse cx="1035" cy="570" rx="180" ry="82" fill="#C7BCAC" opacity=".65"/><ellipse cx="1040" cy="575" rx="100" ry="45" fill="#E6DFD7" opacity=".75"/><ellipse cx="1045" cy="578" rx="42" ry="19" fill="#C1774B"/>
+          </g>
+          <g data-g="4"><ellipse class="halo" cx="1030" cy="540" rx="300" ry="150"/></g>
+          <g data-g="5"><rect class="halo" x="1420" y="20" width="230" height="320" rx="24"/></g>
+          <g data-g="6"><rect class="halo" x="420" y="40" width="760" height="300" rx="24"/></g>
+          <g data-g="7"><rect class="halo" x="20" y="300" width="200" height="560" rx="30"/><ellipse class="halo" cx="1030" cy="540" rx="300" ry="150"/></g>
+        </svg>
+        <div class="chip" data-c="0" style="left:16%;top:62%"><span class="l">Visitas hoy</span><span class="v">1.248</span><span class="s">Pico: 19 h</span></div>
+        <div class="chip" data-c="1" style="left:22%;top:32%"><span class="l">Vidriera</span><span class="v">3.412 → 1.248</span><span class="s">pasan → entran</span></div>
+        <div class="chip" data-c="2" style="left:60%;top:56%"><span class="l">Recorrido más común</span><span class="v">Entrada → mesa</span><span class="s">612 personas</span></div>
+        <div class="chip" data-c="3" style="left:62%;top:40%"><span class="l">Zona más visitada</span><span class="v">Mesa central</span><span class="s">37 % del tiempo</span></div>
+        <div class="chip" data-c="4" style="left:62%;top:40%"><span class="l">Permanencia</span><span class="v">4 min 13 s</span><span class="s">promedio por visita</span></div>
+        <div class="chip" data-c="5" style="left:84%;top:44%"><span class="l">Fila en probadores</span><span class="v">2 min 40 s</span><span class="s">3 personas esperando</span></div>
+        <div class="chip" data-c="6" style="left:48%;top:42%"><span class="l">Mañana</span><span class="v">1.310 visitas</span><span class="s">pico esperado: 18 a 20 h</span></div>
+        <div class="chip" data-c="7" style="left:40%;top:62%"><span class="l">Vidriera nueva</span><span class="v">+17 %</span><span class="s">175 visitas más en 7 días</span></div>
+      </div>
     </div>
+    <div class="wrap ana__foot"><span class="datanote"><span class="dot" aria-hidden="true"></span>Local de ejemplo · datos simulados</span><a class="btn" href="#agendar" data-go>Pedí una demo <span class="arr" aria-hidden="true"></span></a></div>
   </section>
 
-  <!-- 4. Cómo funciona -->
-  <section class="how" id="funciona" aria-labelledby="t-funciona">
-    <div class="wrap how__pin">
-      <div class="how__text">
+  <!-- 4. Cómo funciona: la escena se desarma en capas -->
+  <section class="brk" id="funciona" aria-labelledby="t-funciona">
+    <div class="wrap brk__pin" id="brk-pin">
+      <div>
         <span class="kick">Cómo funciona</span>
         <h2 class="big" id="t-funciona">De la cámara al panel, sin que cambies nada en tu local.</h2>
-        <ol class="steps">
-          <li class="on"><span class="sn">1</span><div><h3>Conectamos</h3><p>Instalamos una cámara en tu local, o conectamos las que ya tenés.</p></div></li>
-          <li><span class="sn">2</span><div><h3>Analizamos</h3><p>El video viaja cifrado y se analiza en la nube. No se guarda.</p></div></li>
-          <li><span class="sn">3</span><div><h3>Te mostramos</h3><p>Ves en un panel qué pasa en tu local.</p></div></li>
-          <li><span class="sn">4</span><div><h3>Probás y medís</h3><p>Cambiás algo en el local y ves qué le pasó a la gente.</p></div></li>
+        <ol class="brk__steps" id="brk-steps">
+          <li class="on"><span class="n">1</span><div><h3>Conectamos</h3><p>Instalamos una cámara en tu local, o conectamos las que ya tenés.</p></div></li>
+          <li><span class="n">2</span><div><h3>Analizamos</h3><p>El video viaja cifrado y se analiza en la nube. No se guarda.</p></div></li>
+          <li><span class="n">3</span><div><h3>Te mostramos</h3><p>Ves en un panel qué pasa en tu local.</p></div></li>
+          <li><span class="n">4</span><div><h3>Probás y medís</h3><p>Cambiás algo en el local y ves qué le pasó a la gente.</p></div></li>
         </ol>
       </div>
-      <div class="stage" aria-hidden="true">
-        <div class="iso" id="iso">
-          <div class="layer layer--floor" data-z="0"><svg viewBox="0 0 100 100">
-            <rect x="0" y="0" width="100" height="100" fill="#C7BCAC"/>
-            <path fill="#542433" d="M0 0H100V100H76V87.5H87.5V12.5H12.5V87.5H50V100H0Z"/>
-            <rect x="22" y="20" width="34" height="8" fill="#FBFAF9"/><rect x="66" y="20" width="12" height="22" fill="#FBFAF9"/><rect x="36" y="44" width="26" height="16" fill="#FBFAF9"/>
+      <div class="brk__stage" aria-hidden="true">
+        <div class="brk__scene" id="brk-scene">
+          <div class="plane plane--base" data-p="0"><img src="/assets/img/landing/shopping-1600.webp" srcset="/assets/img/landing/shopping-900.webp 900w, /assets/img/landing/shopping-1600.webp 1600w" sizes="(max-width: 1000px) 100vw, 60vw" alt="" width="1600" height="900" loading="lazy" decoding="async"></div>
+          <div class="plane" data-p="1"><svg viewBox="0 0 160 90" id="brk-dots"></svg></div>
+          <div class="plane" data-p="2"><svg viewBox="0 0 160 90">
+            <ellipse cx="80" cy="66" rx="44" ry="15" fill="#6A3243" opacity=".85"/><ellipse cx="80" cy="67" rx="31" ry="10.5" fill="#8E5E69" opacity=".9"/><ellipse cx="81" cy="68" rx="20" ry="7" fill="#C7BCAC"/><ellipse cx="82" cy="68.5" rx="11" ry="3.8" fill="#E6DFD7"/><ellipse cx="82" cy="68.6" rx="4.6" ry="1.7" fill="#C1774B"/>
+            <ellipse cx="36" cy="72" rx="18" ry="7" fill="#6A3243" opacity=".85"/><ellipse cx="36" cy="72" rx="9" ry="3.4" fill="#8E5E69"/>
           </svg></div>
-          <div class="layer layer--dots" data-z="1"><svg viewBox="0 0 100 100" id="iso-dots"></svg></div>
-          <div class="layer layer--heat" data-z="2"><svg viewBox="0 0 100 100"><ellipse cx="50" cy="62" rx="34" ry="26" fill="#6A3243"/><ellipse cx="74" cy="34" rx="14" ry="12" fill="#6A3243"/></svg></div>
-          <div class="layer layer--heat" data-z="3"><svg viewBox="0 0 100 100"><ellipse cx="51" cy="63" rx="24" ry="18" fill="#8E5E69"/><ellipse cx="74" cy="34" rx="8" ry="7" fill="#8E5E69"/></svg></div>
-          <div class="layer layer--heat" data-z="4"><svg viewBox="0 0 100 100"><ellipse cx="52" cy="64" rx="15" ry="11" fill="#E6DFD7"/></svg></div>
-          <div class="layer layer--heat" data-z="5"><svg viewBox="0 0 100 100"><ellipse id="iso-core" cx="53" cy="65" rx="7" ry="5" fill="#C1774B"/></svg></div>
-          <div class="layer layer--card" data-z="6"><div class="iso-card"><span class="l">Visitas hoy</span><span class="v num" id="iso-v">1.248</span><div class="z"><span>Zona más visitada</span><b id="iso-z">Mesa central</b></div></div></div>
+          <div class="plane plane--card" data-p="3"><div class="brk-card"><span class="l">Visitas hoy</span><span class="v"><span id="brk-v">1.248</span><span class="up" id="brk-up" style="opacity:0">+17 %</span></span><div class="row"><span>Zona más visitada</span><b id="brk-z">Escalera mecánica</b></div></div></div>
         </div>
-        <span class="datanote stage__tag"><span class="dot"></span>Local de ejemplo · datos simulados</span>
+        <ol class="brk__labels" aria-hidden="true">
+          <li style="top:12%"><b>04</b>Tu panel</li>
+          <li style="top:31%"><b>03</b>Calor por zona</li>
+          <li style="top:50%"><b>02</b>Cada persona, un punto</li>
+          <li style="top:72%"><b>01</b>Tu local · el video se analiza y no se guarda</li>
+        </ol>
       </div>
     </div>
-    <div class="wrap how__cta"><a class="btn" href="#agendar" data-go>Pedí una demo <span class="arr" aria-hidden="true"></span></a></div>
+    <div class="wrap brk__foot"><span class="datanote"><span class="dot" aria-hidden="true"></span>Local de ejemplo · datos simulados</span><a class="btn btn--light" href="#agendar" data-go>Pedí una demo <span class="arr" aria-hidden="true"></span></a></div>
   </section>
 
   <!-- 5. El panel -->
@@ -228,11 +190,11 @@
           <div class="panelx">
             <div class="panelx__nav" role="tablist" aria-label="Secciones del panel">
               <p class="panelx__brand">Tienda de ropa · Palermo</p>
-              <button class="tab" role="tab" id="tab-hoy" aria-controls="pane" aria-selected="true" data-tab="hoy">Hoy<small>Lo que pasa ahora</small></button>
-              <button class="tab" role="tab" id="tab-hacer" aria-controls="pane" aria-selected="false" tabindex="-1" data-tab="hacer">Qué hacer<small>Oportunidades</small></button>
-              <button class="tab" role="tab" id="tab-recorrido" aria-controls="pane" aria-selected="false" tabindex="-1" data-tab="recorrido">Recorrido<small>De la vereda a la caja</small></button>
-              <button class="tab" role="tab" id="tab-local" aria-controls="pane" aria-selected="false" tabindex="-1" data-tab="local">El local<small>Mapa de calor</small></button>
-              <button class="tab" role="tab" id="tab-planificar" aria-controls="pane" aria-selected="false" tabindex="-1" data-tab="planificar">Planificar<small>Semana típica y personal</small></button>
+              <button class="tab" role="tab" id="tab-hoy" aria-controls="pane" aria-selected="true" data-tab="hoy">Hoy<small>Lo que pasa ahora</small><i class="prog" aria-hidden="true"></i></button>
+              <button class="tab" role="tab" id="tab-hacer" aria-controls="pane" aria-selected="false" tabindex="-1" data-tab="hacer">Qué hacer<small>Oportunidades</small><i class="prog" aria-hidden="true"></i></button>
+              <button class="tab" role="tab" id="tab-recorrido" aria-controls="pane" aria-selected="false" tabindex="-1" data-tab="recorrido">Recorrido<small>De la vereda a la caja</small><i class="prog" aria-hidden="true"></i></button>
+              <button class="tab" role="tab" id="tab-local" aria-controls="pane" aria-selected="false" tabindex="-1" data-tab="local">El local<small>Mapa de calor</small><i class="prog" aria-hidden="true"></i></button>
+              <button class="tab" role="tab" id="tab-planificar" aria-controls="pane" aria-selected="false" tabindex="-1" data-tab="planificar">Planificar<small>Semana típica y personal</small><i class="prog" aria-hidden="true"></i></button>
             </div>
             <div class="panelx__body" id="pane" role="tabpanel" aria-labelledby="tab-hoy" tabindex="0"></div>
           </div>
@@ -243,44 +205,50 @@
   </section>
 
   <!-- 6. Privacidad -->
-  <section class="privacy neg" id="privacidad" aria-labelledby="t-priv">
-    <div class="privacy__pin">
-      <canvas id="priv-canvas" aria-hidden="true"></canvas>
-      <div class="wrap privacy__in">
+  <section class="priv neg" id="privacidad" aria-labelledby="t-priv">
+    <div class="wrap priv__pin" id="priv-pin">
+      <div>
         <span class="kick">Privacidad</span>
-        <h2 class="big" id="t-priv">Medimos comportamientos, no identidades.</h2>
-        <p class="lead">Contamos cuánta gente hay, por dónde camina y cuánto se queda. No sabemos quién es cada persona y no nos interesa saberlo.</p>
+        <h2 class="big split" id="t-priv">Medimos comportamientos, no identidades.</h2>
+        <p class="lead" data-reveal>Contamos cuánta gente hay, por dónde camina y cuánto se queda. No sabemos quién es cada persona y no nos interesa saberlo.</p>
       </div>
-      <p class="privacy__count" aria-hidden="true"><b id="priv-n">0</b>personas contadas · ninguna identificada</p>
+      <div class="priv__canvas" aria-hidden="true">
+        <canvas id="priv-canvas" data-src="/assets/img/landing/vidrieras-1600.webp"></canvas>
+        <p class="priv__count"><b id="priv-n">0</b>personas contadas · ninguna identificada</p>
+      </div>
     </div>
     <div class="wrap promises">
       <ul>
-        <li data-reveal><b>01</b><span>No reconocemos caras.</span></li>
-        <li data-reveal><b>02</b><span>No guardamos el video: se analiza y se descarta.</span></li>
-        <li data-reveal><b>03</b><span>No se procesa nada dentro de tu local: el video viaja cifrado y se analiza en la nube.</span></li>
-        <li data-reveal><b>04</b><span>Los resultados son del local, no de personas.</span></li>
+        <li><b>01</b><span>No reconocemos caras.</span></li>
+        <li><b>02</b><span>No guardamos el video: se analiza y se descarta.</span></li>
+        <li><b>03</b><span>No se procesa nada dentro de tu local: el video viaja cifrado y se analiza en la nube.</span></li>
+        <li><b>04</b><span>Los resultados son del local, no de personas.</span></li>
       </ul>
     </div>
   </section>
 
   <!-- 7. Para quién -->
   <section class="who" aria-labelledby="t-who">
-    <div class="wrap"><span class="kick">Para quién</span><h2 class="big split" id="t-who" style="font-size:clamp(44px,6vw,88px);margin-top:22px;max-width:14ch">Para locales donde la gente camina, mira y espera.</h2></div>
-    <div class="who__pin">
-      <ul class="who__track" id="who-track" role="list" tabindex="0" aria-label="Rubros">
-        <li class="rubro"><div class="rubro__art" data-scene="tienda"></div><div class="rubro__txt"><span class="rubro__n">01</span><h3>Boutiques y cadenas de ropa</h3><p>Qué vidriera frena a la gente y qué sector no se mira.</p></div></li>
-        <li class="rubro"><div class="rubro__art" data-scene="shopping"></div><div class="rubro__txt"><span class="rubro__n">02</span><h3>Shoppings</h3><p>Cómo se mueve el público entre locales y a qué hora.</p></div></li>
-        <li class="rubro"><div class="rubro__art" data-scene="bar"></div><div class="rubro__txt"><span class="rubro__n">03</span><h3>Restaurantes y gastronomía</h3><p>Cuánto se espera por una mesa y cuándo se llena el salón.</p></div></li>
-        <li class="rubro"><div class="rubro__art" data-scene="aeropuerto"></div><div class="rubro__txt"><span class="rubro__n">04</span><h3>Aeropuertos</h3><p>Dónde se arman filas y cuánto tardan en avanzar.</p></div></li>
-        <li class="rubro"><div class="rubro__art" data-topo="1"></div><div class="rubro__txt"><span class="rubro__n">05</span><h3>Hoteles</h3><p>Qué espacios usan los huéspedes y cuándo se junta gente en recepción.</p></div></li>
-        <li class="rubro"><div class="rubro__art" data-topo="2"></div><div class="rubro__txt"><span class="rubro__n">06</span><h3>Universidades</h3><p>Qué espacios se usan, a qué hora y cuánta gente espera.</p></div></li>
-        <li class="rubro"><div class="rubro__art" data-topo="3"></div><div class="rubro__txt"><span class="rubro__n">07</span><h3>Locales de repuestos</h3><p>Cuánto espera el cliente en el mostrador y qué zonas recorre.</p></div></li>
+    <div class="wrap">
+      <div class="sechead">
+        <div><span class="kick">Para quién</span><h2 class="big split" id="t-who">Para locales donde la gente camina, mira y espera.</h2></div>
+        <span class="datanote">Tocá una tarjeta para abrirla</span>
+      </div>
+      <ul class="kiln" id="kiln">
+        <li class="kiln__card is-open" tabindex="0" aria-expanded="true"><img src="/assets/img/landing/boutique-1600.webp" alt="" loading="lazy" decoding="async"><div class="kiln__top"><span>01 / Moda</span><span class="kiln__plus" aria-hidden="true"></span></div><div class="kiln__body"><h3>Boutiques y cadenas de ropa</h3><div class="kiln__more"><div><p>Qué vidriera frena a la gente y qué sector no se mira.</p></div></div></div></li>
+        <li class="kiln__card" tabindex="0" aria-expanded="false"><img src="/assets/img/landing/shopping-1600.webp" alt="" loading="lazy" decoding="async"><div class="kiln__top"><span>02 / Centros</span><span class="kiln__plus" aria-hidden="true"></span></div><div class="kiln__body"><h3>Shoppings</h3><div class="kiln__more"><div><p>Cómo se mueve el público entre locales y a qué hora.</p></div></div></div></li>
+        <li class="kiln__card" tabindex="0" aria-expanded="false"><img src="/assets/img/landing/bar-1600.webp" alt="" loading="lazy" decoding="async"><div class="kiln__top"><span>03 / Gastronomía</span><span class="kiln__plus" aria-hidden="true"></span></div><div class="kiln__body"><h3>Restaurantes y gastronomía</h3><div class="kiln__more"><div><p>Cuánto se espera por una mesa y cuándo se llena el salón.</p></div></div></div></li>
+        <li class="kiln__card" tabindex="0" aria-expanded="false"><img src="/assets/img/landing/vidrieras-1600.webp" alt="" loading="lazy" decoding="async"><div class="kiln__top"><span>04 / Calle</span><span class="kiln__plus" aria-hidden="true"></span></div><div class="kiln__body"><h3>Locales a la calle</h3><div class="kiln__more"><div><p>Locales de repuestos: cuánto espera el cliente en el mostrador y qué zonas recorre.</p></div></div></div></li>
+        <li class="kiln__card kiln__card--list" tabindex="0" aria-expanded="false"><div class="kiln__top"><span>05 / Espacios</span><span class="kiln__plus" aria-hidden="true"></span></div><div class="kiln__body"><h3>Y espacios grandes</h3><div class="kiln__more"><div><ul class="kiln__list">
+          <li><b>Aeropuertos</b>Dónde se arman filas y cuánto tardan en avanzar.</li>
+          <li><b>Hoteles</b>Qué espacios usan los huéspedes y cuándo se junta gente en recepción.</li>
+          <li><b>Universidades</b>Qué espacios se usan, a qué hora y cuánta gente espera.</li>
+        </ul></div></div></div></li>
       </ul>
-      <div class="wrap"><div class="who__bar"><i id="who-bar"></i></div></div>
     </div>
   </section>
 
-  <!-- 8 y 9. Demo, piloto y preguntas -->
+  <!-- 8 y 9. Demo y preguntas -->
   <section class="demofaq" aria-labelledby="t-demo">
     <div class="wrap demofaq__grid">
       <div>
@@ -304,16 +272,12 @@
 
   <!-- 10. Cierre y agendador -->
   <section class="close neg" id="agendar" aria-labelledby="t-close">
-    <div class="close__layers" aria-hidden="true">
-      <svg viewBox="0 0 1440 400" style="top:0" data-par="-80"><path fill="#4A1F2D" d="M0 120 C240 40 420 200 720 130 C1000 60 1200 170 1440 90 V0 H0 Z"/></svg>
-      <svg viewBox="0 0 1440 400" style="top:0" data-par="-40"><path fill="#6A3243" d="M0 60 C260 0 460 120 760 70 C1040 24 1220 110 1440 40 V0 H0 Z"/></svg>
-      <svg viewBox="0 0 1440 400" style="bottom:-40px" data-par="60"><path fill="#4A1F2D" d="M0 260 C300 330 520 200 820 250 C1080 292 1260 220 1440 270 V400 H0 Z"/></svg>
-    </div>
+    <div class="close__bg" aria-hidden="true"><img src="/assets/img/landing/bar-1600.webp" srcset="/assets/img/landing/bar-900.webp 900w, /assets/img/landing/bar-1600.webp 1600w" sizes="100vw" alt="" loading="lazy" decoding="async" id="close-img"></div>
     <div class="wrap close__in">
       <span class="kick">Pedí una demo</span>
       <h2 class="big split" id="t-close">Dejá de adivinar qué pasa en tu local.</h2>
       <p class="lead">Elegí día y horario para una videollamada. Te mostramos el panel con un local como el tuyo.</p>
-      <div class="sched">
+      <div class="sched" data-reveal>
         <div class="sched__pick">
           <div class="field" style="gap:12px">
             <span class="step-t">1 · Elegí el día</span>
@@ -368,6 +332,7 @@
 
 <script src="/assets/vendor/gsap.min.js" defer></script>
 <script src="/assets/vendor/ScrollTrigger.min.js" defer></script>
+<script src="/assets/vendor/lenis.min.js" defer></script>
 <script src="/assets/js/hero.js" defer></script>
 <script src="/assets/js/site.js" defer></script>
 <script src="/assets/js/motion.js" defer></script>

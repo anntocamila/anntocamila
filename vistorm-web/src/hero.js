@@ -1455,7 +1455,13 @@ function start() {
   if (tg) tg.addEventListener('change', e => setReduced(e.target.checked || mqReduce.matches));
   mqReduce.addEventListener?.('change', e => setReduced(e.matches));
   // el texto del hero aparece enseguida; la escena arranca cuando el navegador está libre
-  warm(VENUES[0], boot);
+  // el hero arranca enseguida: el primer rubro se prepara en el momento y el resto en pedazos chicos
+  const v0 = VENUES[0];
+  (function prep() {
+    if (!v0.ready) v0.sim.run(Math.min(140, v0.sim.t + 35));
+    if (v0.ready || v0.sim.t >= 140) { if (!v0.ready) { v0.base = v0.visits0 - v0.sim.visits; v0.ready = true; } boot(); }
+    else setTimeout(prep, 0);
+  })();
 }
 function jump(i) {
   if (reduced) { staticIdx = i; heroes.forEach(h => h.paint(staticSpec(i), false)); return; }
@@ -1487,8 +1493,10 @@ function tick(now) {
 }
 function goTo(e) {
   const id = e.currentTarget.getAttribute('href').slice(1), t = document.getElementById(id); if (!t) return;
-  e.preventDefault(); t.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
-  if (id === 'agendar') setTimeout(() => document.querySelector('.cal__day:not([disabled])')?.focus({ preventScroll: true }), reduced ? 0 : 600);
+  e.preventDefault();
+  const ln = window.VistormLenis;
+  if (ln && !reduced) ln.scrollTo(t, { duration: 1.6, easing: x => 1 - Math.pow(1 - x, 4) }); else t.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' });
+  if (id === 'agendar') setTimeout(() => document.querySelector('.cal__day:not([disabled])')?.focus({ preventScroll: true }), reduced ? 0 : 1700);
 }
 window.VistormGoTo = goTo;
 /* escenas estáticas de cada rubro, para otras secciones de la página */
