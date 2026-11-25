@@ -57,32 +57,6 @@ img { display: block; max-width: 100% }
 .hero__links a:hover { text-decoration: underline; text-underline-offset: 4px }
 a.hero__cta { text-decoration: none }
 
-/* ---------- 1 · el cambio de vidriera ---------- */
-.cmp { position: relative; background: var(--surface) }
-.cmp__pin { height: 100vh; min-height: 640px; display: grid; grid-template-rows: auto 1fr auto; gap: 28px; padding-block: 64px 40px }
-.cmp__pin > .wrap { width: 100% }
-.cmp__head { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 24px; align-items: end }
-.cmp__q { font-size: clamp(34px, 3.9vw, 58px); max-width: 24ch; margin-top: 18px }
-.cmp__media { position: relative; margin: 0; border-radius: 18px; overflow: hidden; min-height: 0; clip-path: inset(0 0 0 0 round 18px); will-change: clip-path; container-type: size; background: var(--brand-deep) }
-.cmp__frame { position: absolute; --fx: .5; --fy: .62; width: max(100cqw, 177.78cqh); height: max(56.25cqw, 100cqh); left: calc((100cqw - max(100cqw, 177.78cqh)) * var(--fx)); top: calc((100cqh - max(56.25cqw, 100cqh)) * var(--fy)); will-change: transform }
-.cmp__frame img, .cmp__walk { position: absolute; inset: 0; width: 100%; height: 100% }
-.cmp__walk { pointer-events: none }
-.cmp__shade { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(39,33,36,0) 55%, rgba(39,33,36,.35)) }
-.cmp__tag { position: absolute; bottom: 26px; background: var(--raised); border-radius: 12px; box-shadow: var(--shadow-card); padding: 16px 20px; display: grid; gap: 2px; min-width: 210px }
-.cmp__tag span { font-size: 12.5px; font-weight: 500 }
-.cmp__tag--a { left: 26px } .cmp__tag--a span { color: var(--petroleo) }
-.cmp__tag--b { right: 26px } .cmp__tag--b span { color: var(--brand) }
-.cmp__tag b { font-size: 40px; line-height: 1.05; font-weight: 600; letter-spacing: -.015em; font-variant-numeric: tabular-nums }
-.cmp__tag small { font-size: 12.5px; color: var(--ink-muted) }
-.cmp__tag i { display: block; height: 4px; border-radius: 2px; margin-top: 8px; background: var(--verde) }
-.cmp__tag--b i { background: var(--brand) }
-.cmp__stamp { position: absolute; left: 50%; top: 31%; transform: translate(-50%, -50%) rotate(-4deg); background: var(--brand); color: var(--on-brand); border-radius: 14px; padding: 14px 26px 18px; text-align: center; box-shadow: 0 18px 40px -16px rgba(39,33,36,.55) }
-.cmp__stamp b { display: block; font-family: var(--display); font-weight: 700; font-size: clamp(56px, 7vw, 104px); line-height: .9; letter-spacing: -.04em; font-variant-numeric: tabular-nums }
-.cmp__stamp span { font-size: 13px; color: var(--on-brand-muted) }
-.cmp__foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 16px 32px; align-items: center }
-.cmp__foot p { font-size: 18px; max-width: 46ch }
-.cmp__foot b { font-weight: 600 }
-
 /* ---------- 7 · para quién (Kiln) ---------- */
 .who { padding-block: 140px 120px }
 .kiln { display: flex; gap: 12px; height: 600px; margin-top: 56px; list-style: none; padding: 0 }
@@ -169,10 +143,6 @@ a.hero__cta { text-decoration: none }
 .foot.neg a, .foot.neg button.linklike { color: var(--on-brand-muted) }
 .foot__in { display: flex; flex-wrap: wrap; gap: 24px 48px; align-items: center; justify-content: space-between }
 .proto-note { display: flex; align-items: center; justify-content: center; gap: 10px; padding: 10px 16px; font-size: 13px; color: var(--ink-muted); background: var(--sunken) }
-
-/* ---------- 1 · la vidriera, con su propia altura (no fija la pantalla) ---------- */
-.cmp__pin { height: auto; min-height: 0; grid-template-rows: auto auto auto; padding-block: clamp(56px, 7vw, 104px) clamp(40px, 5vw, 72px) }
-.cmp__media { height: clamp(320px, 40vw, 560px) }
 
 /* ---------- 2 · el panel: el software de Vistorm ---------- */
 .panelsec { padding-block: clamp(72px, 9vw, 136px) clamp(56px, 7vw, 104px); overflow: hidden }
@@ -394,6 +364,92 @@ a.hero__cta { text-decoration: none }
 @media (prefers-reduced-motion: reduce) {
   .dot { animation: none }
   .kiln__card, .kiln__card img, .kiln__more { transition: none }
+}
+
+/* ---------- 1 · qué medimos: tarjetas ---------- */
+.measure { padding-block: clamp(80px, 9vw, 140px) clamp(56px, 6vw, 96px) }
+.measure .sechead .big { font-size: clamp(40px, 5.2vw, 80px) }
+.mcards { list-style: none; margin: clamp(40px, 5vw, 64px) 0 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px }
+.mcard { position: relative; background: var(--raised); border-radius: 18px; padding: 12px 12px 22px; display: grid; gap: 14px; align-content: start; box-shadow: 0 0 0 1px var(--line), 4px 5px 0 #E6DFD7; transition: transform .45s var(--ease-paper), box-shadow .45s var(--ease) }
+.mcard:hover { transform: translateY(-6px); box-shadow: 0 0 0 1px var(--line), 6px 10px 0 #E6DFD7, 0 24px 40px -24px rgba(39,33,36,.35) }
+.mcard__art { position: relative; aspect-ratio: 12 / 7; border-radius: 12px; background: var(--brand-deep); overflow: hidden }
+.mcard__art::after { content: ""; position: absolute; inset: 0; border-radius: inherit; box-shadow: inset 0 0 0 1px rgba(244,242,241,.06) }
+.mcard__art svg { position: absolute; inset: 0; width: 100%; height: 100% }
+.mcard__n { position: absolute; z-index: 1; left: 12px; top: 10px; font-family: var(--display); font-weight: 600; font-size: 13px; color: var(--on-brand-muted) }
+.mcard h3 { font-family: var(--display); font-weight: 600; font-size: 21px; line-height: 1.15; color: var(--brand); padding: 0 8px }
+.mcard p { font-size: 15px; color: var(--ink-muted); padding: 0 8px; margin-top: -6px }
+
+/* ---------- 4 · cómo funciona: una tarjeta con ilustración ---------- */
+.process-block { padding-block: clamp(56px, 7vw, 112px) }
+.howcard { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); background: var(--brand); color: var(--on-brand); border-radius: 22px; overflow: hidden; box-shadow: 0 40px 80px -40px rgba(39,33,36,.6) }
+.howcard__media { position: relative; min-height: 420px; overflow: hidden }
+.howcard__media img { position: absolute; inset: -8% 0; width: 100%; height: 116%; object-fit: cover; will-change: transform }
+.howcard__body { padding: clamp(28px, 4vw, 64px) }
+.howcard .kick { color: var(--on-brand-muted) }
+.howcard .big { color: var(--on-brand); font-size: clamp(34px, 3.8vw, 58px); margin: 18px 0 30px }
+.howcard .steps4::before { background: rgba(244,242,241,.22) }
+.howcard .steps4 .n { background: var(--brand); box-shadow: 0 0 0 1.5px var(--on-brand-muted); color: var(--on-brand) }
+.howcard .steps4 h3 { color: var(--on-brand) }
+.howcard .steps4 p { color: #E3D8D5 }
+
+/* ---------- 5 · demo: título y botón ---------- */
+.close__in { padding-block: clamp(96px, 12vw, 176px) }
+.close .big { font-size: clamp(46px, 6.4vw, 100px); max-width: 14ch }
+.close .btn { margin-top: 40px; height: 60px; padding: 0 32px; font-size: 17px }
+.close__alt { margin-top: 18px; font-size: 14px; color: var(--on-brand-muted) }
+
+/* ---------- 6 · preguntas frecuentes ---------- */
+.faqsec { padding-block: clamp(80px, 9vw, 136px) }
+.faqsec__grid { display: grid; grid-template-columns: minmax(0, 4fr) minmax(0, 8fr); gap: clamp(32px, 6vw, 96px); align-items: start }
+.faqsec .big { font-size: clamp(36px, 4vw, 60px); margin-top: 20px }
+
+/* ---------- pop-up de la demo ---------- */
+.demo-modal { width: min(1040px, calc(100vw - 32px)); max-height: calc(100dvh - 32px); padding: 0; border: 0; border-radius: 20px; background: var(--surface); color: var(--ink); box-shadow: 0 60px 120px -40px rgba(20,6,12,.6); overflow: auto; overscroll-behavior: contain }
+.demo-modal::backdrop { background: rgba(39,33,36,.62); backdrop-filter: blur(3px) }
+.demo-modal[open] { animation: dm-in .55s var(--ease-paper) both }
+.demo-modal[open]::backdrop { animation: dm-fade .4s var(--ease) both }
+.demo-modal.is-closing { animation: dm-out .28s var(--ease) both }
+.demo-modal.is-closing::backdrop { animation: dm-fade .28s var(--ease) reverse both }
+@keyframes dm-in { from { opacity: 0; transform: translateY(28px) scale(.97) } }
+@keyframes dm-out { to { opacity: 0; transform: translateY(16px) scale(.98) } }
+@keyframes dm-fade { from { opacity: 0 } }
+.demo-modal__head { display: flex; justify-content: space-between; align-items: flex-start; gap: 24px; padding: 28px 32px 8px }
+.demo-modal__head h2 { font-family: var(--display); font-weight: 600; font-size: clamp(28px, 3vw, 40px); line-height: 1.05; letter-spacing: -.02em; color: var(--brand) }
+.demo-modal__head p { margin-top: 8px; color: var(--ink-muted); max-width: 52ch }
+.demo-modal__x { flex: none; width: 44px; height: 44px; border-radius: 50%; border: 0; background: var(--sunken); color: var(--ink); cursor: pointer; position: relative; transition: transform .35s var(--ease-paper), background .2s var(--ease) }
+.demo-modal__x:hover { transform: rotate(90deg); background: var(--line) }
+.demo-modal__x::before, .demo-modal__x::after { content: ""; position: absolute; left: 50%; top: 50%; width: 16px; height: 1.5px; background: currentColor; transform: translate(-50%, -50%) rotate(45deg) }
+.demo-modal__x::after { transform: translate(-50%, -50%) rotate(-45deg) }
+.demo-modal .sched { margin: 16px 32px 32px; max-width: none; box-shadow: 0 0 0 1px var(--line), 4px 5px 0 #E6DFD7 }
+html.modal-open { overflow: hidden }
+
+/* ---------- pie ---------- */
+.foot__social { display: flex; gap: 10px; margin-top: 18px }
+.foot__social a, .foot__social span { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; box-shadow: inset 0 0 0 1px rgba(244,242,241,.35); color: var(--on-brand) }
+.foot__social a:hover { background: rgba(244,242,241,.12) }
+.foot__social svg { width: 18px; height: 18px }
+.foot__social span { opacity: .55 }
+
+@media (max-width: 1100px) {
+  .mcards { grid-template-columns: repeat(2, minmax(0, 1fr)) }
+}
+@media (max-width: 900px) {
+  .howcard { grid-template-columns: minmax(0, 1fr) }
+  .howcard__media { min-height: 0; aspect-ratio: 16 / 10 }
+  .faqsec__grid { grid-template-columns: minmax(0, 1fr) }
+}
+@media (max-width: 640px) {
+  /* en celular las tarjetas se deslizan de costado */
+  .mcards { display: flex; overflow-x: auto; scroll-snap-type: x mandatory; gap: 12px; margin-inline: calc(-1 * max(24px, env(safe-area-inset-left, 0px))); padding: 4px max(24px, env(safe-area-inset-left, 0px)) 18px; scrollbar-width: none }
+  .mcards::-webkit-scrollbar { display: none }
+  .mcard { flex: 0 0 78%; scroll-snap-align: center }
+  .demo-modal { width: 100vw; max-width: 100vw; max-height: 100dvh; height: 100dvh; border-radius: 0 }
+  .demo-modal__head { padding: 20px 18px 4px }
+  .demo-modal .sched { margin: 12px 12px 20px }
+}
+@media (prefers-reduced-motion: reduce) {
+  .demo-modal[open], .demo-modal[open]::backdrop, .demo-modal.is-closing { animation: none }
+  .mcard { transition: none }
 }
 
 /* ===== el hero (paleta fija de marca: no cambia con el tema) ===== */

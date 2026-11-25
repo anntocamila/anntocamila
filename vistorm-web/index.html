@@ -41,27 +41,86 @@
 </header>
 
 <main id="main">
-  <!-- 1. El cambio de vidriera -->
-  <section class="cmp" aria-labelledby="cmp-q">
-    <div class="cmp__pin">
-      <div class="wrap cmp__head">
-        <div><span class="kick">Un cambio, medido</span><h2 class="big cmp__q split" id="cmp-q">¿Entró más gente después de cambiar la vidriera?</h2></div>
-        <span class="datanote"><span class="dot" aria-hidden="true"></span>Local de ejemplo · datos simulados</span>
+  <!-- 1. Qué medimos -->
+  <section class="measure" id="medimos" aria-labelledby="t-medimos">
+    <div class="wrap">
+      <div class="sechead">
+        <div><span class="kick">Qué medimos</span><h2 class="big split" id="t-medimos">Ocho respuestas para decidir qué cambiar.</h2></div>
+        <p class="lead" data-reveal>Todo se mide en personas y en tiempo. Ninguna cifra viene en pesos.</p>
       </div>
-      <div class="wrap" style="min-height:0;display:grid;grid-template-rows:minmax(0,1fr)">
-        <figure class="cmp__media" id="cmp-media">
-          <div class="cmp__frame" id="cmp-frame"><img src="/assets/img/landing/vidrieras-1600.webp" srcset="/assets/img/landing/vidrieras-900.webp 900w, /assets/img/landing/vidrieras-1600.webp 1600w" sizes="(max-width: 1280px) 100vw, 1232px" alt="Dos vidrieras de papel. Frente a la primera pasa gente sin detenerse; frente a la segunda, con la vidriera nueva, varias personas se frenan y entran, y sus recorridos se marcan en cobre sobre la vereda." width="1600" height="900">
-          <svg class="cmp__walk" id="cmp-walk" viewBox="0 0 900 507" preserveAspectRatio="none" aria-hidden="true"></svg></div>
-          <div class="cmp__shade" aria-hidden="true"></div>
-          <div class="cmp__tag cmp__tag--a"><span>Antes · 5 al 11 de noviembre</span><b data-count="1022">1.022</b><small>visitas · 146 por día</small><i style="width:62%"></i></div>
-          <div class="cmp__tag cmp__tag--b"><span>Después · 12 al 18 de noviembre</span><b data-count="1197">1.197</b><small>visitas · 171 por día</small><i style="width:74%"></i></div>
-          <div class="cmp__stamp" aria-hidden="true"><b>+17 %</b><span>más visitas</span></div>
-        </figure>
+      <ul class="mcards" id="mcards" tabindex="0" aria-label="Las ocho mediciones">
+        <li class="mcard"><div class="mcard__art" aria-hidden="true"><span class="mcard__n">01</span><svg viewBox="0 0 240 140">
+          <line x1="22" x2="218" y1="118" y2="118" stroke="#6A3243"/>
+          <g class="a-bars"><rect x="28" y="96" width="14" height="22" rx="2" fill="#8E5E69"/><rect x="48" y="88" width="14" height="30" rx="2" fill="#8E5E69"/><rect x="68" y="92" width="14" height="26" rx="2" fill="#8E5E69"/><rect x="88" y="80" width="14" height="38" rx="2" fill="#8E5E69"/><rect x="108" y="70" width="14" height="48" rx="2" fill="#8E5E69"/><rect x="128" y="60" width="14" height="58" rx="2" fill="#C7BCAC"/><rect x="148" y="44" width="14" height="74" rx="2" fill="#E6DFD7"/><rect x="168" y="30" width="14" height="88" rx="2" fill="#C1774B"/><rect x="188" y="58" width="14" height="60" rx="2" fill="#C7BCAC"/></g>
+          <text x="175" y="22" text-anchor="middle" fill="#C1774B" font-size="9" font-weight="600" font-family="Inter, sans-serif" letter-spacing=".08em">PICO</text>
+        </svg></div><h3>Visitas y horario pico</h3><p>Cuánta gente entra y a qué hora se llena el local.</p></li>
+
+        <li class="mcard"><div class="mcard__art" aria-hidden="true"><span class="mcard__n">02</span><svg viewBox="0 0 240 140">
+          <g class="a-hbars" font-family="Inter, sans-serif" font-size="10"><rect x="24" y="40" width="192" height="16" rx="3" fill="#8E5E69"/><text x="28" y="34" fill="#C7BCAC">Pasan</text>
+          <rect x="24" y="74" width="118" height="16" rx="3" fill="#C7BCAC"/><text x="28" y="68" fill="#C7BCAC">Miran</text>
+          <rect x="24" y="108" width="72" height="16" rx="3" fill="#C1774B"/><text x="28" y="102" fill="#C7BCAC">Entran</text></g>
+        </svg></div><h3>Vidriera</h3><p>Cuánta gente pasa, cuánta frena a mirar y cuánta entra.</p></li>
+
+        <li class="mcard"><div class="mcard__art" aria-hidden="true"><span class="mcard__n">03</span><svg viewBox="0 0 240 140">
+          <rect x="70" y="34" width="44" height="26" rx="4" fill="#6A3243"/><rect x="150" y="30" width="60" height="18" rx="4" fill="#6A3243"/><rect x="132" y="84" width="50" height="28" rx="4" fill="#6A3243"/>
+          <path class="a-path" d="M20 122 C 60 118 52 82 92 76 C 132 70 124 58 150 60 C 186 62 204 72 214 98" fill="none" stroke="#C1774B" stroke-width="3.5" stroke-linecap="round"/>
+          <circle cx="20" cy="122" r="5" fill="#F4F2F1"/><circle class="a-end" cx="214" cy="98" r="5" fill="#C1774B"/>
+        </svg></div><h3>Recorrido</h3><p>Por dónde camina la gente adentro.</p></li>
+
+        <li class="mcard"><div class="mcard__art" aria-hidden="true"><span class="mcard__n">04</span><svg viewBox="0 0 240 140">
+          <g class="a-topo"><ellipse cx="128" cy="74" rx="98" ry="52" fill="#6A3243"/><ellipse cx="124" cy="76" rx="72" ry="38" fill="#8E5E69"/><ellipse cx="120" cy="78" rx="48" ry="26" fill="#C7BCAC"/><ellipse cx="118" cy="79" rx="28" ry="15" fill="#E6DFD7"/><ellipse cx="117" cy="80" rx="12" ry="6.5" fill="#C1774B"/>
+          <ellipse cx="52" cy="112" rx="26" ry="12" fill="#6A3243"/><ellipse cx="52" cy="112" rx="12" ry="5.5" fill="#8E5E69"/></g>
+        </svg></div><h3>Zonas y mapa de calor</h3><p>Qué sectores atraen y cuáles quedan vacíos.</p></li>
+
+        <li class="mcard"><div class="mcard__art" aria-hidden="true"><span class="mcard__n">05</span><svg viewBox="0 0 240 140">
+          <circle cx="120" cy="72" r="42" fill="none" stroke="#6A3243" stroke-width="10"/>
+          <circle class="a-arc" cx="120" cy="72" r="42" fill="none" stroke="#C1774B" stroke-width="10" stroke-linecap="round" stroke-dasharray="190 264" transform="rotate(-90 120 72)"/>
+          <g stroke="#C7BCAC" stroke-width="2" stroke-linecap="round"><line x1="120" y1="44" x2="120" y2="50"/><line x1="148" y1="72" x2="142" y2="72"/><line x1="120" y1="100" x2="120" y2="94"/><line x1="92" y1="72" x2="98" y2="72"/></g>
+          <line class="a-hand" x1="120" y1="72" x2="120" y2="54" stroke="#F4F2F1" stroke-width="3" stroke-linecap="round"/><circle cx="120" cy="72" r="4" fill="#F4F2F1"/>
+        </svg></div><h3>Permanencia</h3><p>Cuánto tiempo se queda la gente, en total y en cada zona.</p></li>
+
+        <li class="mcard"><div class="mcard__art" aria-hidden="true"><span class="mcard__n">06</span><svg viewBox="0 0 240 140">
+          <rect x="182" y="40" width="36" height="76" rx="5" fill="#6A3243"/><rect x="186" y="44" width="28" height="10" rx="2" fill="#C1774B"/>
+          <line x1="24" x2="176" y1="110" y2="110" stroke="#6A3243" stroke-dasharray="4 5"/>
+          <g class="a-queue"><circle cx="160" cy="96" r="9" fill="#F4F2F1"/><circle cx="134" cy="96" r="9" fill="#E6DFD7"/><circle cx="108" cy="96" r="9" fill="#C7BCAC"/><circle cx="82" cy="96" r="9" fill="#C7BCAC"/><circle cx="56" cy="96" r="9" fill="#8E5E69"/></g>
+          <path class="a-timer" d="M60 52 A 24 24 0 1 1 108 52" fill="none" stroke="#C1774B" stroke-width="4" stroke-linecap="round"/><circle cx="84" cy="52" r="3" fill="#C1774B"/>
+        </svg></div><h3>Filas y espera</h3><p>Cuánto tarda la atención y cuándo se arma cola.</p></li>
+
+        <li class="mcard"><div class="mcard__art" aria-hidden="true"><span class="mcard__n">07</span><svg viewBox="0 0 240 140">
+          <path d="M140 64 C 160 52 176 40 190 44 C 204 48 210 34 222 30 L 222 70 C 210 72 204 84 190 82 C 176 80 160 90 140 84 Z" fill="#6A3243"/>
+          <path class="a-line" d="M20 104 C 40 98 52 82 70 88 C 88 94 100 70 118 72 C 130 74 134 72 140 74" fill="none" stroke="#F4F2F1" stroke-width="3" stroke-linecap="round"/>
+          <path class="a-fore" d="M140 74 C 160 70 176 62 190 63 C 204 64 210 52 222 50" fill="none" stroke="#C1774B" stroke-width="3" stroke-linecap="round" stroke-dasharray="6 6"/>
+          <line x1="140" x2="140" y1="22" y2="122" stroke="#8E5E69" stroke-dasharray="2 4"/>
+        </svg></div><h3>Pronóstico</h3><p>Cuánta gente esperar mañana y la semana que viene.</p></li>
+
+        <li class="mcard"><div class="mcard__art" aria-hidden="true"><span class="mcard__n">08</span><svg viewBox="0 0 240 140">
+          <line x1="24" x2="216" y1="118" y2="118" stroke="#6A3243"/>
+          <g class="a-bars"><rect x="38" y="74" width="20" height="44" rx="2" fill="#8FB5AE"/><rect x="62" y="56" width="20" height="62" rx="2" fill="#E6DFD7"/>
+          <rect x="106" y="62" width="20" height="56" rx="2" fill="#8FB5AE"/><rect x="130" y="40" width="20" height="78" rx="2" fill="#E6DFD7"/>
+          <rect x="174" y="82" width="20" height="36" rx="2" fill="#8FB5AE"/><rect x="198" y="64" width="20" height="54" rx="2" fill="#C1774B"/></g>
+        </svg></div><h3>Cambios y campañas</h3><p>Qué le pasó a la gente después de mover algo o lanzar una promo.</p></li>
+      </ul>
+    </div>
+  </section>
+
+  <!-- 7. Para quién -->
+  <section class="who" aria-labelledby="t-who">
+    <div class="wrap">
+      <div class="sechead">
+        <div><span class="kick">Para quién</span><h2 class="big split" id="t-who">Para locales donde la gente camina, mira y espera.</h2></div>
+        <span class="datanote">Tocá una tarjeta para abrirla</span>
       </div>
-      <div class="wrap cmp__foot">
-        <p>Con la vidriera nueva entraron <b>175 personas más</b> en la misma cantidad de días: <b>17 % más</b>.</p>
-        <a class="btn" href="#agendar" data-go>Pedí una demo <span class="arr" aria-hidden="true"></span></a>
-      </div>
+      <ul class="kiln" id="kiln">
+        <li class="kiln__card is-open" data-rubro="tienda" tabindex="0" aria-expanded="true"><img src="/assets/img/landing/boutique-1600.webp" alt="" loading="lazy" decoding="async"><div class="kiln__top"><span>01 / Moda</span><span class="kiln__plus" aria-hidden="true"></span></div><div class="kiln__body"><h3>Boutiques y cadenas de ropa</h3><div class="kiln__more"><div><p>Qué vidriera frena a la gente y qué sector no se mira.</p></div></div></div></li>
+        <li class="kiln__card" data-rubro="shopping" tabindex="0" aria-expanded="false"><img src="/assets/img/landing/shopping-1600.webp" alt="" loading="lazy" decoding="async"><div class="kiln__top"><span>02 / Centros</span><span class="kiln__plus" aria-hidden="true"></span></div><div class="kiln__body"><h3>Shoppings</h3><div class="kiln__more"><div><p>Cómo se mueve el público entre locales y a qué hora.</p></div></div></div></li>
+        <li class="kiln__card" data-rubro="bar" tabindex="0" aria-expanded="false"><img src="/assets/img/landing/bar-1600.webp" alt="" loading="lazy" decoding="async"><div class="kiln__top"><span>03 / Gastronomía</span><span class="kiln__plus" aria-hidden="true"></span></div><div class="kiln__body"><h3>Restaurantes y gastronomía</h3><div class="kiln__more"><div><p>Cuánto se espera por una mesa y cuándo se llena el salón.</p></div></div></div></li>
+        <li class="kiln__card" tabindex="0" aria-expanded="false"><img src="/assets/img/landing/vidrieras-1600.webp" alt="" loading="lazy" decoding="async"><div class="kiln__top"><span>04 / Calle</span><span class="kiln__plus" aria-hidden="true"></span></div><div class="kiln__body"><h3>Locales a la calle</h3><div class="kiln__more"><div><p>Locales de repuestos: cuánto espera el cliente en el mostrador y qué zonas recorre.</p></div></div></div></li>
+        <li class="kiln__card kiln__card--list" data-rubro="aeropuerto" tabindex="0" aria-expanded="false"><div class="kiln__top"><span>05 / Espacios</span><span class="kiln__plus" aria-hidden="true"></span></div><div class="kiln__body"><h3>Y espacios grandes</h3><div class="kiln__more"><div><ul class="kiln__list">
+          <li><b>Aeropuertos</b>Dónde se arman filas y cuánto tardan en avanzar.</li>
+          <li><b>Hoteles</b>Qué espacios usan los huéspedes y cuándo se junta gente en recepción.</li>
+          <li><b>Universidades</b>Qué espacios se usan, a qué hora y cuánta gente espera.</li>
+        </ul></div></div></div></li>
+      </ul>
     </div>
   </section>
 
@@ -106,80 +165,61 @@
         </div>
       </div>
       <div class="panel-foot"><span class="datanote"><span class="dot" aria-hidden="true"></span>Local de ejemplo · datos simulados</span><span class="hint">Tocá cualquier sección del panel para recorrerlo.</span></div>
-      <details id="medimos" class="metrics-detail"><summary>Qué medimos en el local</summary><dl>
-        <div><dt>Visitas y horario pico</dt><dd>Cuánta gente entra y a qué hora se llena el local.</dd></div>
-        <div><dt>Vidriera</dt><dd>Cuánta gente pasa, cuánta frena a mirar y cuánta entra.</dd></div>
-        <div><dt>Recorrido</dt><dd>Por dónde camina la gente adentro.</dd></div>
-        <div><dt>Zonas y mapa de calor</dt><dd>Qué sectores atraen y cuáles quedan vacíos.</dd></div>
-        <div><dt>Permanencia</dt><dd>Cuánto tiempo se queda la gente, en total y en cada zona.</dd></div>
-        <div><dt>Filas y espera</dt><dd>Cuánto tarda la atención y cuándo se arma cola.</dd></div>
-        <div><dt>Pronóstico</dt><dd>Cuánta gente esperar mañana y la semana que viene.</dd></div>
-        <div><dt>Cambios y campañas</dt><dd>Qué le pasó a la gente después de mover algo o lanzar una promo.</dd></div>
-      </dl></details>
     </div>
   </section>
 
-  <!-- 7. Para quién -->
-  <section class="who" aria-labelledby="t-who">
-    <div class="wrap">
-      <div class="sechead">
-        <div><span class="kick">Para quién</span><h2 class="big split" id="t-who">Para locales donde la gente camina, mira y espera.</h2></div>
-        <span class="datanote">Tocá una tarjeta para abrirla</span>
-      </div>
-      <ul class="kiln" id="kiln">
-        <li class="kiln__card is-open" data-rubro="tienda" tabindex="0" aria-expanded="true"><img src="/assets/img/landing/boutique-1600.webp" alt="" loading="lazy" decoding="async"><div class="kiln__top"><span>01 / Moda</span><span class="kiln__plus" aria-hidden="true"></span></div><div class="kiln__body"><h3>Boutiques y cadenas de ropa</h3><div class="kiln__more"><div><p>Qué vidriera frena a la gente y qué sector no se mira.</p></div></div></div></li>
-        <li class="kiln__card" data-rubro="shopping" tabindex="0" aria-expanded="false"><img src="/assets/img/landing/shopping-1600.webp" alt="" loading="lazy" decoding="async"><div class="kiln__top"><span>02 / Centros</span><span class="kiln__plus" aria-hidden="true"></span></div><div class="kiln__body"><h3>Shoppings</h3><div class="kiln__more"><div><p>Cómo se mueve el público entre locales y a qué hora.</p></div></div></div></li>
-        <li class="kiln__card" data-rubro="bar" tabindex="0" aria-expanded="false"><img src="/assets/img/landing/bar-1600.webp" alt="" loading="lazy" decoding="async"><div class="kiln__top"><span>03 / Gastronomía</span><span class="kiln__plus" aria-hidden="true"></span></div><div class="kiln__body"><h3>Restaurantes y gastronomía</h3><div class="kiln__more"><div><p>Cuánto se espera por una mesa y cuándo se llena el salón.</p></div></div></div></li>
-        <li class="kiln__card" tabindex="0" aria-expanded="false"><img src="/assets/img/landing/vidrieras-1600.webp" alt="" loading="lazy" decoding="async"><div class="kiln__top"><span>04 / Calle</span><span class="kiln__plus" aria-hidden="true"></span></div><div class="kiln__body"><h3>Locales a la calle</h3><div class="kiln__more"><div><p>Locales de repuestos: cuánto espera el cliente en el mostrador y qué zonas recorre.</p></div></div></div></li>
-        <li class="kiln__card kiln__card--list" data-rubro="aeropuerto" tabindex="0" aria-expanded="false"><div class="kiln__top"><span>05 / Espacios</span><span class="kiln__plus" aria-hidden="true"></span></div><div class="kiln__body"><h3>Y espacios grandes</h3><div class="kiln__more"><div><ul class="kiln__list">
-          <li><b>Aeropuertos</b>Dónde se arman filas y cuánto tardan en avanzar.</li>
-          <li><b>Hoteles</b>Qué espacios usan los huéspedes y cuándo se junta gente en recepción.</li>
-          <li><b>Universidades</b>Qué espacios se usan, a qué hora y cuánta gente espera.</li>
-        </ul></div></div></div></li>
-      </ul>
-    </div>
-  </section>
-
-  <!-- 4. Cómo funciona y privacidad -->
+  <!-- 4. Cómo funciona -->
   <section id="funciona" class="process-block" aria-labelledby="t-funciona">
-    <div class="wrap process-grid">
-      <div>
-        <span class="kick">Cómo funciona</span>
-        <h2 class="big split" id="t-funciona">De la cámara al panel.</h2>
-        <ol class="steps4" id="steps4">
-          <li><span class="n">1</span><div><h3>Conectamos</h3><p>Instalamos una cámara en tu local, o conectamos las que ya tenés.</p></div></li>
-          <li><span class="n">2</span><div><h3>Analizamos</h3><p>El video viaja cifrado y se analiza en la nube. No se guarda.</p></div></li>
-          <li><span class="n">3</span><div><h3>Te mostramos</h3><p>Ves en un panel qué pasa en tu local.</p></div></li>
-          <li><span class="n">4</span><div><h3>Probás y medís</h3><p>Cambiás algo en el local y ves qué le pasó a la gente.</p></div></li>
-        </ol>
-      </div>
-      <div class="privcard" id="privacidad">
-        <div class="privcard__media" aria-hidden="true">
-          <canvas id="priv-canvas" data-src="/assets/img/landing/vidrieras-900.webp"></canvas>
-          <p class="privcard__count"><b id="priv-n">0</b>personas contadas · ninguna identificada</p>
-        </div>
-        <div class="privcard__body">
-          <span class="kick">Privacidad</span>
-          <h2 id="t-priv">Medimos comportamientos, no identidades.</h2>
-          <p>Contamos cuánta gente hay, por dónde camina y cuánto se queda.</p>
-          <ul>
-            <li>No reconocemos caras.</li>
-            <li>El video viaja cifrado, se analiza en la nube y se descarta.</li>
-            <li>Los resultados son del local, no de personas.</li>
-          </ul>
+    <div class="wrap">
+      <div class="howcard">
+        <div class="howcard__media" aria-hidden="true"><img id="how-img" src="/assets/img/landing/boutique-top-1600.webp" srcset="/assets/img/landing/boutique-top-900.webp 900w, /assets/img/landing/boutique-top-1600.webp 1600w" sizes="(max-width: 900px) 100vw, 50vw" alt="" loading="lazy" decoding="async"></div>
+        <div class="howcard__body">
+          <span class="kick">Cómo funciona</span>
+          <h2 class="big split" id="t-funciona">De la cámara al panel.</h2>
+          <ol class="steps4" id="steps4">
+            <li><span class="n">1</span><div><h3>Conectamos</h3><p>Instalamos una cámara en tu local, o conectamos las que ya tenés.</p></div></li>
+            <li><span class="n">2</span><div><h3>Analizamos</h3><p>El video viaja cifrado y se analiza en la nube. No se guarda.</p></div></li>
+            <li><span class="n">3</span><div><h3>Te mostramos</h3><p>Ves en un panel qué pasa en tu local.</p></div></li>
+            <li><span class="n">4</span><div><h3>Probás y medís</h3><p>Cambiás algo en el local y ves qué le pasó a la gente.</p></div></li>
+          </ol>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- 10. Cierre y agendador -->
+  <!-- 5. Demo -->
   <section class="close neg" id="agendar" aria-labelledby="t-close">
     <div class="close__bg" aria-hidden="true"><img src="/assets/img/landing/bar-1600.webp" srcset="/assets/img/landing/bar-900.webp 900w, /assets/img/landing/bar-1600.webp 1600w" sizes="100vw" alt="" loading="lazy" decoding="async" id="close-img"></div>
     <div class="wrap close__in">
       <span class="kick">Pedí una demo</span>
       <h2 class="big split" id="t-close">Conocé Vistorm en una demo.</h2>
-      <p class="lead">Elegí día y horario para una videollamada. Te mostramos el panel con un local como el tuyo. Si querés seguir, armamos juntos un piloto.</p>
-      <div class="sched" data-reveal>
+      <a class="btn btn--light" href="#agendar" data-go>Pedí una demo <span class="arr" aria-hidden="true"></span></a>
+      <noscript><p class="close__alt">Escribinos a hola@vistormlabs.com y coordinamos la demo.</p></noscript>
+    </div>
+  </section>
+
+  <!-- 6. Preguntas frecuentes -->
+  <section class="faqsec" aria-labelledby="t-faq">
+    <div class="wrap faqsec__grid">
+      <div><span class="kick">Preguntas frecuentes</span><h2 class="big split" id="t-faq">Lo que más nos preguntan.</h2></div>
+      <div class="faq" data-reveal>
+        <details><summary>¿Qué pasa con el video?</summary><p>Viaja cifrado, se analiza en la nube y no se guarda.</p></details>
+        <details><summary>¿Reconocen caras?</summary><p>No. Medimos comportamientos, no identidades.</p></details>
+        <details><summary>¿Tengo que instalar algo?</summary><p>No. Nos ocupamos nosotros.</p></details>
+        <details><summary>¿Cómo empiezo?</summary><p>Pedís una demo, elegís un horario y nos vemos por videollamada.</p></details>
+        <details><summary>¿Funciona para cadenas?</summary><p>Sí. Lo armamos a medida; contanos en la demo cuántos locales tenés.</p></details>
+      </div>
+    </div>
+  </section>
+</main>
+
+<!-- Pop-up de la demo -->
+<dialog class="demo-modal" id="demo-modal" aria-labelledby="dm-t">
+  <div class="demo-modal__head">
+    <div><h2 id="dm-t">Pedí una demo</h2><p>Elegí día y horario para una videollamada de 30 minutos. Te mostramos el panel con un local como el tuyo.</p></div>
+    <button class="demo-modal__x" type="button" id="dm-close" aria-label="Cerrar"></button>
+  </div>
+      <div class="sched">
         <div class="sched__pick">
           <div class="field" style="gap:12px">
             <span class="step-t">1 · Elegí el día</span>
@@ -212,26 +252,23 @@
           </div>
         </div>
       </div>
-      <div class="booking-faq faq" data-reveal>
-        <h3 class="kick">Preguntas frecuentes</h3>
-        <details><summary>¿Tengo que instalar algo?</summary><p>No. Nos ocupamos nosotros.</p></details>
-        <details><summary>¿Funciona para cadenas?</summary><p>Sí. Lo armamos a medida; contanos en la demo cuántos locales tenés.</p></details>
-      </div>
-    </div>
-  </section>
-</main>
+
+</dialog>
 
 <footer class="foot neg">
   <div class="wrap">
     <div class="foot__top">
-      <img class="foot__logo" src="/assets/img/logo-negativo.svg" alt="Vistorm Labs" width="200" height="68" loading="lazy">
-      <p class="foot__claim">Que el mundo físico se mida como el digital.</p>
+      <div>
+        <img class="foot__logo" src="/assets/img/logo-negativo.svg" alt="Vistorm Labs" width="200" height="68" loading="lazy">
+        
+      </div>
+      <p class="foot__claim">Entendé qué pasa en tu local.</p>
     </div>
     <ul>
       <li><a href="mailto:hola@vistormlabs.com">hola@vistormlabs.com</a></li>
       <li><a href="mailto:privacidad@vistormlabs.com">privacidad@vistormlabs.com</a></li>
-      <li><a href="/privacidad">Privacidad</a></li>
-      <li><a href="/terminos">Términos</a></li>
+      <li><a href="/terminos">Términos y condiciones</a></li>
+      <li><a href="/privacidad">Política de privacidad</a></li>
       <li><button type="button" class="linklike" id="cookie-settings">Configurar cookies</button></li>
     </ul>
   </div>

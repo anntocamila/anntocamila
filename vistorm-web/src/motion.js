@@ -1,5 +1,5 @@
 /* Vistorm Labs · movimiento de la landing (Lenis + GSAP ScrollTrigger) */
-/* ===== Vistorm Labs · movimiento de la landing v4 =====
+/* ===== Vistorm Labs · movimiento de la landing v5 =====
    Scroll suave (Lenis) + escenas guiadas por scroll (GSAP ScrollTrigger).
    Personalidad "premium": curvas suaves, nada lineal salvo el scrub, rebote de papel chico (3–5 %). */
 (function () {
@@ -30,103 +30,6 @@
 
   /* ---------- enlaces a la demo ---------- */
   $$('a[data-go]').forEach(function (a) { a.addEventListener('click', function (e) { if (window.VistormGoTo) window.VistormGoTo(e); }); });
-
-  /* ---------- 1 · gente que camina hacia la vidriera nueva ---------- */
-  var walk = $('#cmp-walk'), walkers = [], walkOn = false;
-  if (walk) {
-    var PATHS = [
-      'M 905 470 C 830 468 760 440 712 338',
-      'M 880 515 C 790 492 700 452 655 338',
-      'M 640 520 C 660 470 700 420 768 338',
-      'M -20 446 C 150 446 300 446 470 446',
-    ];
-    PATHS.forEach(function (d, i) {
-      var p = document.createElementNS(NS, 'path'); p.setAttribute('d', d); p.setAttribute('fill', 'none'); walk.appendChild(p);
-      var len = p.getTotalLength();
-      for (var k = 0; k < (i === 3 ? 2 : 3); k++) {
-        var c = document.createElementNS(NS, 'circle'); c.setAttribute('r', 6.5);
-        c.setAttribute('fill', i === 3 ? '#F4F2F1' : '#C1774B'); c.setAttribute('stroke', i === 3 ? '#542433' : '#FBFAF9'); c.setAttribute('stroke-width', 2.5);
-        walk.appendChild(c);
-        walkers.push({ p: p, len: len, c: c, off: k / 3 + i * 0.17, sp: i === 3 ? 0.07 : 0.11 });
-      }
-    });
-    var walkT0 = performance.now();
-    var walkTick = function (now) {
-      var t = (now - walkT0) / 1000;
-      walkers.forEach(function (w) {
-        var u = (t * w.sp + w.off) % 1, pt = w.p.getPointAtLength(u * w.len);
-        w.c.setAttribute('cx', pt.x.toFixed(1)); w.c.setAttribute('cy', pt.y.toFixed(1));
-        w.c.setAttribute('opacity', (Math.min(1, u * 6, (1 - u) * 6)).toFixed(2));
-      });
-      if (walkOn && !reduce) requestAnimationFrame(walkTick);
-    };
-    walkTick(walkT0 + 2600);
-    if ('IntersectionObserver' in window) new IntersectionObserver(function (es) {
-      var was = walkOn; walkOn = es[0].isIntersecting; if (walkOn && !was && !reduce) requestAnimationFrame(walkTick);
-    }).observe(walk);
-  }
-
-  /* ---------- 6 · privacidad: la imagen se vuelve puntos ---------- */
-  var pc = $('#priv-canvas'), pn = $('#priv-n'), privP = motion ? 0 : 1, pctx, pw = 0, ph = 0, cells = [], pimg = null, privDirty = true;
-  var PEOPLE = [[45, 350, 60, 170], [160, 350, 55, 160], [385, 360, 60, 180], [585, 340, 50, 150], [750, 330, 55, 150], [808, 320, 55, 170], [870, 340, 60, 190], [270, 380, 0, 0]];
-  function buildCells() {
-    if (!pc || !pimg) return;
-    var dpr = Math.min(2, window.devicePixelRatio || 1);
-    pw = pc.clientWidth; ph = pc.clientHeight; if (!pw || !ph) return;
-    pc.width = Math.round(pw * dpr); pc.height = Math.round(ph * dpr);
-    pctx = pc.getContext('2d'); pctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    var step = pw < 560 ? 7 : 9, cols = Math.ceil(pw / step), rows = Math.ceil(ph / step);
-    var off = document.createElement('canvas'); off.width = cols; off.height = rows;
-    var o = off.getContext('2d'); o.drawImage(pimg, 0, 0, cols, rows);
-    var data = o.getImageData(0, 0, cols, rows).data;
-    cells = [];
-    for (var y = 0; y < rows; y++) for (var x = 0; x < cols; x++) {
-      var i = (y * cols + x) * 4, lum = (0.299 * data[i] + 0.587 * data[i + 1] + 0.114 * data[i + 2]) / 255;
-      var ix = (x + 0.5) / cols * 900, iy = (y + 0.5) / rows * 507, hot = false;
-      for (var k = 0; k < PEOPLE.length; k++) { var q = PEOPLE[k]; if (q[2] && Math.abs(ix - q[0]) < q[2] / 2 && iy > q[1] - q[3] / 2 && iy < q[1] + q[3] / 2) { hot = true; break; } }
-      cells.push({ x: (x + 0.5) * step, y: (y + 0.5) * step, r: step * 0.5 * (0.18 + lum * 0.82), hot: hot });
-    }
-    privDirty = true;
-  }
-  function drawPriv(now) {
-    if (!pctx || !pimg) return;
-    var s = smooth((privP - 0.05) / 0.75), sx = s * (pw + 40) - 20;
-    pctx.fillStyle = '#3A1823'; pctx.fillRect(0, 0, pw, ph);
-    // a la derecha de la línea, el video; a la izquierda, solo puntos
-    if (sx < pw) {
-      pctx.save(); pctx.beginPath(); pctx.rect(Math.max(0, sx), 0, pw, ph); pctx.clip();
-      pctx.drawImage(pimg, 0, 0, pw, ph);
-      pctx.fillStyle = 'rgba(58,24,35,' + (0.25 * s).toFixed(3) + ')'; pctx.fillRect(0, 0, pw, ph);
-      pctx.restore();
-    }
-    var pulse = 0.5 + 0.5 * Math.sin((now || 0) / 380);
-    for (var i = 0; i < cells.length; i++) {
-      var c = cells[i]; if (c.x > sx) continue;
-      var age = clamp((sx - c.x) / 160, 0, 1);
-      pctx.fillStyle = c.hot && age > 0.6 ? '#C1774B' : '#E6DFD7';
-      pctx.globalAlpha = c.hot ? 1 : 0.55 + 0.35 * age;
-      var r = c.hot && age > 0.6 ? c.r * (1.05 + 0.25 * pulse) : c.r * (0.6 + 0.4 * age);
-      pctx.beginPath(); pctx.arc(c.x, c.y, Math.max(0.4, r), 0, 6.283); pctx.fill();
-    }
-    pctx.globalAlpha = 1;
-    if (s > 0 && s < 1) {
-      var gr = pctx.createLinearGradient(sx - 60, 0, sx + 2, 0);
-      gr.addColorStop(0, 'rgba(193,119,75,0)'); gr.addColorStop(1, 'rgba(193,119,75,.55)');
-      pctx.fillStyle = gr; pctx.fillRect(sx - 60, 0, 62, ph);
-      pctx.fillStyle = '#C1774B'; pctx.fillRect(sx, 0, 2.5, ph);
-    }
-    if (pn) pn.textContent = fmt.format(Math.round(1248 * s));
-  }
-  var privVis = false;
-  function privLoop(now) { drawPriv(now); if (privVis && motion) requestAnimationFrame(privLoop); }
-  if (pc) {
-    pimg = new Image(); pimg.decoding = 'async';
-    pimg.onload = function () { buildCells(); drawPriv(0); };
-    pimg.src = pc.dataset.src;
-    if ('IntersectionObserver' in window) new IntersectionObserver(function (es) {
-      var was = privVis; privVis = es[0].isIntersecting; if (privVis && !was && motion) requestAnimationFrame(privLoop);
-    }).observe(pc);
-  }
 
   /* ---------- 7 · tarjetas que se abren con resorte ---------- */
   var kiln = $$('.kiln__card');
@@ -160,7 +63,6 @@
 
   /* ---------- sin movimiento: estados finales y listo ---------- */
   if (!motion) {
-    privP = 1;
     return;
   }
 
@@ -188,27 +90,33 @@
   });
 
   later(function () {
-    /* ---------- 1 · la vidriera: de tarjeta a pantalla completa ---------- */
-    var cmpMedia = $('#cmp-media');
-    if (cmpMedia) {
-      var cImg = $('#cmp-frame'), tagA = $('.cmp__tag--a', cmpMedia), tagB = $('.cmp__tag--b', cmpMedia), stamp = $('.cmp__stamp', cmpMedia);
-      var nA = $('b', tagA), nB = $('b', tagB), cnt = { a: 0, b: 0 };
-      var paintCnt = function () { nA.textContent = fmt.format(Math.round(cnt.a)); nB.textContent = fmt.format(Math.round(cnt.b)); };
-      var cmpTl = function () {
-        var tl = G.timeline();
-        tl.fromTo(cmpMedia, { clipPath: 'inset(16% 26% 16% 26% round 28px)' }, { clipPath: 'inset(0% 0% 0% 0% round 18px)', duration: 1.2, ease: 'power2.inOut' }, 0)
-          .fromTo(cImg, { scale: 1.35 }, { scale: 1, duration: 1.4, ease: 'power2.out' }, 0)
-          .fromTo('#cmp-walk', { opacity: 0 }, { opacity: 1, duration: 0.3 }, 0.9)
-          .fromTo(tagA, { y: 70, opacity: 0, rotate: -3 }, { y: 0, opacity: 1, rotate: 0, duration: 0.5, ease: 'back.out(1.3)' }, 1.0)
-          .fromTo(cnt, { a: 0 }, { a: 1022, duration: 0.6, ease: 'power2.out', onUpdate: paintCnt }, 1.0)
-          .fromTo(tagB, { y: 70, opacity: 0, rotate: 3 }, { y: 0, opacity: 1, rotate: 0, duration: 0.5, ease: 'back.out(1.3)' }, 1.35)
-          .fromTo(cnt, { b: 0 }, { b: 1197, duration: 0.6, ease: 'power2.out', onUpdate: paintCnt, immediateRender: false }, 1.35)
-          .fromTo(stamp, { scale: 0.3, rotate: -22, opacity: 0 }, { scale: 1, rotate: -4, opacity: 1, duration: 0.55, ease: 'back.out(1.6)' }, 1.85)
-          .to({}, { duration: 0.4 });
-        return tl;
-      };
-      ST.create({ trigger: cmpMedia, start: 'top 88%', end: 'bottom 55%', scrub: 0.7, animation: cmpTl() });
-    }
+    /* ---------- 1 · qué medimos: cada tarjeta dibuja su propia medición ---------- */
+    var cards = $$('.mcard');
+    if (!cards.length) return;
+    var draw = function (el) { var L = el.getTotalLength ? el.getTotalLength() : 300; return [{ strokeDasharray: L + ' ' + L, strokeDashoffset: L }, { strokeDashoffset: 0 }]; };
+    var build = function (c) {
+      var tl = G.timeline({ paused: true });
+      var b = $$('.a-bars rect', c); if (b.length) tl.fromTo(b, { scaleY: 0, transformOrigin: '50% 100%' }, { scaleY: 1, duration: 0.6, ease: 'back.out(1.4)', stagger: 0.05 }, 0);
+      var hb = $$('.a-hbars rect', c); if (hb.length) tl.fromTo(hb, { scaleX: 0, transformOrigin: '0% 50%' }, { scaleX: 1, duration: 0.7, ease: 'power3.out', stagger: 0.12 }, 0);
+      ['.a-path', '.a-timer', '.a-line'].forEach(function (sel, k) {
+        var p = $(sel, c); if (!p) return; var dd = draw(p);
+        tl.fromTo(p, dd[0], Object.assign(dd[1], { duration: k === 1 ? 0.9 : 1.1, ease: 'power2.inOut', clearProps: 'strokeDasharray,strokeDashoffset' }), 0);
+      });
+      var fo = $('.a-fore', c); if (fo) tl.fromTo(fo, { opacity: 0, x: -10 }, { opacity: 1, x: 0, duration: 0.5, ease: 'power2.out' }, 0.9);
+      var end = $('.a-end', c); if (end) tl.fromTo(end, { scale: 0, transformOrigin: '50% 50%' }, { scale: 1, duration: 0.35, ease: 'back.out(2)' }, 1);
+      var tp = $$('.a-topo ellipse', c); if (tp.length) tl.fromTo(tp, { scale: 0.2, transformOrigin: '50% 50%', opacity: 0 }, { scale: 1, opacity: 1, duration: 0.6, ease: 'back.out(1.3)', stagger: 0.07 }, 0);
+      var arc = $('.a-arc', c); if (arc) tl.fromTo(arc, { attr: { 'stroke-dasharray': '0 264' } }, { attr: { 'stroke-dasharray': '190 264' }, duration: 1, ease: 'power2.inOut' }, 0);
+      var hand = $('.a-hand', c); if (hand) tl.fromTo(hand, { rotation: 0, svgOrigin: '120 72' }, { rotation: 260, svgOrigin: '120 72', duration: 1, ease: 'power2.inOut' }, 0);
+      var q = $$('.a-queue circle', c); if (q.length) tl.fromTo(q, { x: -50, opacity: 0 }, { x: 0, opacity: 1, duration: 0.5, ease: 'power3.out', stagger: 0.08 }, 0);
+      return tl;
+    };
+    cards.forEach(function (c) {
+      var tl = build(c); tl.progress(0);
+      ST.create({ trigger: c, start: 'top 85%', once: true, onEnter: function () { tl.play(0); } });
+      // al pasar el mouse, la tarjeta vuelve a dibujar su medición
+      if (hover) c.addEventListener('pointerenter', function () { if (!tl.isActive()) tl.play(0); });
+    });
+    G.from(cards, { y: 60, opacity: 0, duration: 0.9, ease: 'power3.out', stagger: 0.07, scrollTrigger: { trigger: '#mcards', start: 'top 88%' } });
   });
 
   later(function () {
@@ -256,14 +164,13 @@
       var tl = G.timeline({ scrollTrigger: { trigger: st, start: 'top 75%', end: 'bottom 55%', scrub: 0.6 } });
       tl.fromTo(rail, { scaleY: 0 }, { scaleY: 1, ease: 'none', duration: 1 }, 0);
       lis.forEach(function (li, i) {
-        tl.fromTo($('.n', li), { scale: 0.6, backgroundColor: '#FBFAF9', color: '#542433' }, { scale: 1, backgroundColor: '#542433', color: '#F4F2F1', duration: 0.12, ease: 'back.out(2)' }, i / lis.length)
+        tl.fromTo($('.n', li), { scale: 0.6, backgroundColor: '#542433', color: '#F4F2F1' }, { scale: 1, backgroundColor: '#C1774B', color: '#272124', duration: 0.12, ease: 'back.out(2)' }, i / lis.length)
           .fromTo($('div', li), { x: 28 }, { x: 0, duration: 0.18, ease: 'power2.out' }, i / lis.length);
       });
     }
-    /* privacidad: la línea cobre convierte la vidriera en puntos mientras la tarjeta pasa */
-    if (pc) ST.create({ trigger: '.privcard', start: 'top 85%', end: 'center 35%', scrub: 0.6, onUpdate: function (s) { privP = s.progress; } });
-    var pcard = $('.privcard');
-    if (pcard) G.from($$('.privcard li', pcard), { x: 24, opacity: 0, duration: 0.6, ease: 'power3.out', stagger: 0.1, scrollTrigger: { trigger: pcard, start: 'top 60%' } });
+    /* la ilustración se mueve un poco más lento que la tarjeta */
+    var hi = $('#how-img');
+    if (hi) G.fromTo(hi, { yPercent: -5 }, { yPercent: 5, ease: 'none', scrollTrigger: { trigger: '.howcard', start: 'top bottom', end: 'bottom top', scrub: true } });
   });
 
   later(function () {
@@ -280,6 +187,6 @@
   (function run() { var f = Q.shift(); if (f) { f(); setTimeout(run, 0); } else ST.refresh(); })();
 
   var rz, lastW = window.innerWidth;
-  window.addEventListener('resize', function () { clearTimeout(rz); rz = setTimeout(function () { if (Math.abs(window.innerWidth - lastW) > 40) { lastW = window.innerWidth; buildCells(); } drawPriv(performance.now()); ST.refresh(); }, 250); });
+  window.addEventListener('resize', function () { clearTimeout(rz); rz = setTimeout(function () { if (Math.abs(window.innerWidth - lastW) > 40) { lastW = window.innerWidth; ST.refresh(); } }, 250); });
   window.addEventListener('load', function () { ST.refresh(); });
 })();

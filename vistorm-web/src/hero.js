@@ -1521,6 +1521,8 @@ function tick(now) {
   requestAnimationFrame(tick);
 }
 function goTo(e) {
+  // si la página tiene el pop-up de la demo, el botón lo abre en lugar de bajar al formulario
+  if (window.VistormOpenDemo && e.currentTarget.getAttribute('href') === '#agendar') { e.preventDefault(); window.VistormOpenDemo(e.currentTarget); return; }
   const id = e.currentTarget.getAttribute('href').slice(1), t = document.getElementById(id); if (!t) return;
   e.preventDefault();
   const ln = window.VistormLenis;

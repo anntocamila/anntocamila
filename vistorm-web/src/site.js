@@ -242,6 +242,49 @@
   document.getElementById('sched-again').addEventListener('click', function () { done.hidden = true; form.hidden = false; sel.slot = null; renderSlots(); renderChosen(); });
 })();
 
+/* ===== Vistorm Labs · pop-up para pedir la demo ===== */
+(function () {
+  'use strict';
+  var dlg = document.getElementById('demo-modal');
+  if (!dlg || typeof dlg.showModal !== 'function') return;
+  var html = document.documentElement, last = null;
+  var reduce = function () { return window.matchMedia('(prefers-reduced-motion: reduce)').matches; };
+  // la rueda del mouse dentro del pop-up la maneja el navegador, no el scroll suave de la página
+  dlg.setAttribute('data-lenis-prevent', '');
+  function open(from) {
+    if (dlg.open) return;
+    last = from || document.activeElement;
+    dlg.classList.remove('is-closing');
+    dlg.showModal();
+    html.classList.add('modal-open');
+    if (window.VistormLenis) window.VistormLenis.stop();
+    dlg.scrollTop = 0;
+    var first = dlg.querySelector('.cal__day:not([disabled])');
+    if (first) first.focus();
+    if (window.vsTrack) window.vsTrack('demo_open', {});
+  }
+  function finish() { if (!dlg.open) return; dlg.classList.remove('is-closing'); dlg.close(); }
+  function close() {
+    if (!dlg.open) return;
+    if (reduce()) { finish(); return; }
+    dlg.classList.add('is-closing');
+    dlg.addEventListener('animationend', finish, { once: true });
+    setTimeout(finish, 400);
+  }
+  dlg.addEventListener('close', function () {
+    html.classList.remove('modal-open');
+    if (window.VistormLenis) window.VistormLenis.start();
+    if (last && last.focus) last.focus({ preventScroll: true });
+  });
+  // Esc cierra con la misma animación
+  dlg.addEventListener('cancel', function (e) { e.preventDefault(); close(); });
+  // tocar fuera de la tarjeta (el fondo oscuro) también cierra
+  dlg.addEventListener('click', function (e) { if (e.target === dlg) close(); });
+  document.getElementById('dm-close').addEventListener('click', close);
+  window.VistormOpenDemo = open;
+  window.VistormCloseDemo = close;
+})();
+
 /* ===== Vistorm Labs · panel de ejemplo (réplica del software, con datos simulados) ===== */
 (function () {
   'use strict';
