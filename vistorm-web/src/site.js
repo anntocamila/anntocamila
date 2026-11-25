@@ -285,279 +285,194 @@
   window.VistormCloseDemo = close;
 })();
 
-/* ===== Vistorm Labs · panel de ejemplo (réplica del software, con datos simulados) =====
-   Tarjetas "respuesta primero": arriba la métrica y el período, el título es la respuesta,
-   un solo dato en cobre, la comparación en granate, y cada franja se puede elegir. */
+/* ===== Vistorm Labs · "Qué medimos": cuadros superpuestos, el activo se abre =====
+   El cuadro no se agranda: se ensancha y la ilustración se recorta distinto. */
 (function () {
   'use strict';
-  var root = document.getElementById('sw'); if (!root) return;
-  var view = document.getElementById('sw-view'), crumbs = document.getElementById('sw-crumbs'), main = root.querySelector('.sw__main');
-  var items = Array.prototype.slice.call(root.querySelectorAll('.sw__item'));
+  var root = document.getElementById('spot'); if (!root) return;
+  var items = Array.prototype.slice.call(root.querySelectorAll('.spot__item'));
+  var dots = Array.prototype.slice.call(root.querySelectorAll('.spot__dot'));
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var cur = 2, auto = true, timer = null, visible = false;
+  if ('IntersectionObserver' in window) root.classList.add('pre');
+  function set(i, focus) {
+    cur = (i + items.length) % items.length;
+    items.forEach(function (it, k) {
+      var dist = Math.abs(k - cur), on = k === cur;
+      it.classList.toggle('is-on', on);
+      it.style.zIndex = 10 - dist;
+      it.style.setProperty('--dist', dist);
+      it.style.setProperty('--side', k < cur ? -1 : k > cur ? 1 : 0);
+      var b = it.querySelector('.spot__frame'); b.setAttribute('aria-expanded', on);
+      it.querySelector('.spot__cap').setAttribute('aria-hidden', !on);
+    });
+    dots.forEach(function (d, k) { d.setAttribute('aria-current', k === cur ? 'true' : 'false'); });
+    if (focus) items[cur].querySelector('.spot__frame').focus({ preventScroll: true });
+  }
+  function stop() { auto = false; clearInterval(timer); }
+  function play() { clearInterval(timer); if (auto && visible && !reduce) timer = setInterval(function () { set(cur + 1); }, 3800); }
+  items.forEach(function (it, k) {
+    var b = it.querySelector('.spot__frame');
+    b.addEventListener('click', function () { stop(); set(k); });
+    b.addEventListener('keydown', function (e) {
+      var d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
+      if (d) { e.preventDefault(); stop(); set(cur + d, true); }
+    });
+    if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) it.addEventListener('pointerenter', function () { stop(); set(k); });
+  });
+  dots.forEach(function (d, k) { d.addEventListener('click', function () { stop(); set(k); }); });
+  if ('IntersectionObserver' in window) new IntersectionObserver(function (es) {
+    visible = es[0].isIntersecting; root.classList.toggle('is-live', visible);
+    if (visible) { root.classList.add('is-in'); play(); } else clearInterval(timer);
+  }, { threshold: .3 }).observe(root);
+  set(cur);
+})();
+
+/* ===== Vistorm Labs · panel de ejemplo: la semana como un acordeón horizontal =====
+   Cada día es una columna. Al abrir uno, la curva de gente de toda la semana se estira
+   para hacerle lugar y el tramo de ese día se dibuja en cobre. Datos simulados. */
+(function () {
+  'use strict';
+  var root = document.getElementById('ridge'); if (!root) return;
+  var daysEl = document.getElementById('ridge-days'), svg = document.getElementById('ridge-svg');
+  var tipEl = document.getElementById('ridge-tip'), countEl = document.getElementById('ridge-count');
   var fmt = new Intl.NumberFormat('es-AR', { maximumFractionDigits: 1 });
-  var C = { burg: '#542433', ink: '#272124', cop: '#C1774B', lim: '#C7BCAC', paper: '#FCFBF8', line: '#D8D1C9', grid: '#E3DBD2', mut: '#655B5D', wash: '#F0E7DF', ante: '#9D9691', anteLine: '#AB9E95' };
-  var HEAT = ['#EFEAE4', '#E2CBBA', '#D3A282', '#C1774B'];
-  var SIM = 'Local de ejemplo · datos simulados';
-  if (main) main.setAttribute('data-lenis-prevent', '');
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var NS = 'http://www.w3.org/2000/svg';
+  var HOURS = [12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23];
+  var D = [
+    { k: 'Lun', name: 'Lunes', n: 9, v: 350, dw: 38, wait: 2.5, left: 3, peak: 24, ph: 21, lunch: .5, title: 'Un lunes tranquilo', tip: 'Con una persona en la barra alcanza hasta las 20 h.' },
+    { k: 'Mar', name: 'Martes', n: 10, v: 372, dw: 40, wait: 3, left: 4, peak: 26, ph: 21, lunch: .5, title: 'Martes parejo', tip: 'Las mesas de la ventana se llenan primero: abrí la terraza desde las 20 h.' },
+    { k: 'Mié', name: 'Miércoles', n: 11, v: 401, dw: 41, wait: 3.5, left: 5, peak: 29, ph: 21, lunch: .45, title: 'Miércoles en subida', tip: 'A las 21 h la espera en la barra pasó los 3 minutos.' },
+    { k: 'Jue', name: 'Jueves', n: 12, v: 341, dw: 37, wait: 2.5, left: 3, peak: 25, ph: 20, lunch: .5, title: 'Jueves en baja', chip: 'Único día en baja', tip: 'Fue el único día con menos visitas que la semana anterior.' },
+    { k: 'Vie', name: 'Viernes', n: 13, v: 525, dw: 46, wait: 5, left: 23, peak: 41, ph: 22, lunch: .35, title: 'Viernes de barra llena', chip: 'Más espera', tip: '23 personas se fueron sin atención de 21 a 23 h: sumá una persona en la barra.' },
+    { k: 'Sáb', name: 'Sábado', n: 14, v: 571, dw: 48, wait: 5.5, left: 17, peak: 52, ph: 22, lunch: .4, title: 'Sábado récord', chip: 'El más concurrido', tip: 'Abrí el sector del fondo antes de las 20 h: hoy queda vacío mientras la gente espera mesa.' },
+    { k: 'Dom', name: 'Domingo', n: 15, v: 290, dw: 35, wait: 2, left: 2, peak: 22, ph: 14, lunch: 1, title: 'Domingo de almuerzo', tip: 'El pico fue al mediodía: reforzá el salón de 13 a 15 h.' }
+  ];
+  // gente adentro, hora por hora: un pico al mediodía y otro a la noche
+  var g = function (x, m, s) { return Math.exp(-((x - m) * (x - m)) / (2 * s * s)); };
+  D.forEach(function (d) {
+    var raw = HOURS.map(function (h) { return d.ph < 16 ? (g(h, d.ph, 1.4) + .35 * g(h, 21, 1.8) + .08) : (d.lunch * g(h, 13.5, 1.1) + g(h, d.ph, 1.6) + .1); });
+    var mx = Math.max.apply(null, raw);
+    d.curve = raw.map(function (r) { return r / mx * d.peak; });
+  });
+  var MAXP = 60;
 
-  var esc = function (s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;'); };
-  var signed = function (n, u) { return (n > 0 ? '+' : n < 0 ? '−' : '') + fmt.format(Math.abs(n)) + (u || ''); };
-  function T(x, y, s, o) { o = o || {}; return '<text x="' + x + '" y="' + y + '" font-size="' + (o.size || 12) + '"' + (o.anchor ? ' text-anchor="' + o.anchor + '"' : '') + ' fill="' + (o.fill || C.mut) + '"' + (o.bold ? ' font-weight="600"' : '') + '>' + esc(s) + '</text>'; }
-  function act(i, label, sel, inside, box) {
-    return '<g class="act" role="button" tabindex="0" data-i="' + i + '" aria-label="' + esc(label) + '" aria-pressed="' + (sel === i) + '">' +
-      '<rect x="' + box[0] + '" y="' + box[1] + '" width="' + box[2] + '" height="' + box[3] + '" rx="3" fill="#000" fill-opacity="0"/>' + inside +
-      '<rect class="ring" x="' + box[0] + '" y="' + box[1] + '" width="' + box[2] + '" height="' + box[3] + '" rx="3" fill="none" stroke="' + C.burg + '" stroke-width="2.5"/></g>';
-  }
-  function svg(w, h, label, body) { return '<svg viewBox="0 0 ' + w + ' ' + h + '" width="' + w + '" height="' + h + '" role="group" aria-label="' + esc(label) + '">' + body + '</svg>'; }
-  function legend(list) {
-    return '<div class="ic__legend">' + list.map(function (l) {
-      var mk = l.kind === 'tick' ? '<i class="tick" style="background:' + l.c + '"></i>' : l.kind === 'ring' ? '<i class="ring" style="border-color:' + l.c + '"></i>' : l.kind === 'dia' ? '<i class="dia" style="background:' + l.c + '"></i>' : '<i style="background:' + l.c + '"></i>';
-      return '<span>' + mk + esc(l.t) + '</span>'; }).join('') + '</div>';
-  }
+  /* ---------- columnas ---------- */
+  var cols = D.map(function (d, i) {
+    var b = document.createElement('button');
+    b.type = 'button'; b.className = 'rd'; b.setAttribute('role', 'tab'); b.id = 'rd-' + i;
+    b.setAttribute('aria-label', d.name + ' ' + d.n + ': ' + d.v + ' visitas, pico de ' + d.peak + ' personas a las ' + d.ph + ' h');
+    b.innerHTML =
+      '<span class="rd__mini"><span class="rd__k">D' + (i + 1) + (i === 5 ? ' <i class="rd__dot"></i>' : '') + '</span><span class="rd__n">' + d.n + '<small>' + d.k + '</small></span>' +
+        '<span class="rd__s">' + fmt.format(d.v) + ' visitas</span><span class="rd__s2">pico a las ' + d.ph + ' h</span></span>' +
+      '<span class="rd__full">' +
+        '<span class="rd__row"><span class="rd__day">Día ' + (i + 1) + '</span><span class="rd__date">' + d.name + ' ' + d.n + ' nov</span>' + (d.chip ? '<span class="rd__chip">' + d.chip + '</span>' : '') +
+          '<span class="rd__wx">Espera máx. ' + fmt.format(d.wait) + ' min</span></span>' +
+        '<span class="rd__title">' + d.title + '<small>pico de ' + d.peak + ' personas a las ' + d.ph + ' h</small></span>' +
+        '<span class="rd__stats">' +
+          '<span><em>Visitas</em><b>' + fmt.format(d.v) + '</b></span>' +
+          '<span><em>Permanencia</em><b>' + d.dw + '<small>min</small></b></span>' +
+          '<span><em>Espera máx.</em><b>' + fmt.format(d.wait) + '<small>min</small></b></span>' +
+          '<span><em>Sin atención</em><b>' + d.left + '<small>pers.</small></b></span>' +
+        '</span>' +
+      '</span>';
+    daysEl.appendChild(b);
+    return b;
+  });
 
-  /* ---------- gráficos ---------- */
-  // columnas: barras caliza, la destacada en cobre, la comparación como raya granate
-  function columns(o, sel, W) {
-    var H = 236, L = 40, R = 8, T0 = 14, B = 30, pw = W - L - R, ph = H - T0 - B;
-    var y = function (v) { return T0 + ph - v / o.max * ph; };
-    var s = '';
-    o.ticks.forEach(function (v) { s += '<path d="M' + L + ' ' + y(v) + 'H' + (W - R) + '" stroke="' + C.grid + '"/>' + T(L - 8, y(v) + 4, fmt.format(v) + (o.tickUnit || ''), { anchor: 'end', size: 11 }); });
-    var n = o.labels.length, step = pw / n, bw = Math.min(40, step * 0.56), narrow = step < 46;
-    o.labels.forEach(function (lb, i) {
-      var cx = L + i * step + step / 2, v = o.vals[i], p = o.prev ? o.prev[i] : null, on = sel === i || (sel == null && i === o.hi);
-      var inner = '<rect class="bar" x="' + (cx - bw / 2) + '" y="' + y(v) + '" width="' + bw + '" height="' + Math.max(1, y(0) - y(v)) + '" fill="' + (i === o.hi ? C.cop : C.lim) + '"/>';
-      if (p != null) inner += '<path class="tickp" d="M' + (cx - bw / 2 - 4) + ' ' + y(p) + 'H' + (cx + bw / 2 + 4) + '" stroke="' + C.burg + '" stroke-width="2.3"/>';
-      inner += T(cx, H - 9, narrow ? lb.split('–')[0] : lb, { anchor: 'middle', size: narrow ? 11 : 12.5, fill: on ? C.ink : C.mut, bold: on });
-      s += act(i, o.aria(i), sel, inner, [cx - step / 2 + 1, T0 - 6, step - 2, H - T0]);
+  /* ---------- curva ---------- */
+  var openW = function () { return window.innerWidth < 760 ? 2.4 : 4.4; };
+  var detail = document.getElementById('ridge-detail');
+  var weights = D.map(function () { return 1; }), cur = 5, drawn = 0;
+  function el(tag, a, p) { var n = document.createElementNS(NS, tag); for (var k in a) n.setAttribute(k, a[k]); if (p) p.appendChild(n); return n; }
+  function draw() {
+    var W = Math.max(300, svg.parentNode.clientWidth), H = window.innerWidth < 760 ? 170 : 230, T = 34, B = 26, ph = H - T - B;
+    svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H); svg.setAttribute('height', H);
+    while (svg.firstChild) svg.removeChild(svg.firstChild);
+    var tot = weights.reduce(function (a, b) { return a + b; }, 0), xs = [0];
+    weights.forEach(function (w, i) { xs.push(xs[i] + w / tot * W); });
+    var y = function (v) { return T + ph - v / MAXP * ph; };
+    // puntos de toda la semana, cada día ocupa el ancho de su columna
+    var pts = [], segs = [];
+    D.forEach(function (d, i) {
+      var x0 = xs[i], x1 = xs[i + 1], seg = [];
+      d.curve.forEach(function (v, k) { var p = [x0 + (k + .5) / d.curve.length * (x1 - x0), y(v)]; pts.push(p); seg.push(p); });
+      segs.push(seg);
     });
-    return svg(W, H, o.label, s);
-  }
-  // filas horizontales con letra, como las zonas del local
-  function rows(o, sel, W) {
-    var rh = 42, H = o.items.length * rh + 34, L = Math.min(210, Math.max(152, W * 0.42)), R = 56, pw = W - L - R;
-    var s = '', x = function (v) { return L + v / o.max * pw; };
-    o.items.forEach(function (it, i) {
-      var yy = i * rh, on = sel === i;
-      var inner = (on ? '<rect x="0" y="' + (yy + 2) + '" width="' + W + '" height="' + (rh - 4) + '" rx="3" fill="' + C.wash + '"/>' : '') +
-        (it.k ? T(10, yy + 26, it.k, { size: 11.5, bold: true }) : '') + T(it.k ? 32 : 10, yy + 26, it.label, { size: 14, fill: C.ink, bold: on }) +
-        '<rect class="hbar" x="' + L + '" y="' + (yy + 13) + '" width="' + Math.max(2, x(it.v) - L) + '" height="16" fill="' + (on ? C.cop : C.lim) + '"/>' +
-        T(x(it.v) + 8, yy + 26, fmt.format(it.v) + (o.unit || ''), { size: 14, fill: C.ink, bold: true });
-      s += act(i, it.label + ', ' + fmt.format(it.v) + (o.unitLong || ''), sel, inner, [0, yy + 2, W, rh - 4]);
-    });
-    var by = o.items.length * rh + 6;
-    s += '<path d="M' + L + ' ' + by + 'H' + (L + pw) + '" stroke="' + C.line + '"/>';
-    o.ticks.forEach(function (v) { s += '<path d="M' + x(v) + ' ' + by + 'v5" stroke="' + C.line + '"/>' + T(x(v), by + 22, fmt.format(v) + (o.unit || ''), { anchor: 'middle', size: 11 }); });
-    return svg(W, H, o.label, s);
-  }
-  // antes y después por día: círculo hueco (antes) y rombo cobre (después)
-  function dumbbell(o, sel, W) {
-    var rh = 30, T0 = 8, H = o.items.length * rh + T0 + 30, L = 52, R = 40, pw = W - L - R;
-    var x = function (v) { return L + (v - o.min) / (o.max - o.min) * pw; };
-    var s = '';
-    o.ticks.forEach(function (v) { s += '<path d="M' + x(v) + ' ' + T0 + 'V' + (H - 26) + '" stroke="' + C.grid + '"/>' + T(x(v), H - 8, fmt.format(v), { anchor: 'middle', size: 11 }); });
-    o.items.forEach(function (it, i) {
-      var yy = T0 + i * rh + rh / 2, a = x(it[1]), d = x(it[2]), on = sel === i, up = it[2] >= it[1];
-      var inner = (on ? '<rect x="0" y="' + (yy - 13) + '" width="' + W + '" height="26" rx="3" fill="' + C.wash + '"/>' : '') +
-        T(8, yy + 4, it[0], { size: 13, fill: C.ink, bold: on }) +
-        '<g class="db"><path d="M' + a + ' ' + yy + 'H' + d + '" stroke="' + C.anteLine + '" stroke-width="2"/>' +
-        '<circle cx="' + a + '" cy="' + yy + '" r="5" fill="' + C.paper + '" stroke="' + C.ante + '" stroke-width="2"/>' +
-        '<path d="M' + d + ' ' + (yy - 5.8) + 'l5.8 5.8-5.8 5.8-5.8-5.8z" fill="' + C.cop + '"/></g>' +
-        T(up ? a - 9 : a + 9, yy + 4, fmt.format(it[1]), { size: 12, fill: C.ink, anchor: up ? 'end' : 'start' }) +
-        T(up ? d + 9 : d - 9, yy + 4, fmt.format(it[2]), { size: 12, fill: C.ink, anchor: up ? 'start' : 'end' });
-      s += act(i, it[0] + ', ' + it[1] + ' antes y ' + it[2] + ' después', sel, inner, [0, yy - 13, W, 26]);
-    });
-    return svg(W, H, o.label, s);
-  }
-  function table(caption, head, body) {
-    return '<details class="ic__table"><summary>Ver la tabla</summary><table><caption>' + esc(caption) + '</caption><thead><tr>' + head.map(function (h, i) { return '<th scope="col">' + esc(h) + '</th>'; }).join('') + '</tr></thead><tbody>' +
-      body.map(function (r) { return '<tr>' + r.map(function (c, i) { return i ? '<td>' + esc(c) + '</td>' : '<th scope="row">' + esc(c) + '</th>'; }).join('') + '</tr>'; }).join('') + '</tbody></table></details>';
-  }
-
-  /* ---------- tarjeta ---------- */
-  function card(o) {
-    var el = document.createElement('article'); el.className = 'ic';
-    var sel = o.sel == null ? null : o.sel;
-    el.innerHTML = '<p class="ic__kick">' + esc(o.kick) + '</p><h4 class="ic__title">' + esc(o.title) + '</h4>' +
-      (o.sub ? '<p class="ic__sub">' + esc(o.sub) + '</p>' : '') + (o.legend ? legend(o.legend) : '') +
-      (o.chart ? '<div class="ic__chart"></div><p class="ic__read" role="status" aria-live="polite"></p>' : '') + (o.extra || '') +
-      (o.note ? '<p class="ic__note">' + esc(o.note) + '</p>' : '') + (o.caveat ? '<p class="ic__caveat">' + esc(o.caveat) + '</p>' : '') +
-      (o.table || '') + '<p class="ic__sim">' + SIM + '</p>';
-    if (!o.chart) return el;
-    var box = el.querySelector('.ic__chart'), read = el.querySelector('.ic__read');
-    var draw = function (focusI) {
-      var W = Math.max(280, Math.round(box.clientWidth || 600));
-      box.innerHTML = o.chart(sel, W);
-      read.textContent = sel == null ? (o.hint || 'Elegí una franja para ver la diferencia.') : o.readout(sel);
-      if (o.sync) o.sync(sel, el);
-      if (focusI != null) { var f = box.querySelector('.act[data-i="' + focusI + '"]'); if (f) f.focus(); }
+    var line = function (P) { return P.map(function (p, i) { return (i ? 'L' : 'M') + p[0].toFixed(1) + ' ' + p[1].toFixed(1); }).join(''); };
+    var smooth = function (P) {
+      if (P.length < 3) return line(P);
+      var s = 'M' + P[0][0].toFixed(1) + ' ' + P[0][1].toFixed(1);
+      for (var i = 1; i < P.length - 1; i++) { var mx = (P[i][0] + P[i + 1][0]) / 2, my = (P[i][1] + P[i + 1][1]) / 2; s += 'Q' + P[i][0].toFixed(1) + ' ' + P[i][1].toFixed(1) + ' ' + mx.toFixed(1) + ' ' + my.toFixed(1); }
+      return s + 'L' + P[P.length - 1][0].toFixed(1) + ' ' + P[P.length - 1][1].toFixed(1);
     };
-    var pick = function (i) { sel = sel === i ? null : i; draw(i); };
-    box.addEventListener('click', function (e) { var g = e.target.closest('.act'); if (g) pick(+g.dataset.i); });
-    box.addEventListener('keydown', function (e) {
-      var g = e.target.closest('.act'); if (!g) return;
-      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); pick(+g.dataset.i); }
-    });
-    el._draw = draw; el._pick = pick;
-    return el;
+    // la columna abierta sigue hacia abajo, sobre la curva
+    el('rect', { x: xs[cur], y: 0, width: xs[cur + 1] - xs[cur], height: H, fill: '#6A3243' }, svg);
+    for (var i = 1; i < D.length; i++) el('path', { d: 'M' + xs[i] + ' 0V' + (H - B), stroke: 'rgba(244,242,241,.14)', 'stroke-dasharray': '2 4' }, svg);
+    var all = [[0, H - B]].concat(pts, [[W, H - B]]);
+    el('path', { d: smooth(all) + 'Z', fill: 'rgba(244,242,241,.07)' }, svg);
+    el('path', { d: smooth(pts), fill: 'none', stroke: 'rgba(244,242,241,.42)', 'stroke-width': 1.6 }, svg);
+    // el tramo del día abierto, en cobre
+    var seg = segs[cur], d = D[cur];
+    var segPath = smooth(seg);
+    el('path', { d: segPath + 'L' + seg[seg.length - 1][0] + ' ' + (H - B) + 'L' + seg[0][0] + ' ' + (H - B) + 'Z', fill: 'rgba(193,119,75,.16)' }, svg);
+    var hl = el('path', { class: 'ridge__line', d: segPath, fill: 'none', stroke: '#C1774B', 'stroke-width': 3, 'stroke-linecap': 'round' }, svg);
+    var L = hl.getTotalLength(); hl.style.strokeDasharray = L; hl.style.strokeDashoffset = (1 - drawn) * L;
+    // pico del día
+    var pk = d.curve.indexOf(Math.max.apply(null, d.curve)), P = seg[pk];
+    el('circle', { cx: P[0], cy: P[1], r: 5.5, fill: '#F4F2F1', stroke: '#C1774B', 'stroke-width': 2.5, opacity: drawn > .9 ? 1 : 0 }, svg);
+    var lab = el('text', { x: Math.min(W - 64, Math.max(64, P[0])), y: P[1] - 14, 'text-anchor': 'middle', fill: '#F4F2F1', 'font-size': 12, 'font-weight': 600, opacity: drawn > .9 ? 1 : 0 }, svg); lab.textContent = d.peak + ' personas · ' + d.ph + ' h';
+    // horas del día abierto
+    [0, 6, 11].forEach(function (k) { var t = el('text', { x: seg[k][0], y: H - 8, 'text-anchor': 'middle', fill: 'rgba(244,242,241,.72)', 'font-size': 11 }, svg); t.textContent = HOURS[k] + ' h'; });
+    el('path', { d: 'M0 ' + (H - B) + 'H' + W, stroke: 'rgba(244,242,241,.22)' }, svg);
   }
 
-  /* ---------- datos del local de ejemplo ---------- */
-  var HRS = ['12–13', '13–14', '14–15', '15–16', '16–17', '17–18', '18–19', '19–20', '20–21', '21–22', '22–23', '23–24'];
-  var head = function (kick, title, sub, meta, seg) {
-    return '<div class="sw__head"><div><p class="sw__kick">' + kick + '</p><h3 class="sw__h1">' + title + '</h3><p class="sw__sub">' + sub + '</p>' +
-      (meta ? '<p class="sw__meta">' + meta + '</p>' : '') + '</div>' +
-      (seg ? '<div class="sw__seg" aria-hidden="true">' + ['Hoy', '7 días', '28 días'].map(function (s) { return '<span' + (s === seg ? ' class="on"' : '') + '>' + s + '</span>'; }).join('') + '</div>' : '') + '</div>';
-  };
-  function colCard(c) {
-    return card({
-      kick: c.kick, title: c.title, sub: c.sub, hint: c.hint, sel: null,
-      legend: [{ t: c.cur, c: C.lim }, { t: c.peak, c: C.cop }].concat(c.prev ? [{ t: c.prevName, c: C.burg, kind: 'tick' }] : []),
-      chart: function (sel, W) { return columns({ labels: c.labels, vals: c.vals, prev: c.prev, hi: c.hi, max: c.max, ticks: c.ticks, tickUnit: c.tickUnit, label: c.title, aria: function (i) { return c.labels[i] + ' ' + (c.span || 'h') + ', ' + fmt.format(c.vals[i]) + ' ' + c.unit + (c.prev ? ', ' + c.prevShort + ' ' + fmt.format(c.prev[i]) : ''); } }, sel, W); },
-      readout: function (i) { var v = c.vals[i], p = c.prev ? c.prev[i] : null; return c.labels[i] + ' ' + (c.span || 'h') + ' · ' + fmt.format(v) + ' ' + c.unit + (p != null ? '; ' + c.prevShort + ', ' + fmt.format(p) + ' (' + signed(v - p, c.dUnit || '') + ')' : ''); },
-      note: c.note,
-      table: table(SIM, [c.span === 'h' || !c.span ? 'Horario' : 'Franja', c.cur].concat(c.prev ? [c.prevName] : []), c.labels.map(function (l, i) { return [l + ' ' + (c.span || 'h'), fmt.format(c.vals[i]) + (c.tUnit || '')].concat(c.prev ? [fmt.format(c.prev[i]) + (c.tUnit || '')] : []); }))
-    });
-  }
-
-  var VIEWS = {
-    hoy: { crumb: 'Hoy', render: function () {
-      var v = [22, 31, 28, 19, 14, 17, 26, 38, 51, 58], p = [20, 27, 25, 18, 15, 16, 22, 33, 43, 52];
-      return [head('Hoy', 'Hoy', 'Lo que pasa en el local ahora.', 'Martes 24 de noviembre · actualizado 21:42 · sin contar al personal'),
-        colCard({ kick: 'Visitas y horario pico · hoy, de 12 a 22 h', title: 'El pico fue de 21 a 22 h con 58 visitas', sub: '304 visitas hoy · 271 el martes pasado en el mismo horario',
-          labels: HRS.slice(0, 10), vals: v, prev: p, hi: 9, max: 60, ticks: [0, 20, 40, 60], unit: 'visitas', cur: 'Hoy', peak: 'Hora pico', prevName: 'Martes pasado', prevShort: 'el martes pasado' })];
-    } },
-    hacer: { crumb: 'Qué hacer', render: function () {
-      var O = [
-        { n: 23, t: 'Sumá una persona en la barra de 21 a 23 h', d: 'El viernes, 23 personas se fueron sin que nadie las atendiera en ese horario.' },
-        { n: 37, t: 'Abrí el sector del fondo antes de las 20 h', d: 'Queda vacío hasta las 21 h mientras 37 personas por noche esperan mesa en la entrada.' }
-      ];
-      return [head('Qué hacer', 'Qué hacer', 'Sugerencias ordenadas por personas en juego.', 'Basadas en los últimos 7 días')].concat(O.map(function (o) {
-        return card({ kick: 'Sugerencia · ' + o.n + ' personas en juego', title: o.t, sub: o.d, extra: '<button class="sw__btn" type="button" aria-pressed="false">Probar y medir</button>' });
-      })).concat(['<p class="sw__note">Cuando probás una sugerencia, Vistorm compara las dos semanas siguientes con las dos anteriores y te avisa en <b>Resultados</b>.</p>']);
-    } },
-    mesas: { crumb: 'Mesas', render: function () {
-      return [head('Tus preguntas', 'Mesas', '¿Qué mesa espera? Cuánto se espera para sentarse.', 'Últimos 7 días · comparado con los 7 días anteriores', '7 días'),
-        colCard({ kick: 'Espera por una mesa · últimos 7 días', title: 'A las 21 h se esperan 11 minutos para sentarse', sub: '23 personas se fueron sin mesa · 9 menos que la semana anterior',
-          labels: HRS, vals: [1, 2, 3, 1, 1, 1, 1, 3, 7, 11, 8, 3], prev: [1, 2, 3, 2, 1, 1, 2, 4, 9, 14, 10, 4], hi: 9, max: 15, ticks: [0, 5, 10, 15], unit: 'min de espera', dUnit: ' min', tUnit: ' min',
-          cur: 'Esta semana', peak: 'Más espera', prevName: 'Semana anterior', prevShort: 'la semana anterior' })];
-    } },
-    atencion: { crumb: 'Atención', render: function (tab) {
-      tab = tab || 'permanencia';
-      var tabs = '<div class="sw__tabs" role="tablist" aria-label="Atención">' + [['resumen', 'Resumen'], ['fila', 'Fila y espera'], ['permanencia', 'Permanencia']].map(function (x) {
-        return '<button class="sw__tab" role="tab" type="button" data-tab="' + x[0] + '" aria-selected="' + (x[0] === tab) + '">' + x[1] + '</button>'; }).join('') + '</div>';
-      if (tab === 'permanencia') {
-        var B = ['< 5', '5–15', '15–30', '30–60', '60–90', '> 90'];
-        return [tabs, head('Atención', 'Permanencia', 'Cuánto se queda cada visita.', 'Últimos 7 días · comparado con los 7 días anteriores · sin contar al personal', '7 días'),
-          colCard({ kick: 'Permanencia · últimos 7 días', title: 'La visita promedio se quedó 42 minutos, 3 más que la semana anterior', sub: '4 de cada 10 visitas se quedaron entre 30 y 60 minutos',
-            labels: B, span: 'min', vals: [9, 4, 14, 41, 22, 10], prev: [12, 5, 15, 38, 21, 9], hi: 3, max: 50, ticks: [0, 25, 50], tickUnit: ' %', unit: '% de las visitas', dUnit: ' puntos', tUnit: ' %',
-            cur: 'Esta semana', peak: 'La más común', prevName: 'Semana anterior', prevShort: 'la semana anterior', hint: 'Elegí una duración para ver la diferencia.' }),
-          colCard({ kick: 'Permanencia por hora de llegada · últimos 7 días', title: 'Quienes llegan a las 21 h se quedan más: 51 minutos', sub: 'Promedio de todas las horas: 42 minutos',
-            labels: HRS, vals: [28, 35, 39, 31, 22, 19, 24, 33, 44, 51, 47, 36], prev: [26, 33, 37, 30, 22, 20, 23, 30, 41, 47, 45, 35], hi: 9, max: 60, ticks: [0, 30, 60], unit: 'min', dUnit: ' min', tUnit: ' min',
-            cur: 'Esta semana', peak: 'La más larga', prevName: 'Semana anterior', prevShort: 'la semana anterior' })];
-      }
-      if (tab === 'fila') return [tabs, head('Atención', 'Fila y espera', 'Cuánto se espera para pedir.', 'Últimos 7 días · comparado con los 7 días anteriores', '7 días'),
-        colCard({ kick: 'Espera en la barra · últimos 7 días', title: 'De 21 a 22 h se esperan 5 minutos y medio para pedir', sub: '23 personas se fueron sin que nadie las atendiera · 6 menos que la semana anterior',
-          labels: HRS, vals: [1, 1.5, 2, 1, 0.5, 0.5, 1, 2, 3.5, 5.5, 4.5, 2], prev: [1, 1.5, 2, 1, 1, 1, 1, 2.5, 4, 6.5, 5, 2.5], hi: 9, max: 7, ticks: [0, 2, 4, 6], unit: 'min de espera', dUnit: ' min', tUnit: ' min',
-          cur: 'Esta semana', peak: 'Más espera', prevName: 'Semana anterior', prevShort: 'la semana anterior' })];
-      var R = [{ label: 'Llegaron a una mesa', v: 58 }, { label: 'Llegaron a la barra', v: 33 }, { label: 'Miraron y se fueron', v: 9 }];
-      return [tabs, head('Atención', 'Resumen', '¿Quién se va sin atención?', 'Últimos 7 días', '7 días'),
-        card({ kick: 'Atención · últimos 7 días', title: '9 de cada 10 visitas llegaron a una mesa o a la barra', sub: 'Base: 2.810 visitas', sel: null, hint: 'Elegí una fila para ver el detalle.',
-          chart: function (sel, W) { return rows({ items: R, max: 60, ticks: [0, 30, 60], unit: ' %', unitLong: ' por ciento', label: 'Dónde terminó cada visita' }, sel, W); },
-          readout: function (i) { return R[i].label + ': ' + R[i].v + ' de cada 100 visitas (' + fmt.format(Math.round(2810 * R[i].v / 100)) + ' personas).'; },
-          note: 'La mayoría de quienes se van sin atención llega entre las 21 y las 22 h.',
-          table: table(SIM, ['Resultado', 'Visitas'], R.map(function (r) { return [r.label, r.v + ' %']; })) })];
-    } },
-    personal: { crumb: 'Personal', render: function () {
-      var DAYS = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'], base = [0.25, 0.35, 0.3, 0.2, 0.15, 0.2, 0.35, 0.55, 0.8, 1, 0.85, 0.5], dayF = [0.5, 0.55, 0.6, 0.7, 0.95, 1, 0.65];
-      var band = function (n) { return n < 15 ? 0 : n < 30 ? 1 : n < 45 ? 2 : 3; };
-      var t = '<div class="hm"><table><caption class="sr">Gente en el local por día y hora. ' + SIM + '</caption><thead><tr><th scope="col"><span class="sr">Día</span></th>' + HRS.map(function (x) { return '<th scope="col">' + x.split('–')[0] + '</th>'; }).join('') + '</tr></thead><tbody>';
-      DAYS.forEach(function (d, di) { t += '<tr><th scope="row">' + d + '</th>' + base.map(function (b, hi) { var n = Math.round(b * dayF[di] * 56); return '<td style="background:' + HEAT[band(n)] + '" title="' + d + ' ' + HRS[hi] + ' h · ' + n + ' personas"><span class="sr">' + n + ' personas</span></td>'; }).join('') + '</tr>'; });
-      t += '</tbody></table></div>';
-      return [head('Tus preguntas', 'Personal', '¿Cuándo reforzar? La semana típica, hora por hora.', 'Promedio de las últimas 4 semanas', '28 días'),
-        card({ kick: 'Gente en el local · semana típica', title: 'Viernes y sábado de 20 a 23 h es cuando más gente hay', sub: 'Hasta 56 personas a la vez el sábado a las 21 h',
-          legend: [{ t: '0–14', c: HEAT[0] }, { t: '15–29', c: HEAT[1] }, { t: '30–44', c: HEAT[2] }, { t: '45 o más personas', c: HEAT[3] }],
-          extra: t, note: 'Sugerido: 2 personas más en la barra los viernes y sábados de 20 a 23 h.' })];
-    } },
-    salon: { crumb: 'Salón', render: function () {
-      var Z = [{ k: 'A', label: 'Barra', v: 62 }, { k: 'B', label: 'Ventana', v: 41 }, { k: 'C', label: 'Mesas del centro', v: 38 }, { k: 'D', label: 'Terraza', v: 27 }, { k: 'E', label: 'Fondo', v: 6 }];
-      var band = function (v) { return v < 15 ? 0 : v < 30 ? 1 : v < 45 ? 2 : 3; };
-      var plan = function (sel) {
-        var shapes = [
-          { d: 'M10 10H210V62H10Z', tag: [190, 46], deco: '<path d="M22 22H196V40H22Z" fill="#F3ECE2" stroke="#87695C" stroke-width="1.5"/>' + [40, 70, 100, 130, 160].map(function (x) { return '<circle cx="' + x + '" cy="52" r="5" fill="none" stroke="#87695C"/>'; }).join('') },
-          { d: 'M226 10H312V120H226Z', tag: [292, 104], deco: '<path d="M309 22V100" stroke="#8C746B" stroke-width="3"/>' + [[248, 36], [248, 76]].map(function (p) { return '<circle cx="' + p[0] + '" cy="' + p[1] + '" r="11" fill="#F7F4EE" stroke="#8C746B" stroke-width="1.4"/>'; }).join('') },
-          { d: 'M64 78H210V160H64Z', tag: [190, 146], deco: [[92, 104], [140, 104], [92, 140], [140, 140]].map(function (p) { return '<rect x="' + (p[0] - 12) + '" y="' + (p[1] - 10) + '" width="24" height="20" rx="3" fill="#F7F4EE" stroke="#8C746B" stroke-width="1.4"/>'; }).join('') },
-          { d: 'M226 136H312V206H226Z', tag: [292, 190], deco: '<path d="M234 198H304" stroke="#8C746B" stroke-dasharray="3 4"/>' + '<circle cx="252" cy="162" r="10" fill="#F7F4EE" stroke="#8C746B" stroke-width="1.4"/>' },
-          { d: 'M10 78H52V206H10Z', tag: [31, 190], deco: '<rect x="18" y="96" width="26" height="40" rx="3" fill="none" stroke="#A89A90" stroke-dasharray="3 3"/>' }
-        ];
-        var s = '<rect x="4" y="4" width="314" height="208" fill="#F6F3EE"/>';
-        shapes.forEach(function (z, i) {
-          var on = sel === i;
-          var inner = '<path class="zone" d="' + z.d + '" fill="' + HEAT[band(Z[i].v)] + '" stroke="' + (on ? C.burg : '#D4C9BF') + '" stroke-width="' + (on ? 2.2 : 1) + '"/>' + z.deco +
-            '<circle cx="' + z.tag[0] + '" cy="' + z.tag[1] + '" r="10.5" fill="' + (on ? C.burg : C.paper) + '" stroke="' + (on ? C.burg : '#9D8F83') + '"/>' + T(z.tag[0], z.tag[1] + 4, Z[i].k, { anchor: 'middle', size: 10.5, bold: true, fill: on ? C.paper : C.ink });
-          var bb = z.d.match(/[\d.]+/g).map(Number);
-          s += act(i, Z[i].label + ', ' + Z[i].v + ' por ciento de las visitas', sel, inner, [Math.min(bb[0], bb[2]), Math.min(bb[1], bb[3]), Math.abs(bb[2] - bb[0]) || 40, Math.abs((bb[5] || bb[3]) - bb[1]) || 40]);
-        });
-        s += '<path d="M120 212H4V4H318V212H172" fill="none" stroke="' + C.burg + '" stroke-width="6"/><path d="M122 210V174A48 48 0 0 1 170 210" fill="none" stroke="#8D817B"/>' + T(146, 230, 'Entrada', { anchor: 'middle', size: 11.5 });
-        return '<svg viewBox="0 0 322 236" role="group" aria-label="Plano del salón">' + s + '</svg>';
-      };
-      var c = card({ kick: 'Zonas del salón · últimos 7 días', title: 'Seis de cada diez visitas pasaron por la barra', sel: 0, hint: 'Elegí una zona en el plano o en la lista.',
-        legend: [{ t: '0–14 %', c: HEAT[0] }, { t: '15–29 %', c: HEAT[1] }, { t: '30–44 %', c: HEAT[2] }, { t: '45–100 %', c: HEAT[3] }],
-        chart: function (sel, W) {
-          var wide = W > 620, listW = wide ? Math.round(W - 340) : W;
-          return '<div class="ic__split' + (wide ? '' : ' is-stack') + '"><div class="ic__plan">' + plan(sel) + '</div><div><p class="ic__axis">Porcentaje de visitas que pasaron por cada zona</p>' +
-            rows({ items: Z, max: 75, ticks: [0, 25, 50, 75], unit: ' %', unitLong: ' por ciento de las visitas', label: 'Zonas del salón' }, sel, listW) + '</div></div>';
-        },
-        readout: function (i) { return Z[i].k + ' · ' + Z[i].label + ': ' + Z[i].v + ' de cada 100 visitas pasaron por acá' + (i === 4 ? ' · zona fría.' : '.'); },
-        caveat: 'Base: 2.810 visitas al local. Una visita puede pasar por varias zonas.',
-        table: table(SIM, ['Zona', 'Visitas que pasaron'], Z.map(function (z) { return [z.k + ' · ' + z.label, z.v + ' %']; })) });
-      return [head('Tus preguntas', 'Salón', '¿Qué parte no se usa?', 'Últimos 7 días · sin contar al personal', '7 días'), c];
-    } },
-    resultados: { crumb: 'Resultados', render: function () {
-      var D = [['Lun', 320, 350], ['Mar', 335, 372], ['Mié', 360, 401], ['Jue', 350, 341], ['Vie', 480, 525], ['Sáb', 520, 571], ['Dom', 255, 290]];
-      return [head('Tus preguntas', 'Resultados', '¿Funcionó el cambio?', 'Moviste la barra de café a la entrada el 9 de noviembre'),
-        card({ kick: 'Antes y después · visitas por día', title: 'Hubo 230 visitas más la semana posterior al cambio', sel: null, hint: 'Elegí un día para ver la diferencia.',
-          legend: [{ t: 'Antes · 2–8 nov · 2.620', c: C.ante, kind: 'ring' }, { t: 'Después · 9–15 nov · 2.850', c: C.cop, kind: 'dia' }],
-          chart: function (sel, W) { return dumbbell({ items: D, min: 200, max: 600, ticks: [200, 300, 400, 500, 600], label: 'Visitas por día, antes y después del cambio' }, sel, W); },
-          readout: function (i) { var d = D[i]; return d[0] + ' · ' + fmt.format(d[1]) + ' antes y ' + fmt.format(d[2]) + ' después (' + signed(d[2] - d[1]) + ').'; },
-          note: 'El jueves fue el único día con menos visitas.', caveat: 'La diferencia entre semanas, por sí sola, no establece qué causó el cambio.',
-          table: table(SIM, ['Día', 'Antes', 'Después'], D.map(function (d) { return [d[0], fmt.format(d[1]), fmt.format(d[2])]; })) })];
-    } }
-  };
-
-  /* ---------- navegación ---------- */
-  var current = null, curTab = 'permanencia';
-  function show(name, opts) {
+  /* ---------- abrir un día ---------- */
+  var ease = function (t) { return 1 - Math.pow(1 - t, 3); }, raf = null;
+  function setFlex() { cols.forEach(function (c, i) { c.style.flexGrow = weights[i]; }); }
+  function open(i, opts) {
     opts = opts || {};
-    var v = VIEWS[name]; if (!v) return;
-    current = name;
-    items.forEach(function (b) { if (b.dataset.view === name) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current'); });
-    // en celular la barra de secciones se desliza para mostrar la activa, sin mover la página
-    var act = items.filter(function (b) { return b.dataset.view === name; })[0], nav = act && act.parentNode;
-    if (nav && nav.scrollWidth > nav.clientWidth + 4) nav.scrollLeft = Math.max(0, act.offsetLeft - nav.offsetLeft - 12);
-    view.innerHTML = '';
-    v.render(curTab).forEach(function (b) { if (typeof b === 'string') view.insertAdjacentHTML('beforeend', b); else view.appendChild(b); });
-    Array.prototype.forEach.call(view.querySelectorAll('.ic'), function (c) { if (c._draw) c._draw(); });
-    if (main) main.scrollTop = 0;
-    crumbs.innerHTML = 'Local de ejemplo / ' + (name === 'atencion' ? 'Atención / <b>' + { resumen: 'Resumen', fila: 'Fila y espera', permanencia: 'Permanencia' }[curTab] + '</b>' : '<b>' + v.crumb + '</b>');
-    root.dispatchEvent(new CustomEvent('sw:view', { detail: { name: name, user: !!opts.user } }));
+    i = (i + D.length) % D.length;
+    var from = weights.slice(), to = D.map(function (_, k) { return k === i ? openW() : 1; });
+    cur = i; drawn = 0;
+    cols.forEach(function (c, k) { var on = k === i; c.classList.toggle('is-open', on); c.setAttribute('aria-selected', on); c.tabIndex = on ? 0 : -1; });
+    countEl.textContent = D[i].name + ' · ' + (i + 1) + ' de ' + D.length;
+    tipEl.innerHTML = '<i aria-hidden="true"></i>' + D[i].tip;
+    // en celular el detalle del día va debajo de la fila de días, a todo el ancho
+    if (detail) detail.innerHTML = '<div class="rd__full">' + cols[i].querySelector('.rd__full').innerHTML + '</div>';
+    if (opts.focus) cols[i].focus();
+    if (raf) cancelAnimationFrame(raf);
+    if (reduce || opts.instant) { weights = to; drawn = 1; setFlex(); draw(); return; }
+    var t0 = performance.now(), dur = 700, dl = 650;
+    var step = function (now) {
+      var t = Math.min(1, (now - t0) / dur), e = ease(t);
+      weights = from.map(function (f, k) { return f + (to[k] - f) * e; });
+      drawn = ease(Math.max(0, Math.min(1, (now - t0 - dur * .55) / dl)));
+      setFlex(); draw();
+      if (t < 1 || drawn < 1) raf = requestAnimationFrame(step); else raf = null;
+    };
+    raf = requestAnimationFrame(step);
   }
-  items.forEach(function (b) { b.addEventListener('click', function () { show(b.dataset.view, { user: true }); }); });
-  view.addEventListener('click', function (e) {
-    var t = e.target.closest('.sw__tab');
-    if (t) { curTab = t.dataset.tab; show('atencion', { user: true }); var nt = view.querySelector('.sw__tab[data-tab="' + curTab + '"]'); if (nt) nt.focus(); return; }
-    var b = e.target.closest('.sw__btn');
-    if (b) { var on = b.getAttribute('aria-pressed') !== 'true'; b.setAttribute('aria-pressed', on); b.textContent = on ? 'Midiendo · día 1 de 14' : 'Probar y medir'; }
+  var auto = true, timer = null, visible = false;
+  function stop() { auto = false; clearInterval(timer); }
+  function play() { clearInterval(timer); if (auto && visible && !reduce) timer = setInterval(function () { open(cur + 1); }, 4800); }
+  cols.forEach(function (c, i) { c.addEventListener('click', function () { stop(); if (i !== cur) open(i); }); });
+  daysEl.addEventListener('keydown', function (e) {
+    var dlt = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
+    if (dlt) { e.preventDefault(); stop(); open(cur + dlt, { focus: true }); }
   });
-  view.addEventListener('keydown', function (e) {
-    var t = e.target.closest('.sw__tab'); if (!t) return;
-    var tabs = Array.prototype.slice.call(view.querySelectorAll('.sw__tab')), i = tabs.indexOf(t);
-    var d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
-    if (d) { e.preventDefault(); curTab = tabs[(i + d + tabs.length) % tabs.length].dataset.tab; show('atencion', { user: true }); view.querySelector('.sw__tab[data-tab="' + curTab + '"]').focus(); }
-  });
-  // los gráficos se dibujan al ancho real de la tarjeta: se rehacen si cambia el ancho
-  var lastW = view.clientWidth, rzT;
-  window.addEventListener('resize', function () { clearTimeout(rzT); rzT = setTimeout(function () { if (Math.abs(view.clientWidth - lastW) > 24) { lastW = view.clientWidth; Array.prototype.forEach.call(view.querySelectorAll('.ic'), function (c) { if (c._draw) c._draw(); }); } }, 150); });
-  show('atencion');
-  window.VistormPanel = { show: show, items: items, current: function () { return current; } };
+  document.getElementById('ridge-prev').addEventListener('click', function () { stop(); open(cur - 1); });
+  document.getElementById('ridge-next').addEventListener('click', function () { stop(); open(cur + 1); });
+  root.addEventListener('pointerdown', stop);
+  if ('IntersectionObserver' in window) new IntersectionObserver(function (es) {
+    var was = visible; visible = es[0].isIntersecting;
+    if (visible && !was) { root.classList.add('is-in'); if (!root.dataset.played) { root.dataset.played = 1; open(cur); } play(); }
+    if (!visible) clearInterval(timer);
+  }, { threshold: .35 }).observe(root);
+  if ('IntersectionObserver' in window) root.classList.add('pre');
+  open(5, { instant: true });
+  var rz; window.addEventListener('resize', function () { clearTimeout(rz); rz = setTimeout(function () { weights = D.map(function (_, k) { return k === cur ? openW() : 1; }); setFlex(); draw(); }, 120); });
 })();
 
 /* ===== Consentimiento de cookies y Google Analytics 4 (solo si la persona acepta) ===== */

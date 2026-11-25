@@ -41,7 +41,7 @@
 </header>
 
 <main id="main">
-  <!-- 1. Qué medimos: tarjetas de colección en papel cortado y marquetería -->
+  <!-- 1. Qué medimos: cuadros superpuestos; el del medio se abre con su texto -->
   <section class="measure" id="medimos" aria-labelledby="t-medimos">
     <div class="wrap">
       <div class="measure__head">
@@ -49,8 +49,7 @@
         <h2 class="big split" id="t-medimos">Mirá lo que podés medir con Vistorm Labs.</h2>
         <p class="lead" data-reveal>Todo en personas y en tiempo. Ninguna cifra viene en pesos.</p>
       </div>
-      <div class="deck-wrap">
-        <!-- sombras de recorte, grano de papel y veta de marquetería, compartidos por todas las ilustraciones -->
+      <div class="spot" id="spot">
         <svg class="pc-defs" width="0" height="0" aria-hidden="true" focusable="false"><defs>
           <filter id="pc-sh" x="-25%" y="-25%" width="150%" height="170%"><feDropShadow dx="0" dy="2.6" stdDeviation="2.2" flood-color="#2A0F17" flood-opacity=".34"/></filter>
           <filter id="pc-sh2" x="-25%" y="-25%" width="150%" height="170%"><feDropShadow dx="0" dy="1.2" stdDeviation="1" flood-color="#2A0F17" flood-opacity=".4"/></filter>
@@ -58,17 +57,9 @@
           <pattern id="pc-wood" width="120" height="16" patternUnits="userSpaceOnUse"><g fill="none" stroke="#2A0F17" stroke-opacity=".12" stroke-width=".6"><path d="M0 4c15-2 30 2 45 0s30-2 45 0 22 1.5 30 0"/><path d="M0 11c18 2 34-2 52 0s34 2 46 0 16-1.5 22 0"/></g></pattern>
           <pattern id="pc-wood-l" width="120" height="16" patternUnits="userSpaceOnUse"><g fill="none" stroke="#FFFFFF" stroke-opacity=".1" stroke-width=".6"><path d="M0 4c15-2 30 2 45 0s30-2 45 0 22 1.5 30 0"/><path d="M0 11c18 2 34-2 52 0s34 2 46 0 16-1.5 22 0"/></g></pattern>
         </defs></svg>
-        <div class="confetti" aria-hidden="true">
-          <i style="left:6%;top:18%;--r:24deg;background:#C1774B"></i><i style="left:12%;top:78%;--r:-30deg;background:#542433"></i><i style="left:19%;top:8%;--r:62deg;background:#C7BCAC"></i>
-          <i style="left:27%;top:90%;--r:12deg;background:#C1774B"></i><i style="left:35%;top:4%;--r:-48deg;background:#8E5E69"></i><i style="left:44%;top:94%;--r:80deg;background:#C7BCAC"></i>
-          <i style="left:52%;top:6%;--r:18deg;background:#542433"></i><i style="left:60%;top:92%;--r:-22deg;background:#C1774B"></i><i style="left:68%;top:3%;--r:40deg;background:#C7BCAC"></i>
-          <i style="left:76%;top:88%;--r:-70deg;background:#8E5E69"></i><i style="left:84%;top:12%;--r:30deg;background:#C1774B"></i><i style="left:92%;top:72%;--r:-12deg;background:#542433"></i>
-          <i style="left:3%;top:52%;--r:55deg;background:#E6DFD7"></i><i style="left:97%;top:38%;--r:-35deg;background:#C1774B"></i><i style="left:48%;top:-2%;--r:5deg;background:#E6DFD7"></i>
-        </div>
-        <ul class="deck" id="deck">
-
-          <li class="tcard tcard--t1" tabindex="0">
-            <div class="tcard__art" aria-hidden="true"><svg viewBox="0 0 200 150"><g filter="url(#pc-grain)">
+        <ul class="spot__rail" id="spot-rail">
+          <li class="spot__item spot--t1" data-i="0">
+            <button class="spot__frame" type="button" aria-label="Visitas y horario pico" aria-controls="spot-cap-0"><svg preserveAspectRatio="xMidYMid slice" viewBox="0 0 200 150"><g filter="url(#pc-grain)">
               <rect width="200" height="150" fill="#F4E6E0"/>
               <path filter="url(#pc-sh)" d="M0 30C40 18 70 40 110 28S170 10 200 22V150H0Z" fill="#EEDAD2"/>
               <path filter="url(#pc-sh)" d="M0 62C36 52 64 70 104 60S168 44 200 56V150H0Z" fill="#E6CBC0"/>
@@ -84,14 +75,11 @@
                 <g filter="url(#pc-sh2)" transform="translate(82 0)"><rect x="-6.5" y="94" width="13" height="27" rx="6.5" fill="#FBFAF9"/><circle cy="85" r="7" fill="#542433"/></g>
                 <g filter="url(#pc-sh2)" transform="translate(106 0)"><rect x="-6.5" y="92" width="13" height="29" rx="6.5" fill="#542433"/><circle cy="83" r="7" fill="#8E5E69"/></g>
               </g>
-            </g></svg></div>
-            <div class="tcard__body"><h3>Visitas y horario pico</h3><span class="tcard__tag">Pico</span></div>
-            <p class="tcard__desc">Cuánta gente entra y a qué hora se llena el local.</p>
-            <div class="tcard__foot"><span>N.º 01 / 05</span><span><i></i>Personas</span></div>
+            </g></svg></button>
+            <div class="spot__cap" id="spot-cap-0"><span class="spot__num">01 / 05 · Personas</span><h3>Visitas y horario pico</h3><p>Cuánta gente entra y a qué hora se llena el local.</p><span class="spot__tag">Pico</span></div>
           </li>
-
-          <li class="tcard tcard--t2" tabindex="0">
-            <div class="tcard__art" aria-hidden="true"><svg viewBox="0 0 200 150"><g filter="url(#pc-grain)">
+          <li class="spot__item spot--t2" data-i="1">
+            <button class="spot__frame" type="button" aria-label="Permanencia" aria-controls="spot-cap-1"><svg preserveAspectRatio="xMidYMid slice" viewBox="0 0 200 150"><g filter="url(#pc-grain)">
               <rect width="200" height="150" fill="#EBD2C5"/>
               <path filter="url(#pc-sh)" d="M-10 0H60C40 40 70 70 40 150H-10Z" fill="#E0BCA9"/>
               <path filter="url(#pc-sh)" d="M210 0H150C168 46 138 80 166 150H210Z" fill="#E0BCA9"/>
@@ -103,14 +91,11 @@
               <g filter="url(#pc-sh2)"><rect x="44" y="76" width="14" height="32" rx="7" fill="#542433"/><circle cx="51" cy="67" r="7.5" fill="#8E5E69"/><rect x="40" y="104" width="22" height="5" rx="2.5" fill="#6A3243"/><rect x="40" y="108" width="4" height="14" fill="#6A3243"/></g>
               <g filter="url(#pc-sh2)"><rect x="142" y="76" width="14" height="32" rx="7" fill="#FBFAF9"/><circle cx="149" cy="67" r="7.5" fill="#542433"/><rect x="138" y="104" width="22" height="5" rx="2.5" fill="#6A3243"/><rect x="156" y="108" width="4" height="14" fill="#6A3243"/></g>
               <g filter="url(#pc-sh)" transform="translate(100 34)"><path d="M-13 -20H13L3 0 13 20H-13L-3 0Z" fill="#542433"/><path d="M-9 -16H9L1 0 9 16H-9L-1 0Z" fill="#FBFAF9"/><path class="art-sand" d="M-6 13H6L0 5Z" fill="#C1774B"/><path d="M-1 1h2v4h-2z" fill="#C1774B"/></g>
-            </g></svg></div>
-            <div class="tcard__body"><h3>Permanencia</h3><span class="tcard__tag">Minutos</span></div>
-            <p class="tcard__desc">Cuánto tiempo se queda la gente, en total y en cada zona.</p>
-            <div class="tcard__foot"><span>N.º 02 / 05</span><span><i></i>Tiempo</span></div>
+            </g></svg></button>
+            <div class="spot__cap" id="spot-cap-1"><span class="spot__num">02 / 05 · Tiempo</span><h3>Permanencia</h3><p>Cuánto tiempo se queda la gente, en total y en cada zona.</p><span class="spot__tag">Minutos</span></div>
           </li>
-
-          <li class="tcard tcard--t3" tabindex="0">
-            <div class="tcard__art" aria-hidden="true"><svg viewBox="0 0 200 150"><g filter="url(#pc-grain)">
+          <li class="spot__item spot--t3" data-i="2">
+            <button class="spot__frame" type="button" aria-label="Filas y espera" aria-controls="spot-cap-2"><svg preserveAspectRatio="xMidYMid slice" viewBox="0 0 200 150"><g filter="url(#pc-grain)">
               <rect width="200" height="150" fill="#CF8D66"/>
               <path filter="url(#pc-sh)" d="M0 24C44 10 78 34 120 22S178 6 200 14V150H0Z" fill="#C47C52"/>
               <path filter="url(#pc-sh)" d="M0 58C40 46 76 66 118 54S180 40 200 48V150H0Z" fill="#B66D43"/>
@@ -127,14 +112,11 @@
                 <g filter="url(#pc-sh2)" transform="translate(26 0)"><rect x="-7" y="90" width="14" height="30" rx="7" fill="#6A3243"/><circle cy="81" r="7.5" fill="#C7BCAC"/></g>
               </g>
               <g filter="url(#pc-sh)" transform="translate(70 34)"><circle r="18" fill="#FBFAF9"/><path d="M-10 15l-5 11 13-8" fill="#FBFAF9"/><circle r="12" fill="none" stroke="#E6DFD7" stroke-width="4"/><circle class="art-timer" r="12" fill="none" stroke="#542433" stroke-width="4" stroke-linecap="round" stroke-dasharray="52 76" transform="rotate(-90)"/></g>
-            </g></svg></div>
-            <div class="tcard__body"><h3>Filas y espera</h3><span class="tcard__tag">Espera</span></div>
-            <p class="tcard__desc">Cuánta gente espera, cuánto tarda la atención y cuándo se arma cola.</p>
-            <div class="tcard__foot"><span>N.º 03 / 05</span><span><i></i>Personas y tiempo</span></div>
+            </g></svg></button>
+            <div class="spot__cap" id="spot-cap-2"><span class="spot__num">03 / 05 · Personas y tiempo</span><h3>Filas y espera</h3><p>Cuánta gente espera, cuánto tarda la atención y cuándo se arma cola.</p><span class="spot__tag">Espera</span></div>
           </li>
-
-          <li class="tcard tcard--t4" tabindex="0">
-            <div class="tcard__art" aria-hidden="true"><svg viewBox="18 4 164 123"><g filter="url(#pc-grain)">
+          <li class="spot__item spot--t4" data-i="3">
+            <button class="spot__frame" type="button" aria-label="Zonas y mapa de calor" aria-controls="spot-cap-3"><svg preserveAspectRatio="xMidYMid slice" viewBox="18 4 164 123"><g filter="url(#pc-grain)">
               <rect width="200" height="150" fill="#9A6B75"/>
               <path filter="url(#pc-sh)" d="M0 30C40 20 70 40 110 30S172 14 200 24V150H0Z" fill="#8E5E69"/>
               <rect width="200" height="150" fill="url(#pc-wood-l)"/>
@@ -153,14 +135,11 @@
               <g filter="url(#pc-sh2)"><rect x="124" y="73" width="7" height="16" rx="3.5" fill="#C1774B"/><circle cx="127.5" cy="70" r="3.8" fill="#F4F2F1"/></g>
               <g filter="url(#pc-sh2)"><rect x="100" y="86" width="7" height="16" rx="3.5" fill="#E6DFD7"/><circle cx="103.5" cy="83" r="3.8" fill="#F4F2F1"/></g>
               <g filter="url(#pc-sh2)"><rect x="51" y="81" width="7" height="16" rx="3.5" fill="#C7BCAC"/><circle cx="54.5" cy="78" r="3.8" fill="#F4F2F1"/></g>
-            </g></svg></div>
-            <div class="tcard__body"><h3>Zonas y mapa de calor</h3><span class="tcard__tag">Calor</span></div>
-            <p class="tcard__desc">Dónde se junta la gente en tu local y qué sectores quedan vacíos.</p>
-            <div class="tcard__foot"><span>N.º 04 / 05</span><span><i></i>Personas</span></div>
+            </g></svg></button>
+            <div class="spot__cap" id="spot-cap-3"><span class="spot__num">04 / 05 · Personas</span><h3>Zonas y mapa de calor</h3><p>Dónde se junta la gente en tu local y qué sectores quedan vacíos.</p><span class="spot__tag">Calor</span></div>
           </li>
-
-          <li class="tcard tcard--t5" tabindex="0">
-            <div class="tcard__art" aria-hidden="true"><svg viewBox="0 0 200 150"><g filter="url(#pc-grain)">
+          <li class="spot__item spot--t5" data-i="4">
+            <button class="spot__frame" type="button" aria-label="Recorrido" aria-controls="spot-cap-4"><svg preserveAspectRatio="xMidYMid slice" viewBox="0 0 200 150"><g filter="url(#pc-grain)">
               <rect width="200" height="150" fill="#5E2A3A"/>
               <g filter="url(#pc-sh)" transform="translate(100 75)" fill="#6A3243">
                 <path d="M0 0L-18 -170H18Z"/><path d="M0 0L-18 -170H18Z" transform="rotate(30)"/><path d="M0 0L-18 -170H18Z" transform="rotate(60)"/><path d="M0 0L-18 -170H18Z" transform="rotate(90)"/><path d="M0 0L-18 -170H18Z" transform="rotate(120)"/><path d="M0 0L-18 -170H18Z" transform="rotate(150)"/><path d="M0 0L-18 -170H18Z" transform="rotate(180)"/><path d="M0 0L-18 -170H18Z" transform="rotate(210)"/><path d="M0 0L-18 -170H18Z" transform="rotate(240)"/><path d="M0 0L-18 -170H18Z" transform="rotate(270)"/><path d="M0 0L-18 -170H18Z" transform="rotate(300)"/><path d="M0 0L-18 -170H18Z" transform="rotate(330)"/>
@@ -175,12 +154,13 @@
               <path class="art-path" d="M101 132 C 100 112 70 112 66 96 C 62 78 78 60 100 54 C 124 48 132 66 128 80 C 124 94 132 104 140 104" fill="none" stroke="#C1774B" stroke-width="3.4" stroke-linecap="round" stroke-dasharray="2 7"/>
               <circle cx="101" cy="132" r="4" fill="#542433"/>
               <g class="art-walker" filter="url(#pc-sh2)"><circle cx="140" cy="104" r="7.5" fill="#C1774B"/><circle cx="140" cy="104" r="3.2" fill="#FBFAF9"/></g>
-            </g></svg></div>
-            <div class="tcard__body"><h3>Recorrido</h3><span class="tcard__tag">Camino</span></div>
-            <p class="tcard__desc">Por dónde camina la gente desde que entra hasta que se va.</p>
-            <div class="tcard__foot"><span>N.º 05 / 05</span><span><i></i>Personas</span></div>
+            </g></svg></button>
+            <div class="spot__cap" id="spot-cap-4"><span class="spot__num">05 / 05 · Personas</span><h3>Recorrido</h3><p>Por dónde camina la gente desde que entra hasta que se va.</p><span class="spot__tag">Camino</span></div>
           </li>
         </ul>
+        <div class="spot__dots" role="group" aria-label="Elegí qué medición ver">
+          <button type="button" class="spot__dot" data-i="0" aria-label="Ver medición 1 de 5"></button><button type="button" class="spot__dot" data-i="1" aria-label="Ver medición 2 de 5"></button><button type="button" class="spot__dot" data-i="2" aria-label="Ver medición 3 de 5"></button><button type="button" class="spot__dot" data-i="3" aria-label="Ver medición 4 de 5"></button><button type="button" class="spot__dot" data-i="4" aria-label="Ver medición 5 de 5"></button>
+        </div>
       </div>
     </div>
   </section>
@@ -206,47 +186,24 @@
     </div>
   </section>
 
-  <!-- 2. El panel: el software tal como se ve -->
+  <!-- 2. El panel: la semana del local, día por día -->
   <section class="panelsec" id="panel" aria-labelledby="t-panel">
     <div class="wrap">
       <div class="sechead">
         <div><span class="kick">El panel</span><h2 class="big split" id="t-panel">Un panel que dice qué hacer, no solo qué pasó.</h2></div>
-        <p class="lead" data-reveal>Así se ve Vistorm por dentro: tus preguntas sobre el local, respondidas en personas y en tiempo.</p>
+        <p class="lead" data-reveal>Abrí un día y mirá cómo se movió la gente en tu local, hora por hora, y qué conviene cambiar.</p>
       </div>
-      <div class="device-wrap">
-        <div class="device" id="device">
-          <div class="device__bar" aria-hidden="true"><i></i><i></i><i></i><span>Panel de Vistorm Labs</span></div>
-          <div class="sw" id="sw">
-            <div class="sw__side">
-              <img class="sw__logo" src="/assets/img/logo-color.svg" alt="" width="124" height="42">
-              <div class="sw__local"><small>Bar, restaurante o café</small><b>Local de ejemplo</b></div>
-              <nav class="sw__nav" aria-label="Secciones del panel de ejemplo">
-                <button class="sw__item" type="button" data-view="hoy">Hoy<i class="sw__prog" aria-hidden="true"></i></button>
-                <button class="sw__item" type="button" data-view="hacer">Qué hacer<span class="sw__badge" aria-hidden="true">2</span><span class="sr"> · 2 sugerencias</span><i class="sw__prog" aria-hidden="true"></i></button>
-                <p class="sw__group">Tus preguntas</p>
-                <button class="sw__item" type="button" data-view="mesas">Mesas<small>¿Qué mesa espera?</small><i class="sw__prog" aria-hidden="true"></i></button>
-                <button class="sw__item" type="button" data-view="atencion">Atención<small>¿Quién se va sin atención?</small><i class="sw__prog" aria-hidden="true"></i></button>
-                <button class="sw__item" type="button" data-view="personal">Personal<small>¿Cuándo reforzar?</small><i class="sw__prog" aria-hidden="true"></i></button>
-                <button class="sw__item" type="button" data-view="salon">Salón<small>¿Qué parte no se usa?</small><i class="sw__prog" aria-hidden="true"></i></button>
-                <button class="sw__item" type="button" data-view="resultados">Resultados<small>¿Funcionó el cambio?</small><i class="sw__prog" aria-hidden="true"></i></button>
-              </nav>
-              <ul class="sw__more" aria-hidden="true"><li>Informe semanal</li><li>Alertas</li><li>Cámaras y plano</li><li>Ajustes</li></ul>
-            </div>
-            <div class="sw__main">
-              <div class="sw__top">
-                <p class="sw__crumbs" id="sw-crumbs">Local de ejemplo / <b>Hoy</b></p>
-                <div class="sw__status" aria-hidden="true">
-                  <span class="sw__live">EN LÍNEA</span>
-                  <svg class="sw__bell" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"/><path d="M10.3 21a1.94 1.94 0 0 0 3.4 0"/></svg>
-                  <span class="sw__avatar">V</span>
-                </div>
-              </div>
-              <div class="sw__view" id="sw-view"></div>
-            </div>
-          </div>
+      <div class="ridge" id="ridge">
+        <div class="ridge__top">
+          <div class="ridge__brand"><img src="/assets/img/logo-negativo.svg" alt="Vistorm Labs" width="104" height="35"><span class="ridge__sep" aria-hidden="true"></span><p class="ridge__local">Local de ejemplo</p></div>
+          <p class="ridge__meta">7 días · <b>2.850</b> visitas · <b>+9 %</b> que la semana anterior</p>
+          <div class="ridge__nav"><button class="ridge__arrow" type="button" id="ridge-prev" aria-label="Día anterior">‹</button><span id="ridge-count" aria-live="polite">Sábado · 6 de 7</span><button class="ridge__arrow" type="button" id="ridge-next" aria-label="Día siguiente">›</button></div>
         </div>
+        <div class="ridge__days" id="ridge-days" role="tablist" aria-label="Días de la semana"></div>
+        <div class="ridge__detail" id="ridge-detail"></div>
+        <div class="ridge__chart"><svg id="ridge-svg" role="img" aria-label="Gente adentro del local, hora por hora, durante la semana"></svg></div>
+        <div class="ridge__foot"><p class="ridge__tip" id="ridge-tip"></p><span class="ridge__sim">Local de ejemplo · datos simulados</span></div>
       </div>
-      <div class="panel-foot"><span class="datanote"><span class="dot" aria-hidden="true"></span>Local de ejemplo · datos simulados</span><span class="hint">Tocá cualquier sección del panel para recorrerlo.</span></div>
     </div>
   </section>
 
